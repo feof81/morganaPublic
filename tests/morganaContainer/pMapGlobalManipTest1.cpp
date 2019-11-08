@@ -1,0 +1,102 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMap.hpp"
+#include "pMapItem.h"
+#include "pMpiOptimization.hpp"
+#include "pMapComm.hpp"
+#include "pMapGlobalManip.h"
+
+using namespace Teuchos;
+
+
+//! Run with three processors
+int main(int argc, char *argv[])
+{
+  //Comunication stuff
+  environment  env(argc,argv);
+  RCP<communicator> world(new communicator);
+  
+  assert(world->size() == 3);
+  
+  //Common data
+  typedef pMap<pMapItem> OBJ;
+  pMapItem  item;
+  RCP<OBJ>  sMap(new OBJ);
+  
+  
+  if(world->rank() == 1)
+  {
+    item.setPid(1);
+    
+    item.setLid(1); item.setGid(1); sMap->push_back(item);
+    item.setLid(2); item.setGid(2); sMap->push_back(item);
+    item.setLid(3); item.setGid(3); sMap->push_back(item);
+    item.setLid(4); item.setGid(4); sMap->push_back(item);
+    item.setLid(5); item.setGid(5); sMap->push_back(item);
+  }
+  
+  if(world->rank() == 2)
+  {
+    item.setPid(2);
+    
+    item.setLid(1); item.setGid(6);  sMap->push_back(item);
+    item.setLid(2); item.setGid(7);  sMap->push_back(item);
+    item.setLid(3); item.setGid(8);  sMap->push_back(item);
+    item.setLid(4); item.setGid(9);  sMap->push_back(item);
+    item.setLid(5); item.setGid(10); sMap->push_back(item);
+  }
+  
+  if(world->rank() == 0)
+  {
+    item.setPid(0);
+    
+    item.setLid(1); item.setGid(11); sMap->push_back(item);
+    item.setLid(2); item.setGid(12); sMap->push_back(item);
+    item.setLid(3); item.setGid(13); sMap->push_back(item);
+    item.setLid(4); item.setGid(14); sMap->push_back(item);
+    item.setLid(5); item.setGid(15); sMap->push_back(item);
+  }
+  
+  pMapGlobalManip<pMapItem> manipulator(world);
+  bool checkFlag = manipulator.check(sMap);
+  
+  world->barrier();
+  
+  if(world->rank() == 0)
+  {
+    cout << "Processor: " << world->rank() << " Check: " << checkFlag << endl;
+  }
+  
+  world->barrier();
+  
+  if(world->rank() == 1)
+  {
+    cout << "Processor: " << world->rank() << " Check: " << checkFlag << endl;
+  }
+  
+  world->barrier();
+  
+  if(world->rank() == 2)
+  {
+    cout << "Processor: " << world->rank() << " Check: " << checkFlag << endl;
+  }
+}
+

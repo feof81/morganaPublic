@@ -1,0 +1,70 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef POLYDYNAMICSUBCARD_H
+#define POLYDYNAMICSUBCARD_H
+
+#include "typesInterface.h"
+#include "simpleFormats.hpp"
+
+
+/*! Definition of a dynamically defined polynomial. Represents a monomial: c * x^pX * y^pY * z^pZ */
+class polyDynamicSubCard
+{
+  /*! @name Internal data */ //@{
+  public:
+    UInt pX, pY, pZ;
+    Real c;
+    //@}
+    
+    /*! @name Constructors */ //@{
+  public:
+    polyDynamicSubCard();
+    polyDynamicSubCard(const UInt & Cx, const UInt & Cy, const UInt & Cz, const Real & C);
+    polyDynamicSubCard(const polyDynamicSubCard & card);
+    polyDynamicSubCard operator=(const polyDynamicSubCard & card);
+    void operator*=(const Real & val);
+    //@}
+    
+    /*! @name Set and get functions */ //@{
+  public:
+    const UInt & getCx() const;
+    const UInt & getCy() const;
+    const UInt & getCz() const;
+    const Real & getCoeff() const;
+    UInt & getCx();
+    UInt & getCy();
+    UInt & getCz();
+    Real & getCoeff(); 
+    void setCx(const UInt & PX);
+    void setCy(const UInt & PY);
+    void setCz(const UInt & PZ);
+    void setCoeff(const Real & Coeff);
+    //@}
+    
+    /*! @name Operator functions */ //@{
+  public:
+    /*! The "less" operator */
+    bool operator<(const polyDynamicSubCard & E) const;
+    
+    /*! The inequality operator*/
+    bool operator!=(const polyDynamicSubCard & E) const;
+    //@}
+    
+    /*! @name Outstream operator */ //@{
+  public:
+    friend ostream & operator<<(ostream & f, const polyDynamicSubCard & G);
+    //@}
+};
+
+#endif

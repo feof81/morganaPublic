@@ -1,0 +1,305 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef TRAITSSEGMENTATIONUTILITY_HPP
+#define TRAITSSEGMENTATIONUTILITY_HPP
+
+#include <set>
+#include <assert.h>
+#include <iostream>
+
+#include "typesInterface.hpp"
+#include "pGraphItem.h"
+#include "geoElement.hpp"
+
+#include "pMap.hpp"
+#include "pVect.hpp"
+#include "pMapItemSendRecv.h"
+
+using namespace std;
+
+
+
+
+
+//_________________________________________________________________________________________________
+// DOFS THAT CAN BE SEGMENTED
+//-------------------------------------------------------------------------------------------------
+/*! Trait for UInt */
+inline UInt linearCombination(const UInt & G1, const UInt & G2, const Real & a)
+{
+  return(UInt( Real(G1) + Real(G2 - G1) * a ));
+}
+
+/*! Trait for Real */
+inline Real linearCombination(const Real & G1, const Real & G2, const Real & a)
+{
+  return(G1 * (1.0 - a) + G2 * a);
+}
+
+/*! Trait for point2d */
+inline point2d linearCombination(const point2d & G1, const point2d & G2, const Real & a)
+{
+  point2d G;
+  
+  G.X[0] = G1.X[0] * (1.0 - a) + G2.X[0] * a;
+  G.X[1] = G1.X[1] * (1.0 - a) + G2.X[1] * a;
+
+  return(G);
+}
+
+/*! Trait for point3d */
+inline point3d linearCombination(const point3d & G1, const point3d & G2, const Real & a)
+{
+  point3d G;
+  
+  G.X[0] = G1.X[0] * (1.0 - a) + G2.X[0] * a;
+  G.X[1] = G1.X[1] * (1.0 - a) + G2.X[1] * a;
+  G.X[2] = G1.X[2] * (1.0 - a) + G2.X[2] * a;
+
+  return(G);
+}
+
+/*! Trait for tensor2d */
+inline tensor2d linearCombination(const tensor2d & G1, const tensor2d & G2, const Real & a)
+{ 
+  tensor2d G;
+  
+  G.T[0][0] = G1.T[0][0] * (1-a) + G2.T[0][0] * a;
+  G.T[0][1] = G1.T[0][1] * (1-a) + G2.T[0][1] * a;
+  
+  G.T[1][0] = G1.T[1][0] * (1-a) + G2.T[1][0] * a;
+  G.T[1][1] = G1.T[1][1] * (1-a) + G2.T[1][1] * a;
+  
+  return(G);
+}
+
+/*! Trait for tenso3d */
+inline tensor3d linearCombination(const tensor3d & G1, const tensor3d & G2, const Real & a)
+{
+  tensor3d G;
+  
+  G.T[0][0] = G1.T[0][0] * (1-a) + G2.T[0][0] * a;
+  G.T[0][1] = G1.T[0][1] * (1-a) + G2.T[0][1] * a;
+  G.T[0][2] = G1.T[0][2] * (1-a) + G2.T[0][2] * a;
+  
+  G.T[1][0] = G1.T[1][0] * (1-a) + G2.T[1][0] * a;
+  G.T[1][1] = G1.T[1][1] * (1-a) + G2.T[1][1] * a;
+  G.T[1][2] = G1.T[1][2] * (1-a) + G2.T[1][2] * a;
+  
+  G.T[2][0] = G1.T[2][0] * (1-a) + G2.T[2][0] * a;
+  G.T[2][1] = G1.T[2][1] * (1-a) + G2.T[2][1] * a;
+  G.T[2][2] = G1.T[2][2] * (1-a) + G2.T[2][2] * a;
+  
+  return(G);
+}
+
+/*! Trait for stateVector */
+inline stateVector linearCombination(const stateVector & G1, const stateVector & G2, const Real & a)
+{
+  assert(G1.Length() == G2.Length());
+  
+  stateVector G(G1.Length());
+  
+  for(int i=1; i <= G1.Length(); ++i)
+  {
+    G.operator()(i) = G1.operator()(i) * (1.0-a) + G2.operator()(i) * a;
+  }
+  
+  return(G);
+}
+
+/*! Trait for staticVector */
+template<size_t N>
+staticVector<N> linearCombination(const staticVector<N> & G1, const staticVector<N> & G2, const Real & a)
+{
+  staticVector<N> G;
+   
+  for(UInt i=1; i <= N; ++i)
+  {
+    G.operator()(i) = G1.operator()(i) * (1.0-a) + G2.operator()(i) * a;
+  }
+  
+  return(G);
+}
+
+/*! Trait for staticMatrix */
+inline stateMatrix linearCombination(const stateMatrix & G1, const stateMatrix & G2, const Real & a)
+{
+  assert(G1.RowDim() == G2.RowDim());
+  assert(G1.ColDim() == G2.ColDim());
+  
+  stateMatrix G( G1.RowDim(), G1.ColDim());
+  
+  for(int i=1; i <= G1.RowDim(); ++i)
+  {
+    for(int j=1; j <= G1.ColDim(); ++j)
+    {
+      G.operator()(i,j) = G1.operator()(i,j) * (1.0 - a) + G2.operator()(i,j) * a;
+    }
+  }
+  
+  return(G);
+}
+
+/*! Trait for pGraphItem */
+inline pGraphItem linearCombination(const pGraphItem & G1, const pGraphItem & G2, const Real & a)
+{
+  //Asserts
+  assert(G1.nodesOrdered);
+  assert(G2.nodesOrdered);
+  assert(G1.connected.size()    == G2.connected.size());
+  assert(G1.orderedNodes.size() == G2.orderedNodes.size());
+  assert(G1.orderedNodes.size() == G1.connected.size());
+  assert(G1.getNodesOrdered());
+  assert(G2.getNodesOrdered());
+  
+  //Resizing
+  pGraphItem G;
+  G.connected.resize(G1.connected.size());
+  
+  //Computing
+  for(UInt i=1; i <= G1.connected.size(); ++i)
+  {
+    G.connected(i) = Real(G1.getSorted(i)) * (1.0 - a) + Real(G2.getSorted(i)) * a;
+  }
+  
+  //Updating and return
+  G.updateSorting();
+  return(G);
+}
+
+/*! Trait for geoElement */
+template<typename GEOSHAPE>
+geoElement<GEOSHAPE> linearCombination(const geoElement<GEOSHAPE> & G1, const geoElement<GEOSHAPE> & G2, const Real & a)
+{
+  //Asserts
+  assert(G1.nodesOrdered);
+  assert(G2.nodesOrdered);
+  assert(G1.connected.size()    == G2.connected.size());
+  assert(G1.orderedNodes.size() == G2.orderedNodes.size());
+  assert(G1.orderedNodes.size() == G1.connected.size());
+  assert(G1.getNodesOrdered());
+  assert(G2.getNodesOrdered());
+  
+  //Resizing
+  geoElement<GEOSHAPE> G;
+  G.connected.resize(G1.connected.size());
+  
+  //Computing
+  for(UInt i=1; i <= G1.connected.size(); ++i)
+  {
+    G.connected(i) = Real(G1.getSorted(i)) * (1.0 - a) + Real(G2.getSorted(i)) * a;
+  }
+  
+  //Updating and return
+  G.updateSorting();
+  return(G);
+}
+
+
+//_________________________________________________________________________________________________
+// SEGMENTATION UTILITIES
+//-------------------------------------------------------------------------------------------------
+/*! This is the only trait class in the \c morganaContainer package. This trait specifies how to segment a vector containing 
+some data into pieces. This is mainly used for segmentation on the processors vectors that has not a \c gid identificator.
+For instance all functions that generate a global numbering usually use this class. We have implemented some functions for the
+various types of data that can be segmented: they are mainly all the \c morganaDofs and the \c pGraphItem classes. The second one
+are used much more often than the \c morganaDofs. The numbering of locally created geometric faces is an example of usage of this 
+class.
+Given a vector of ordinable data this class divides it into a number of sub-vectors. 
+The data type should satisfy: P1 <= (1-a) P1 + a P2 <= P2 where a is a real [0,1] */
+template<typename DATA> class dataSegmentationUtility
+{
+    /*! @name Typedefs */ //@{  
+  public:
+    typedef std::pair<DATA,UInt>             PAIR;
+    typedef std::map<DATA,UInt>              STLMAP;
+    typedef typename STLMAP::const_iterator  ITERATOR;
+    //@}
+    
+    /*! @name Internal data */ //@{
+  public:
+    UInt N;
+    DATA   MaxData;
+    STLMAP orderMap;
+    //@}
+    
+    /*! @name Functions */ //@{
+  public:
+    dataSegmentationUtility(const UInt & n, const DATA & minData, const DATA & maxData);
+    UInt index(const DATA & value) const;
+    
+    template<typename D>
+    friend ostream & operator<<(ostream & f, const dataSegmentationUtility<D> & M);
+    //@}
+};
+
+template<typename DATA>
+dataSegmentationUtility<DATA>::
+dataSegmentationUtility(const UInt & n, const DATA & minData, const DATA & maxData)
+{  
+  N = n;
+  MaxData = maxData;
+  
+  PAIR pair;
+
+  for(UInt i=0; i<=n; ++i)
+  {
+    pair.first  = linearCombination(minData, maxData, Real(i) / Real(n));
+    pair.second = i;
+    
+    assert( ( pair.first < linearCombination(minData, maxData, Real(i+1) / Real(n)) )  ||
+    !(pair.first != linearCombination(minData, maxData, Real(i+1) / Real(n)) ) 
+    );
+    
+    orderMap.insert(pair);
+  }
+}
+
+template<typename DATA>
+UInt
+dataSegmentationUtility<DATA>::
+index(const DATA & value) const
+{
+  if(!(value != MaxData))
+  {
+    return(N);
+  }
+  else
+  {
+    assert(value < MaxData);
+    ITERATOR iter = orderMap.upper_bound(value);
+    
+    assert((*iter).second >= 1);
+    assert((*iter).second <= N);
+    
+    return((*iter).second);
+  }
+}
+
+template<typename D>
+ostream & operator<<(ostream & f, const dataSegmentationUtility<D> & M)
+{
+  typedef typename dataSegmentationUtility<D>::ITERATOR ITERATOR;
+  
+  ITERATOR iter;
+  
+  for(iter = M.orderMap.begin(); iter != M.orderMap.end(); ++iter)
+  { f << (*iter).first << endl; }
+  
+  return(f);
+}
+
+
+#endif

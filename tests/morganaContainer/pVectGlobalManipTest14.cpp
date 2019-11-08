@@ -1,0 +1,101 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMap.hpp"
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+#include "pMpiOptimization.hpp"
+#include "pMapComm.hpp"
+#include "pMapGlobalManip.h"
+
+using namespace Teuchos;
+
+
+//! Run with three processors
+int main(int argc, char *argv[])
+{
+  //Comunication stuff
+  environment  env(argc,argv);
+  RCP<communicator> world(new communicator);
+  
+  assert(world->size() == 3);
+  
+  
+  //Common data
+  typedef pMap<pMapItemShare> OBJ;
+  
+  UInt maxSize = 4;
+  pMapItemShare  item;
+  RCP<OBJ>  sMap(new OBJ);
+  RCP<OBJ>  rMap(new OBJ);
+  
+  if(world->rank() == 1)
+  {
+    item.setPid(1);
+    item.setLid(1); item.setGid(1);  item.setOwned(true); item.setShared(false);  sMap->push_back(item);
+    item.setLid(2); item.setGid(2);  item.setOwned(true); item.setShared(false);  sMap->push_back(item);
+    item.setLid(3); item.setGid(3);  item.setOwned(true); item.setShared(false);  sMap->push_back(item);
+    item.setLid(4); item.setGid(4);  item.setOwned(true); item.setShared(true);   sMap->push_back(item);
+    item.setLid(5); item.setGid(5);  item.setOwned(true); item.setShared(true);   sMap->push_back(item);
+  }
+  
+  if(world->rank() == 2)
+  {
+    item.setPid(2);
+    item.setLid(1); item.setGid(4);  item.setOwned(false); item.setShared(true);  sMap->push_back(item);
+    item.setLid(2); item.setGid(5);  item.setOwned(false); item.setShared(true);  sMap->push_back(item);
+    item.setLid(3); item.setGid(6);  item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(4); item.setGid(7);  item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(5); item.setGid(8);  item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(6); item.setGid(9);  item.setOwned(true);  item.setShared(true);  sMap->push_back(item);
+    item.setLid(7); item.setGid(10); item.setOwned(true);  item.setShared(true);  sMap->push_back(item);
+  }
+  
+  if(world->rank() == 0)
+  {
+    item.setPid(0);
+    item.setLid(1); item.setGid(9);  item.setOwned(false); item.setShared(true);  sMap->push_back(item);
+    item.setLid(2); item.setGid(10); item.setOwned(false); item.setShared(true);  sMap->push_back(item);
+    item.setLid(3); item.setGid(11); item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(4); item.setGid(12); item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(5); item.setGid(13); item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(6); item.setGid(14); item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+    item.setLid(7); item.setGid(15); item.setOwned(true);  item.setShared(false); sMap->push_back(item);
+  }
+  
+  
+  pMapGlobalManip<pMapItemShare> manipulator(world);
+  manipulator.destroyOverlap(sMap);
+  
+  world->barrier();
+  if(world->rank() == 0)
+  { cout << *sMap << endl; }
+  sleep(1);
+  
+  world->barrier();
+  if(world->rank() == 1)
+  { cout << *sMap << endl; }
+  sleep(1);
+  
+  world->barrier();
+  if(world->rank() == 2)
+  { cout << *sMap << endl; }
+  sleep(1);
+}

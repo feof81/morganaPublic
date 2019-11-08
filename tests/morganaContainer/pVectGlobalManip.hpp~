@@ -1,0 +1,82 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef _PVECTGLOBALMANIP_HH_
+#define _PVECTGLOBALMANIP_HH_
+
+#include "Teuchos_RCP.hpp"
+#include <Epetra_Map.h>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+#include "pVectManip.hpp"
+#include "pVectComm.hpp"
+
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+using Teuchos::RCP;
+using Teuchos::rcp;
+
+
+//_________________________________________________________________________________________________
+// UNSPECIALIZED
+//-------------------------------------------------------------------------------------------------
+template<typename DATA, typename MAPITEM> class pVectGlobalManip
+{ };
+
+
+//_________________________________________________________________________________________________
+// PMAPITEM
+//-------------------------------------------------------------------------------------------------
+template<typename DATA> class pVectGlobalManip<DATA,pMapItem>
+{
+  public:
+    typedef pVect<DATA,MAPITEM>    PVECT;
+    typedef SimpleVect<DATA>       DATAVECT;
+    typedef pMap<MAPITEM>          PMAP;
+    typedef pMap<pMapItemSendRecv> SENDRECV;
+    
+  public:
+    UInt maxSize;
+    bool commDevLoaded;
+    bool maxSizeLoaded;
+    RCP<communicator> commDev;
+    
+  public:
+    pVectGlobalManip();
+    pVectGlobalManip(const RCP<communicator> & CommDev);
+    pVectGlobalManip(communicator & CommDev);
+    void setCommunicator(const RCP<communicator> & CommDev);
+    void setCommunicator(communicator & CommDev);
+    void setMaxSize(const UInt & MaxSize);
+    
+  public:
+    UInt sizeG(const RCP<PVECT> & Vect);
+    UInt sizeG(PVECT & Vect);
+    bool check(const RCP<MAP> & Map);
+    bool check(const MAP & Map);
+    
+  public:
+    void setGlobalNumbering(const RCP<PVECT> & Vect);
+    void setGlobalNumbering(PVECT & Vect);
+};
+
+
+
+#endif

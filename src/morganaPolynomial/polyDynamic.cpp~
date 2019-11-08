@@ -1,0 +1,386 @@
+#include "polyDynamic.h"
+
+polyDynamic::
+polyDynamic()
+{
+  cardLoaded = false;
+}
+
+
+//_________________________________________________________________________________________________
+// INTERNAL FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+void
+polyDynamic::
+setPolyDynamicCard(polyDynamicCard Card)
+{
+  cardLoaded = true;
+  card = Card;
+}
+
+UInt 
+polyDynamic::
+factorial(const UInt & d, const UInt & p) const
+{
+  UInt out = 1;
+  
+  for(UInt i=0; i<d; ++i)
+  { out *= p - i; }
+  
+  return(out);
+}
+
+
+
+//_________________________________________________________________________________________________
+// INTERFACE FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+Real
+polyDynamic::
+evaluate(const point3d & X) const
+{
+  assert(cardLoaded);
+  
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    result += card.getCoeff(k) *
+              pow(X.getX(), int(card.getCx(k)) ) *
+              pow(X.getY(), int(card.getCy(k)) ) * 
+              pow(X.getZ(), int(card.getCz(k)) );
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateGradientX(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCx(k) >= 1)
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) * 
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateGradientY(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCy(k) >= 1)
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) *
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateGradientZ(const point3d & X) const
+{
+   Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCz(k) >= 1)
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) * 
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(result);
+}
+
+point3d
+polyDynamic::
+evaluateGradient(const point3d & X) const
+{
+  Real resultX = 0.0;
+  Real resultY = 0.0;
+  Real resultZ = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    //Dx
+    if(card.getCx(k) >= 1)
+    {
+      resultX += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) * 
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+    
+    //Dy
+    if(card.getCy(k) >= 1)
+    {
+      resultY += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) *
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+    
+    //Dz
+    if(card.getCz(k) >= 1)
+    {
+      resultZ += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) * 
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(point3d(resultX,resultY,resultZ));
+}
+
+Real
+polyDynamic::
+evaluateHessianXX(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCx(k) >= 2)
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(2,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 2) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) * 
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianXY(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCx(k) >= 1) && (card.getCy(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) * 
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+    
+Real
+polyDynamic::
+evaluateHessianXZ(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCx(k) >= 1) && (card.getCz(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+                                           pow(X.getY(), int(card.getCy(k)) )     *
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianYX(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCx(k) >= 1) && (card.getCy(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) * 
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianYY(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCy(k) >= 2)
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+      Real( factorial(2,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 2) ) *
+                                           pow(X.getZ(), int(card.getCz(k)) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianYZ(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCy(k) >= 1) && (card.getCz(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) )     *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) *
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianZX(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCx(k) >= 1) && (card.getCz(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(1,card.getCx(k)) ) * pow(X.getX(), int(card.getCx(k) - 1) ) *
+                                           pow(X.getY(), int(card.getCy(k)) )     *
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianZY(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if( (card.getCy(k) >= 1) && (card.getCz(k) >= 1))
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) )     *
+      Real( factorial(1,card.getCy(k)) ) * pow(X.getY(), int(card.getCy(k) - 1) ) *
+      Real( factorial(1,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 1) );
+    }
+  }
+  
+  return(result);
+}
+
+Real
+polyDynamic::
+evaluateHessianZZ(const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if(card.getCz(k) >= 2)
+    {
+      result += card.getCoeff(k) *
+                                           pow(X.getX(), int(card.getCx(k)) ) *
+                                           pow(X.getY(), int(card.getCy(k)) ) *
+      Real( factorial(2,card.getCz(k)) ) * pow(X.getZ(), int(card.getCz(k) - 2) );
+    }
+  }
+  
+  return(result);
+}
+
+tensor3d
+polyDynamic::
+evaluateHessian(const point3d & X) const
+{
+  Real XX = evaluateHessianXX(X);
+  Real XY = evaluateHessianXY(X);
+  Real XZ = evaluateHessianXZ(X);
+  Real YY = evaluateHessianYY(X);
+  Real YZ = evaluateHessianYZ(X);
+  Real ZZ = evaluateHessianZZ(X);
+  
+  return(tensor3d(XX,XY,XZ,
+		  XY,YY,YZ,
+		  XZ,YZ,ZZ));
+}
+    
+Real
+polyDynamic::
+evaluateDerivative(const UInt & dx, const UInt & dy, const UInt & dz, const point3d & X) const
+{
+  Real result = 0.0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    if((dx <= card.getCx(k)) && (dy <= card.getCy(k)) && (dz <= card.getCz(k)))
+    {
+      result += card.getCoeff(k) *
+      Real( factorial(dx,card.getCx(k)) ) * pow(X.getX() , int(card.getCx(k) - dx) ) * 
+      Real( factorial(dy,card.getCy(k)) ) * pow(X.getY() , int(card.getCy(k) - dy) ) * 
+      Real( factorial(dz,card.getCz(k)) ) * pow(X.getZ() , int(card.getCz(k) - dz) );
+    }
+  }
+  
+  return(result);
+}
+   
+UInt
+polyDynamic::
+getDegree() const
+{
+  UInt out = 0;
+  
+  for(UInt k=1; k <= card.getNumCoeff(); ++k)
+  {
+    out = max(card.getCx(k) + card.getCy(k) + card.getCz(k), out);
+  }
+  
+  return(out);
+}

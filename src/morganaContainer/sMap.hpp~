@@ -1,0 +1,183 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef _SMAP_HH_
+#define _SMAP_HH_
+
+#include <assert.h>
+
+#include "simpleFormats.hpp"
+
+using namespace std;
+
+/*! Container for serial Graph implementation */
+template<typename ITEM> class sMap
+{
+  public:
+    /*! Items of the graph */
+    SimpleVect<ITEM> items;
+  
+    
+  public:
+    /*! Constructor */
+    sMap();
+    
+    /*! Constructor
+    \param n length of the graph */
+    sMap(const UInt & n);
+    
+    /*! Copy constructor */
+    sMap(const sMap & G);
+    
+    /*! Equality operator */
+    sMap & operator=(const sMap & G);
+    
+    /*! Data clean */
+    void clear();
+  
+    
+  public:
+    /*! Resize */
+    void resize(const UInt & n);
+    
+    /*! Get - memory cheched */
+    ITEM & get(UInt i);
+    
+    /*! Get - memory cheched */
+    const ITEM & get(UInt i) const;
+    
+    /*! Get - NOT memory cheched */
+    inline ITEM operator() (UInt const i);
+    
+    /*! Get - NOT memory cheched */
+    inline ITEM operator() (UInt const i) const;
+    
+    /*! Set */
+    void set(const UInt & i, const ITEM & I);
+    
+    /*! Push Back */
+    void push_back(const ITEM & I);
+};
+
+
+//_______________________________________________________________________________________________________
+// IMPLEMENTATION
+//-------------------------------------------------------------------------------------------------------
+template<typename ITEM>
+sMap<ITEM>::
+sMap()
+{
+}
+
+template<typename ITEM>
+sMap<ITEM>::
+sMap(const UInt & n)
+{
+  items.resize(n);
+  
+  for(UInt i=1; i<=items.size(); ++i)
+  { items(i).setId(i); }
+}
+
+template<typename ITEM>
+sMap<ITEM>::
+sMap(const sMap & G)
+{
+  items = G.items;
+}
+
+template<typename ITEM>
+sMap & 
+sMap<ITEM>::
+operator=(const sMap & G)
+{
+  items = G.items;
+  return *this;
+}
+
+template<typename ITEM>
+void
+sMap<ITEM>::
+clear()
+{
+  items.clear();
+}
+
+template<typename ITEM>
+void
+sMap<ITEM>::
+resize(const UInt & n)
+{
+  items.resize(N);
+}
+
+template<typename ITEM>
+ITEM &
+sMap<ITEM>::
+get(UInt i)
+{
+  assert(i >= 1);
+  assert(i <= items.size());
+  return(items(i));
+}
+
+template<typename ITEM>
+const ITEM &
+sMap<ITEM>::
+get(UInt i) const
+{
+  assert(i >= 1);
+  assert(i <= items.size());
+  return(items(i));
+}
+
+template<typename ITEM>
+ITEM
+sMap<ITEM>::
+operator() (UInt const i)
+{
+  assert(i >= 1);
+  assert(i <= items.size());
+  return(items(i));
+}
+
+template<typename ITEM>
+ITEM
+sMap<ITEM>::
+operator() (UInt const i) const
+{
+  assert(i >= 1);
+  assert(i <= items.size());
+  return(items(i));
+}
+
+template<typename ITEM>
+void
+sMap<ITEM>::
+set(const UInt & i, const ITEM & I)
+{
+  assert(i >= 1);
+  assert(i <= items.size());
+  items(i) = I;
+}
+
+template<typename ITEM>
+void
+sMap<ITEM>::
+push_back(const ITEM & I)
+{
+  items.push_back(I);
+}
+
+#endif

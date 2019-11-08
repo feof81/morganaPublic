@@ -1,0 +1,202 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "polyDynamicCard.h"
+#include <set>
+
+using namespace std;
+
+
+polyDynamicCard::
+polyDynamicCard()
+{
+}
+
+polyDynamicCard::
+polyDynamicCard(const polyDynamicCard & card)
+{
+  subCards = card.subCards;
+}
+
+polyDynamicCard
+polyDynamicCard::
+operator=(const polyDynamicCard & card)
+{
+  subCards = card.subCards;
+  
+  return(*this);
+}
+
+void
+polyDynamicCard::
+operator*=(const polyDynamicCard & card)
+{
+  sVect<polyDynamicSubCard> tempList;
+  tempList.reserve(subCards.size() * card.subCards.size());
+  
+  for(UInt i=1; i <= subCards.size(); ++i)
+  {
+    for(UInt j=1; j <= card.subCards.size(); ++j)
+    {
+      tempList.push_back( polyDynamicSubCard(
+	subCards(i).getCx()    + card.subCards(j).getCx(),
+	subCards(i).getCy()    + card.subCards(j).getCy(),
+	subCards(i).getCz()    + card.subCards(j).getCz(),
+	subCards(i).getCoeff() * card.subCards(j).getCoeff()  ) );
+    }
+  }
+  
+  subCards = tempList;
+}
+
+void
+polyDynamicCard::
+operator*=(const Real & val)
+{
+  for(UInt i=1; i <= subCards.size(); ++i)
+  {
+    subCards(i) *= val;
+  }
+}
+
+void
+polyDynamicCard::
+reorder()
+{
+  typedef multiset<polyDynamicSubCard>::iterator ITER;
+  multiset<polyDynamicSubCard> orderedList;
+  
+  for(UInt i=1; i <= subCards.size(); ++i)
+  {
+    orderedList.insert(subCards(i));
+  }
+  
+  UInt k=1;
+  
+  for(ITER iter = orderedList.begin(); iter != orderedList.end(); ++iter)
+  {
+    subCards(k) = *iter;
+    ++k;
+  }
+}
+
+void
+polyDynamicCard::
+simplify()
+{
+  typedef set<polyDynamicSubCard>::iterator ITER;
+  typedef pair<ITER,bool> PAIR;
+  
+  set<polyDynamicSubCard> orderedList;
+  PAIR paio;
+  Real c;
+  
+  for(UInt i=1; i <= subCards.size(); ++i)
+  {
+    paio = orderedList.insert(subCards(i));
+    
+    if(!paio.second)
+    {
+      c = subCards(i).getCoeff() + (paio.first)->getCoeff();
+      (paio.first)->setCoeff(c);
+    }
+  }
+  
+  subCards.clear();
+  subCards.reserve(orderedList.size());
+  
+  for(ITER iter = orderedList.begin(); iter != orderedList.end(); ++iter)
+  {
+    if(abs(iter->getCoeff()) >= 1e-10)
+    {
+      subCards.push_back(*iter);
+    }
+  }
+}
+    
+void
+polyDynamicCard::
+addSlot(const UInt & cx, const UInt & cy, const UInt & cz, const Real & c)
+{
+  subCards.push_back(polyDynamicSubCard(cx,cy,cz,c));
+}
+
+void
+polyDynamicCard::
+setSlot(const UInt & i, const UInt & cx, const UInt & cy, const UInt & cz, const Real & c)
+{
+  assert(i >= 1);
+  assert(i <= subCards.size());
+  
+  subCards(i).setCx(cx);
+  subCards(i).setCy(cy);
+  subCards(i).setCz(cz);
+  subCards(i).setCoeff(c);
+}
+
+UInt
+polyDynamicCard::
+getCx(const UInt & i) const
+{
+  assert(i >= 1);
+  assert(i <= subCards.size());
+  
+  return(subCards(i).getCx());
+}
+
+UInt
+polyDynamicCard::
+getCy(const UInt & i) const
+{
+  assert(i >= 1);
+  assert(i <= subCards.size());
+  
+  return(subCards(i).getCy());
+}
+
+UInt
+polyDynamicCard::
+getCz(const UInt & i) const
+{
+  assert(i >= 1);
+  assert(i <= subCards.size());
+  
+  return(subCards(i).getCz());
+}
+
+Real
+polyDynamicCard::
+getCoeff(const UInt & i) const
+{
+  assert(i >= 1);
+  assert(i <= subCards.size());
+  
+  return(subCards(i).getCoeff());
+}
+
+UInt
+polyDynamicCard::
+getNumCoeff() const
+{
+  return(subCards.size());
+}
+
+ostream & operator<<(ostream & f, const polyDynamicCard & G)
+{
+  for(UInt i=1; i <= G.getNumCoeff(); ++i)
+  {
+    f << G.subCards(i);
+  }
+  
+  return(f);
+}

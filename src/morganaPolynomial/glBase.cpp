@@ -1,0 +1,97 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "glBase.h"
+#include "glRule.h"
+#include "polyDynamic.h"
+
+glBase::
+glBase()
+{
+}
+
+polyDynamicCard
+glBase::
+getPolynomial(const UInt & nx, const UInt & ny, const UInt & nz, const UInt & ix, const UInt & iy, const UInt & iz)
+{
+  //Assert
+  assert(ix >= 1);  assert(iy >= 1);  assert(iz >= 1);
+  assert(ix <= (nx+1)); assert(iy <= (ny+1)); assert(iz <= (nz+1));
+  
+  //Compute the nodes
+  Real toll = 1e-10;
+  
+  glRule xRuler(nx);
+  glRule yRuler(ny);
+  glRule zRuler(nz);
+  
+  sVect<Real> xgl, ygl, zgl;
+  sVect<Real> wgl;
+  
+  xRuler.compute(xgl,wgl,toll);
+  yRuler.compute(ygl,wgl,toll);
+  zRuler.compute(zgl,wgl,toll);
+  
+  //Polynomial buildup
+  polyDynamicCard outPoly, itemPoly;
+  
+  outPoly.addSlot(0, 0, 0, 1.0);
+  
+  itemPoly.addSlot(0, 0, 0, 0.0);
+  itemPoly.addSlot(0, 0, 0, 0.0);
+  
+  
+  for(UInt i=1; i <= (nx+1); ++i)
+  {
+    if(i != ix)
+    {
+      itemPoly.setSlot(1, 0,0,0, -xgl(i));
+      itemPoly.setSlot(2, 1,0,0, 1.0);
+           
+      outPoly *= itemPoly;
+    }
+  }
+  
+  for(UInt i=1; i <= (ny+1); ++i)
+  {
+    if(i != iy)
+    {
+      itemPoly.setSlot(1, 0,0,0, -ygl(i));
+      itemPoly.setSlot(2, 0,1,0, 1.0);
+      
+      outPoly *= itemPoly;
+    }
+  }
+  
+  for(UInt i=1; i <= (nz+1); ++i)
+  {
+    if(i != iz)
+    {
+      itemPoly.setSlot(1, 0,0,0, -zgl(i));
+      itemPoly.setSlot(2, 0,0,1, 1.0);
+      
+      outPoly *= itemPoly;
+    }
+  }
+  
+  outPoly.simplify();
+  
+  
+  //Normalization
+  polyDynamic polyVal;
+  polyVal.setPolyDynamicCard(outPoly);
+  Real val = polyVal.evaluate( point3d(xgl(ix),ygl(iy),zgl(iz)) );
+  
+  outPoly *= (1.0 / val);
+  return(outPoly);
+}

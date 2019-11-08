@@ -1,0 +1,267 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include "typesInterface.hpp"
+#include "traitsBasic.hpp"
+
+
+int main(int argc, char *argv[])
+{
+  // REAL__________________________________________________________________________________________
+  Real r;
+  traitsBasic<Real> traitReal;
+  
+  cout << "%%%%% Real Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<Real>::numI << " J: " << traitsBasic<Real>::numJ << endl;
+  
+  r = traitReal.getZero();
+  cout << "Zero: " << r << endl;
+  cout << endl;
+  
+  r = traitReal.getUnity();
+  cout << "Unity: " << r << endl;
+  cout << endl;
+  
+  traitReal.setZero(r);
+  cout << "Set Zero: " << r << endl;
+  cout << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<Real>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<Real>::numJ; ++j)
+    {
+      r = traitReal.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitReal.getIJ(i,j,r) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<Real>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<Real>::numJ; ++j)
+    {
+      traitReal.setIJ(i,j,2.0,r);
+      cout << "I: " << i << " J: " << j << " Value: " << traitReal.getIJ(i,j,r) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+  
+  
+  // POINT2D_______________________________________________________________________________________
+  point2d P2;
+  traitsBasic<point2d> traitPoint2d;
+  
+  cout << "%%%%% Point2d Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<point2d>::numI << " J: " << traitsBasic<point2d>::numJ << endl;
+  
+  P2 = traitPoint2d.getZero();
+  cout << "Zero: " << P2 << endl;
+  
+  P2 = traitPoint2d.getUnity();
+  cout << "Unity: " << P2 << endl;
+  
+  traitPoint2d.setZero(P2);
+  cout << "Set Zero: " << P2 << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<point2d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<point2d>::numJ; ++j)
+    {
+      P2 = traitPoint2d.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitPoint2d.getIJ(i,j,P2) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<point2d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<point2d>::numJ; ++j)
+    {
+      traitPoint2d.setIJ(i,j,2.0,P2);
+      cout << "I: " << i << " J: " << j << " Value: " << traitPoint2d.getIJ(i,j,P2) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+  
+  
+  // POINT3D_______________________________________________________________________________________
+  point3d P3;
+  traitsBasic<point3d> traitPoint3d;
+  
+  cout << "%%%%% Point3d Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<point3d>::numI << " J: " << traitsBasic<point3d>::numJ << endl;
+  
+  P3 = traitPoint3d.getZero();
+  cout << "Zero: " << P3 << endl;
+  
+  P3 = traitPoint3d.getUnity();
+  cout << "Unity: " << P3 << endl;
+  
+  traitPoint3d.setZero(P3);
+  cout << "Set Zero: " << P3 << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<point3d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<point3d>::numJ; ++j)
+    {
+      P3 = traitPoint3d.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitPoint3d.getIJ(i,j,P3) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<point3d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<point3d>::numJ; ++j)
+    {
+      traitPoint3d.setIJ(i,j,2.0,P3);
+      cout << "I: " << i << " J: " << j << " Value: " << traitPoint3d.getIJ(i,j,P3) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+  
+  
+  // TENSOR2D_______________________________________________________________________________________
+  tensor2d T2;
+  traitsBasic<tensor2d> traitTensor2d;
+  
+  cout << "%%%%% Tensor2d Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<tensor2d>::numI << " J: " << traitsBasic<tensor2d>::numJ << endl;
+  
+  T2 = traitTensor2d.getZero();
+  cout << "Zero: " << T2 << endl;
+  
+  T2 = traitTensor2d.getUnity();
+  cout << "Unity: " << T2 << endl;
+  
+  traitTensor2d.setZero(T2);
+  cout << "Set Zero: " << T2 << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<tensor2d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<tensor2d>::numJ; ++j)
+    {
+      T2 = traitTensor2d.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitTensor2d.getIJ(i,j,T2) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<tensor2d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<tensor2d>::numJ; ++j)
+    {
+      traitTensor2d.setIJ(i,j,2.0,T2);
+      cout << "I: " << i << " J: " << j << " Value: " << traitTensor2d.getIJ(i,j,T2) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+  
+  
+  
+  // TENSOR3D_______________________________________________________________________________________
+  tensor3d T3;
+  traitsBasic<tensor3d> traitTensor3d;
+  
+  cout << "%%%%% Tensor3d Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<tensor3d>::numI << " J: " << traitsBasic<tensor3d>::numJ << endl;
+  
+  T3 = traitTensor3d.getZero();
+  cout << "Zero: " << T3 << endl;
+  
+  T3 = traitTensor3d.getUnity();
+  cout << "Unity: " << T3 << endl;
+  
+  traitTensor3d.setZero(T3);
+  cout << "Set Zero: " << T3 << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<tensor3d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<tensor3d>::numJ; ++j)
+    {
+      T3 = traitTensor3d.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitTensor3d.getIJ(i,j,T3) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<tensor3d>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<tensor3d>::numJ; ++j)
+    {
+      traitTensor3d.setIJ(i,j,2.0,T3);
+      cout << "I: " << i << " J: " << j << " Value: " << traitTensor3d.getIJ(i,j,T3) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+  
+  
+  
+  // STATICVECTOR_______________________________________________________________________________________
+  typedef staticVector<2> VECTOR; 
+  VECTOR V;
+  traitsBasic<VECTOR> traitVector;
+  
+  cout << "%%%%% StaticVector Trait %%%%%" << endl;
+  cout << "I: " << traitsBasic<VECTOR>::numI << " J: " << traitsBasic<VECTOR>::numJ << endl;
+  
+  V = traitVector.getZero();
+  cout << "Zero: " << V << endl;
+  
+  V = traitVector.getUnity();
+  cout << "Unity: " << V << endl;
+  
+  traitVector.setZero(V);
+  cout << "Set Zero: " << V << endl;
+  
+  cout << "IJ test" << endl;
+  for(UInt i=1; i <= traitsBasic<VECTOR>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<VECTOR>::numJ; ++j)
+    {
+      V = traitVector.getUnityIJ(i,j);
+      cout << "I: " << i << " J: " << j << " Value: " << traitVector.getIJ(i,j,V) << endl;
+    }
+  }
+  cout << endl;
+  
+  cout << "Set IJ test 2.0" << endl;
+  for(UInt i=1; i <= traitsBasic<VECTOR>::numI; ++i)
+  {
+    for(UInt j=1; j <= traitsBasic<VECTOR>::numJ; ++j)
+    {
+      traitVector.setIJ(i,j,2.0,V);
+      cout << "I: " << i << " J: " << j << " Value: " << traitVector.getIJ(i,j,V) << endl;
+    }
+  }
+  cout << endl;
+  cout << endl;
+}

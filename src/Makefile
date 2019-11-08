@@ -1,0 +1,237 @@
+include MakeDefs
+
+####### Cartelle SRC
+MORGANADOFS           = ./morganaDofs
+MORGANAKERNEL         = ./morganaKernel
+MORGANACONTAINER      = ./morganaContainer
+MORGANAPOLYNOMIAL     = ./morganaPolynomial
+MORGANAPGRAPH         = ./morganaPgraph
+MORGANAGEOMETRY       = ./morganaGeometry
+MORGANAINTEGRATOR     = ./morganaIntegrator
+MORGANAFILE           = ./morganaFile
+MORGANAFIELDS         = ./morganaFields
+MORGANAFINITEELEMENTS = ./morganaFiniteElements
+MORGANAOPERATORS      = ./morganaOperators
+MORGANATRILINOS       = ./morganaTrilinos
+MORGANASOLVERS        = ./morganaSolvers
+MORGANAFINITEVOLUMES  = ./morganaFiniteVolumes
+MORGANAODE            = ./morganaOde
+
+
+#INCLUDE AND LIB PATHS
+INCPATH =  -I. \
+ -I$(EXPRTK) \
+ -I$(BOOSTINC) \
+ -I$(TRILINOSINC) \
+ -I$(PARMETISINC) \
+ -I$(METISINC) \
+ -I$(HDF5INC) \
+ -I$(MUMPSINC) \
+ -I$(MORGANACONTAINER) \
+ -I$(MORGANADOFS) \
+ -I$(MORGANAKERNEL) \
+ -I$(MORGANAPGRAPH) \
+ -I$(MORGANAPOLYNOMIAL) \
+ -I$(MORGANAGEOMETRY) \
+ -I$(MORGANAINTEGRATOR) \
+ -I$(MORGANAFILE) \
+ -I$(MORGANAFIELDS) \
+ -I$(MORGANAFINITEELEMENTS) \
+ -I$(MORGANAFINITEVOLUMES) \
+ -I$(MORGANAOPERATORS) \
+ -I$(MORGANATRILINOS) \
+ -I$(MORGANASOLVERS) \
+ -I$(MORGANAODE) \
+
+
+LIBS = -L$(BOOSTLIB) \
+ -L$(BLASLIB) \
+ -L$(LAPACKLIB) \
+ -L$(TRILINOSLIB) \
+ -L$(PARMETISLIB) \
+ -L$(METISLIB) \
+ -L$(HDF5LIB) \
+ -L$(MUMPSLIB) \
+   $(LIBLIST)
+
+
+####### Output directory
+OBJDIR  = ../obj
+LIBDIR  = ../lib
+TARGET  = ../bin/morgana
+
+
+####### Source files
+HPP = $(EXPRTK)/exprtk.hpp \
+$(shell ls $(MORGANAKERNEL)/*.hpp) \
+$(shell ls $(MORGANACONTAINER)/*.hpp) \
+$(shell ls $(MORGANADOFS)/*.hpp) \
+$(shell ls $(MORGANAPGRAPH)/*.hpp) \
+$(shell ls $(MORGANAPOLYNOMIAL)/*.hpp) \
+$(shell ls $(MORGANAGEOMETRY)/*.hpp) \
+$(shell ls $(MORGANAINTEGRATOR)/*.hpp) \
+$(shell ls $(MORGANAFILE)/*.hpp) \
+$(shell ls $(MORGANAFIELDS)/*.hpp) \
+$(shell ls $(MORGANAFINITEELEMENTS)/*.hpp) \
+$(shell ls $(MORGANAOPERATORS)/*.hpp) \
+$(shell ls $(MORGANATRILINOS)/*.hpp) \
+$(shell ls $(MORGANASOLVERS)/*.hpp) \
+$(shell ls $(MORGANAFINITEVOLUMES)/*.hpp) \
+$(shell ls $(MORGANAODE)/*.hpp)
+
+
+HEADERS = $(shell ls $(MORGANACONTAINER)/*.h) \
+$(shell ls $(MORGANAPGRAPH)/*.h) \
+$(shell ls $(MORGANAPOLYNOMIAL)/*.h) \
+$(shell ls $(MORGANADOFS)/*.h) \
+$(shell ls $(MORGANAGEOMETRY)/*.h) \
+$(shell ls $(MORGANAFILE)/*.h) \
+$(shell ls $(MORGANAFIELDS)/*.h) \
+$(shell ls $(MORGANAINTEGRATOR)/*.h) \
+$(shell ls $(MORGANATRILINOS)/*.h) \
+$(shell ls $(MORGANAFINITEVOLUMES)/*.h) \
+$(shell ls $(MORGANAODE)/*.h) \
+$(shell ls $(MORGANASOLVERS)/*.h)
+
+
+SOURCES = morgana.cpp \
+$(EXPRTK)/eprtk.cpp \
+$(shell ls $(MORGANACONTAINER)/*.cpp) \
+$(shell ls $(MORGANAPGRAPH)/*.cpp) \
+$(shell ls $(MORGANAPOLYNOMIAL)/*.cpp) \
+$(shell ls $(MORGANADOFS)/*.cpp) \
+$(shell ls $(MORGANAGEOMETRY)/*.cpp) \
+$(shell ls $(MORGANAFILE)/*.cpp) \
+$(shell ls $(MORGANAFIELDS)/*.cpp) \
+$(shell ls $(MORGANAINTEGRATOR)/*.cpp) \
+$(shell ls $(MORGANATRILINOS)/*.cpp) \
+$(shell ls $(MORGANAFINITEVOLUMES)/*.cpp) \
+$(shell ls $(MORGANAODE)/*.cpp) \
+$(shell ls $(MORGANASOLVERS)/*.cpp)
+
+
+####### Objects
+MORGANACONTAINER_SRC = $(shell ls $(MORGANACONTAINER)/*.cpp)
+MORGANACONTAINER_TMP = $(MORGANACONTAINER_SRC:.cpp=.o)
+MORGANACONTAINER_OBJ = $(MORGANACONTAINER_TMP:$(MORGANACONTAINER)/%=$(OBJDIR)/%)
+
+MORGANAPGRAPH_SRC = $(shell ls $(MORGANAPGRAPH)/*.cpp)
+MORGANAPGRAPH_TMP = $(MORGANAPGRAPH_SRC:.cpp=.o)
+MORGANAPGRAPH_OBJ = $(MORGANAPGRAPH_TMP:$(MORGANAPGRAPH)/%=$(OBJDIR)/%)
+
+MORGANAPOLYNOMIAL_SRC = $(shell ls $(MORGANAPOLYNOMIAL)/*.cpp)
+MORGANAPOLYNOMIAL_TMP = $(MORGANAPOLYNOMIAL_SRC:.cpp=.o)
+MORGANAPOLYNOMIAL_OBJ = $(MORGANAPOLYNOMIAL_TMP:$(MORGANAPOLYNOMIAL)/%=$(OBJDIR)/%)
+
+MORGANADOFS_SRC = $(shell ls $(MORGANADOFS)/*.cpp)
+MORGANADOFS_TMP = $(MORGANADOFS_SRC:.cpp=.o)
+MORGANADOFS_OBJ = $(MORGANADOFS_TMP:$(MORGANADOFS)/%=$(OBJDIR)/%)
+
+MORGANAGEOMETRY_SRC = $(shell ls $(MORGANAGEOMETRY)/*.cpp)
+MORGANAGEOMETRY_TMP = $(MORGANAGEOMETRY_SRC:.cpp=.o)
+MORGANAGEOMETRY_OBJ = $(MORGANAGEOMETRY_TMP:$(MORGANAGEOMETRY)/%=$(OBJDIR)/%)
+
+MORGANAFILE_SRC = $(shell ls $(MORGANAFILE)/*.cpp)
+MORGANAFILE_TMP = $(MORGANAFILE_SRC:.cpp=.o)
+MORGANAFILE_OBJ = $(MORGANAFILE_TMP:$(MORGANAFILE)/%=$(OBJDIR)/%)
+
+MORGANAFIELDS_SRC = $(shell ls $(MORGANAFIELDS)/*.cpp)
+MORGANAFIELDS_TMP = $(MORGANAFIELDS_SRC:.cpp=.o)
+MORGANAFIELDS_OBJ = $(MORGANAFIELDS_TMP:$(MORGANAFIELDS)/%=$(OBJDIR)/%)
+
+MORGANAINTEGRATOR_SRC = $(shell ls $(MORGANAINTEGRATOR)/*.cpp)
+MORGANAINTEGRATOR_TMP = $(MORGANAINTEGRATOR_SRC:.cpp=.o)
+MORGANAINTEGRATOR_OBJ = $(MORGANAINTEGRATOR_TMP:$(MORGANAINTEGRATOR)/%=$(OBJDIR)/%)
+
+MORGANATRILINOS_SRC = $(shell ls $(MORGANATRILINOS)/*.cpp)
+MORGANATRILINOS_TMP = $(MORGANATRILINOS_SRC:.cpp=.o)
+MORGANATRILINOS_OBJ = $(MORGANATRILINOS_TMP:$(MORGANATRILINOS)/%=$(OBJDIR)/%)
+
+MORGANAFINITEVOLUMES_SRC = $(shell ls $(MORGANAFINITEVOLUMES)/*.cpp)
+MORGANAFINITEVOLUMES_TMP = $(MORGANAFINITEVOLUMES_SRC:.cpp=.o)
+MORGANAFINITEVOLUMES_OBJ = $(MORGANAFINITEVOLUMES_TMP:$(MORGANAFINITEVOLUMES)/%=$(OBJDIR)/%)
+
+MORGANAODE_SRC = $(shell ls $(MORGANAODE)/*.cpp)
+MORGANAODE_TMP = $(MORGANAODE_SRC:.cpp=.o)
+MORGANAODE_OBJ = $(MORGANAODE_TMP:$(MORGANAODE)/%=$(OBJDIR)/%)
+
+MORGANASOLVERS_SRC = $(shell ls $(MORGANASOLVERS)/*.cpp)
+MORGANASOLVERS_TMP = $(MORGANASOLVERS_SRC:.cpp=.o)
+MORGANASOLVERS_OBJ = $(MORGANASOLVERS_TMP:$(MORGANASOLVERS)/%=$(OBJDIR)/%)
+
+
+OBJECTS = $(OBJDIR)/morgana.o \
+$(MORGANACONTAINER_OBJ) \
+$(MORGANAPGRAPH_OBJ) \
+$(MORGANAPOLYNOMIAL_OBJ) \
+$(MORGANADOFS_OBJ) \
+$(MORGANAGEOMETRY_OBJ) \
+$(MORGANAFILE_OBJ) \
+$(MORGANAFIELDS_OBJ) \
+$(MORGANAINTEGRATOR_OBJ) \
+$(MORGANATRILINOS_OBJ) \
+$(MORGANAFINITEVOLUMES_OBJ) \
+$(MORGANAODE_OBJ) \
+$(MORGANASOLVERS_OBJ)
+
+
+##### Rules
+$(OBJDIR)/%.o: $(MORGANACONTAINER)/%.cpp $(MORGANACONTAINER)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANACONTAINER)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAPGRAPH)/%.cpp $(MORGANAPGRAPH)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAPGRAPH)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAPOLYNOMIAL)/%.cpp $(MORGANAPOLYNOMIAL)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAPOLYNOMIAL)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANADOFS)/%.cpp $(MORGANADOFS)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANADOFS)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAGEOMETRY)/%.cpp $(MORGANAGEOMETRY)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAGEOMETRY)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAFILE)/%.cpp $(MORGANAFILE)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAFILE)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAFIELDS)/%.cpp $(MORGANAFIELDS)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAFIELDS)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAINTEGRATOR)/%.cpp $(MORGANAINTEGRATOR)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAINTEGRATOR)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANATRILINOS)/%.cpp $(MORGANATRILINOS)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANATRILINOS)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANATRILINOS)/%.cpp $(MORGANATRILINOS)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANATRILINOS)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAFINITEVOLUMES)/%.cpp $(MORGANAFINITEVOLUMES)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAFINITEVOLUMES)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANAODE)/%.cpp $(MORGANAODE)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANAODE)/$*.cpp
+
+$(OBJDIR)/%.o: $(MORGANASOLVERS)/%.cpp $(MORGANASOLVERS)/%.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/$*.o $(MORGANASOLVERS)/$*.cpp
+
+
+###### Main Rules
+$(OBJDIR)/morgana.o: morgana.cpp $(HEADERS) $(HPP)
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $(OBJDIR)/morgana.o morgana.cpp
+
+$(LIBDIR)/libmorgana.a: $(HEADERS) $(HPP) $(OBJECTS)
+	ar cr $(LIBDIR)/libmorgana.a $(OBJECTS)
+
+
+###### Main ALL
+all: Makefile $(OBJECTS) $(LIBDIR)/libmorgana.a
+	$(LINK) -o $(TARGET) $(OBJECTS) $(LIBS) $(LINKSO)$(SOPATH) $(LINKSO)$(SOMPI) $(LINKSO)$(SOMKL)
+
+clean:
+	rm -f $(OBJECTS) $(LIBDIR)/libmorgana.a
+
+#To count line codes use: find ./src/ -name '*.cpp' | xargs wc -l
+
+
+

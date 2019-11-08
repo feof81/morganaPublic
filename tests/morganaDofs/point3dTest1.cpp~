@@ -1,0 +1,101 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "point3d.h"
+#include "typesInterface.h"
+#include <cmath>
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+  //Points declaration_____________________________________________________________________________
+  Real a = 2.0;
+  
+  point3d P1(1.0, 0.0, 0.0);
+  point3d P2(0.0, 1.0, 0.0);
+  point3d P3(0.0, 0.0, 1.0);
+  point3d P;
+  point3d Q(1.0,2.0,3.0), Q1(Q), Q2(Q1);
+  
+  
+  //Expression templates___________________________________________________________________________
+  cout << "Expression template debug" << endl;
+  
+  typedef plusPoint3d<point3d,point3d>            PLUS;
+  typedef expressionPoint3d<point3d,point3d,PLUS> EXPRESSIONPLUS;
+  
+  cout << "TestPlus" << endl;
+  EXPRESSIONPLUS expressionPlus(P1,P2);
+  cout << expressionPlus.getX() << endl;
+  cout << expressionPlus.getY() << endl;
+  cout << expressionPlus.getZ() << endl;
+  
+  typedef multPoint3d<point3d>                 MULT;
+  typedef expressionPoint3d<point3d,Real,MULT> EXPRESSIONMULT;
+  
+  cout << "TestMult" << endl;
+  EXPRESSIONMULT expressionMult(P2,a);
+  cout << expressionMult.getX() << endl;
+  cout << expressionMult.getY() << endl;
+  cout << expressionMult.getZ() << endl;
+  
+  cout << "Other tests" << endl;
+  //Test constructor 1
+  bool test1 = (P1.getI(1) == 1.0) && (P1.getI(2) == 0.0) && (P1.getI(3) == 0.0);
+  
+  //Test constructor 2
+  bool test2 = (Q1.getI(1) == 1.0) && (Q1.getI(2) == 2.0) && (Q1.getI(3) == 3.0);
+  
+  //Test copy constructor
+  bool test3 = (Q2.getI(1) == 1.0) && (Q2.getI(2) == 2.0) && (Q2.getI(3) == 3.0);
+  
+  //Test algebra1 
+  point3d Q3;
+  Q3 = (Q1 + P1/2.0 - P2*2.0);
+  bool test4 = (Q3.getI(1) == 1.5) && (Q3.getI(2) == 0.0) && (Q3.getI(3) == 3.0);
+  
+  //Test algebra2
+  point3d Q4 = P1^P2;
+  bool test5 = (Q4 * P3) == 1.0;
+  
+  //Test algebra3
+  P2.setX(1.0);    P2.setY(2.0);   P2.setZ(4.0);
+  P3.setI(1,-1.0); P3.setI(2,3.0); P3.setI(3,-1.0);
+  
+  point3d Q5 = P2 ^ P3;
+  bool test6 = (Q5.getX() == -14.0) && (Q5.getY() == -3.0) && (Q5.getZ() == 5.0);
+  
+  //Test compare1 
+  point3d W1(1.0, 0.0, 0.0);
+  point3d W2(0.0, 1.0, 0.0);
+  point3d W3(0.0, 0.0, 1.0);
+  
+  bool test7 = (W2 < W1) && (W3 < W1) && (W3 < W1) && !(Q1 < Q2) && !(W1 < W2);
+  
+  //Test compare2
+  bool test8 = (W2 != W1) && (W3 != W1) && !(Q1 != Q2);
+  
+  //Norm test 
+  bool test9 = (P2.norm2() == sqrt(21.0));
+  
+  cout << test1 << endl;
+  cout << test2 << endl;
+  cout << test3 << endl;
+  cout << test4 << endl;
+  cout << test5 << endl;
+  cout << test6 << endl;
+  cout << test7 << endl;
+  cout << test8 << endl;
+  cout << test9 << endl;
+}

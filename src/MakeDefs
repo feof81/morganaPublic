@@ -1,0 +1,113 @@
+####### Compiler, tools and options
+MORGANAINC = /home/avilla/Documenti/morgana/src
+MORGANALIB = /home/avilla/Documenti/morgana/lib
+
+TRILINOSINC = /home/avilla/Documenti/trilinos-12.10.1-mumps/include
+TRILINOSLIB = /home/avilla/Documenti/trilinos-12.10.1-mumps/lib
+
+PARMETISINC = /home/avilla/Documenti/parmetis-4.0.3-release/include
+PARMETISLIB = /home/avilla/Documenti/parmetis-4.0.3-release/lib
+
+METISINC = /home/avilla/Documenti/metis-4.0.3-release/include
+METISLIB = /home/avilla/Documenti/metis-4.0.3-release/lib
+
+BOOSTINC = /home/avilla/Documenti/boost-1.61.0-release/include
+BOOSTLIB = /home/avilla/Documenti/boost-1.61.0-release/lib
+
+HDF5INC = /home/avilla/Documenti/hdf5-1.8.17-release/include
+HDF5LIB = /home/avilla/Documenti/hdf5-1.8.17-release/lib
+
+MUMPSINC = /home/avilla/Documenti/MUMPS_5.0.2/include
+MUMPSLIB = /home/avilla/Documenti/MUMPS_5.0.2/lib
+
+BLASINC =
+BLASLIB =
+
+LAPACKINC =
+LAPACKLIB =
+
+EXPRTK = /home/avilla/Documenti/exprtk
+
+SOPATH = /home/avilla/Documenti/boost-1.61.0-release/lib
+SOMPI  = /usr/lib/openmpi/lib
+SOMKL  =
+
+
+####### Compile commands
+CC      = mpicc
+CXX     = mpic++
+LINK    = mpic++
+LFLAGS  =
+LINKSO  = -Wl,-rpath,
+
+#Versione DEBUG-ASSERT -> versione calcolo semi-testato
+#CFLAGS   = -W -std=c++11 -g -O0 -DMPICH_IGNORE_CXX_SEEK
+#CXXFLAGS = -W -std=c++11 -g -O0 -DHAVE_CONFIG_H -fpermissive -DMPICH_IGNORE_CXX_SEEK
+
+#Versione HP -> versione per calcoli HP
+#CFLAGS   = -W -std=c++11 -O3 -DNDEBUG -DNOCOMMBUFFER -DMPICH_IGNORE_CXX_SEEK
+#CXXFLAGS = -W -std=c++11 -O3 -DHAVE_CONFIG_H -fpermissive -DNDEBUG -DNOCOMMBUFFER -DMPICH_IGNORE_CXX_SEEK
+
+#Versione HP-ASSERT
+CFLAGS   = -W -std=c++11 -O3 -DNOCOMMBUFFER -DMPICH_IGNORE_CXX_SEEK
+CXXFLAGS = -W -std=c++11 -O3 -DHAVE_CONFIG_H -fpermissive -DNOCOMMBUFFER -DMPICH_IGNORE_CXX_SEEK
+
+#Versione DEBUG -> Versione per il profiling
+#CFLAGS   = -W -std=c++11 -g -O0 -DNDEBUG -DMPICH_IGNORE_CXX_SEEK
+#CXXFLAGS = -W -std=c++11 -g -O0 -DHAVE_CONFIG_H -fpermissive -DNDEBUG -DMPICH_IGNORE_CXX_SEEK
+
+
+####### LIBRARIES
+LIBLIST = -lnoxlapack \
+ -lnoxepetra \
+ -lnox \
+ -lanasazi \
+ -lanasaziepetra \
+ -lbelos \
+ -lbelosepetra \
+ -lml \
+ -lifpack \
+ -lamesos2 \
+ -lamesos \
+ -laztecoo \
+ -lzoltan \
+ -lepetraext \
+ -lepetra \
+ -ltpetra \
+ -ltpetraclassicnodeapi \
+ -ltpetrakernels \
+ -ltpetraext \
+ -ltpi \
+ -lthyracore \
+ -lthyraepetra \
+ -lthyraepetraext \
+ -lrtop \
+ -lteuchosremainder \
+ -lteuchosnumerics \
+ -lteuchoskokkoscompat \
+ -lteuchoscomm \
+ -lteuchosparameterlist \
+ -lteuchoscore \
+ -lkokkosalgorithms \
+ -lkokkoscontainers \
+ -lkokkostsqr \
+ -lkokkoscore \
+ -ltriutils \
+ -ldmumps \
+ -lmumps_common \
+ -lpord \
+ -lhdf5 \
+ -lparmetis \
+ -lmetis \
+ -lboost_thread \
+ -lboost_mpi \
+ -lboost_serialization \
+ -lboost_system \
+ -llapack \
+ -lblas \
+ -lgfortran \
+ -lscalapack-openmpi \
+ -lblacs-openmpi \
+ -lmpi \
+ -lmpi_f77 \
+ -lz

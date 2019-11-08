@@ -1,0 +1,109 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMap.hpp"
+
+#include "pVect.hpp"
+#include "pVectComm.hpp"
+
+#include "pGraphItem.h"
+#include "pGraph.hpp"
+#include "pGraphManip.hpp"
+#include "pGraphComm.hpp"
+#include "pGraphGlobalManip.hpp"
+
+#include "traitsMpiOptimization.h"
+
+
+//! Run with two processors
+int main(int argc, char *argv[])
+{
+  typedef pGraphItem     ITEM;
+  typedef pMapItem       ROWMAP;
+  typedef pMapItemShare  COLMAP;
+  
+  environment  env(argc,argv);
+  RCP<communicator> world(new communicator);
+  
+  ITEM grphItem(3);
+  ROWMAP pItem;
+  COLMAP pShare;
+  
+  pMap<ROWMAP> newMap;
+  pMap<COLMAP> colMap;
+  pGraph<ITEM,ROWMAP,COLMAP>  grafo;
+  
+  if(world->rank() == 0)
+  {
+    pShare.setPid(world->rank()); pShare.setLid(1); pShare.setGid(1); pShare.setShared(false); pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(2); pShare.setGid(2); pShare.setShared(true);  pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(3); pShare.setGid(3); pShare.setShared(true);  pShare.setOwned(false); colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(4); pShare.setGid(4); pShare.setShared(true);  pShare.setOwned(false); colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(5); pShare.setGid(5); pShare.setShared(true);  pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(6); pShare.setGid(6); pShare.setShared(false); pShare.setOwned(true);  colMap.push_back(pShare);
+  
+    pItem.setPid(world->rank()); pItem.setLid(1); pItem.setGid(2); grphItem(1) = 1; grphItem(2) = 5; grphItem(3) = 6; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(2); pItem.setGid(1); grphItem(1) = 1; grphItem(2) = 2; grphItem(3) = 5; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(3); pItem.setGid(4); grphItem(1) = 2; grphItem(2) = 4; grphItem(3) = 5; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(4); pItem.setGid(3); grphItem(1) = 2; grphItem(2) = 3; grphItem(3) = 4; grafo.push_back(pItem,grphItem);
+    
+    pItem.setPid(world->rank()); pItem.setLid(1); pItem.setGid(4); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(2); pItem.setGid(3); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(3); pItem.setGid(5); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(4); pItem.setGid(6); newMap.push_back(pItem);
+  
+    grafo.setColMap(colMap);
+    grafo.updateRowFinder();
+    grafo.updateColFinder();
+  }
+  else
+  {
+    pShare.setPid(world->rank()); pShare.setLid(1); pShare.setGid(2); pShare.setShared(true);  pShare.setOwned(false); colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(2); pShare.setGid(3); pShare.setShared(true);  pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(3); pShare.setGid(7); pShare.setShared(false); pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(4); pShare.setGid(8); pShare.setShared(false); pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(5); pShare.setGid(4); pShare.setShared(true);  pShare.setOwned(true);  colMap.push_back(pShare);
+    pShare.setPid(world->rank()); pShare.setLid(6); pShare.setGid(5); pShare.setShared(true);  pShare.setOwned(false); colMap.push_back(pShare);
+    
+    pItem.setPid(world->rank()); pItem.setLid(1); pItem.setGid(4); grphItem(1) = 1; grphItem(2) = 5; grphItem(3) = 6; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(2); pItem.setGid(3); grphItem(1) = 1; grphItem(2) = 2; grphItem(3) = 5; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(3); pItem.setGid(5); grphItem(1) = 2; grphItem(2) = 4; grphItem(3) = 5; grafo.push_back(pItem,grphItem);
+    pItem.setPid(world->rank()); pItem.setLid(4); pItem.setGid(6); grphItem(1) = 2; grphItem(2) = 3; grphItem(3) = 4; grafo.push_back(pItem,grphItem);
+    
+    pItem.setPid(world->rank()); pItem.setLid(1); pItem.setGid(2); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(2); pItem.setGid(1); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(3); pItem.setGid(4); newMap.push_back(pItem);
+    pItem.setPid(world->rank()); pItem.setLid(4); pItem.setGid(3); newMap.push_back(pItem);
+    
+    grafo.setColMap(colMap);
+    grafo.updateRowFinder();
+    grafo.updateColFinder();
+  }
+  
+  grafo.pushToGlobal();
+  
+  pVectGlobalManip<ITEM,pMapItem> vectDistributor(world);
+  vectDistributor.changeMap(grafo,newMap);
+  
+  
+  if(world->rank() == 0)
+  { cout << grafo << endl; }
+}
