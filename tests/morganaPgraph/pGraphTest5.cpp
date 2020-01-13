@@ -21,31 +21,34 @@ You should have received a copy of the GNU General Public License along with Mor
 #include "pMapItem.h"
 #include "pMap.hpp"
 
+#include "pVect.hpp"
+#include "pVectComm.hpp"
+
 #include "pGraphItem.h"
 #include "pGraph.hpp"
 #include "pGraphManip.hpp"
+#include "pGraphComm.hpp"
+#include "pGraphGlobalManip.hpp"
+
 #include "traitsMpiOptimization.hpp"
 
-
-using namespace std;
-using namespace boost::mpi;
 using namespace Teuchos;
 
 
-/*! Run with one processor */
+//! Test with graph items
 int main(int argc, char *argv[])
 {
   typedef pGraphItem ITEM;
   typedef pMapItem   ROWMAP;
   typedef pMapItem   COLMAP;
+  typedef pVect<ITEM,ROWMAP> PVECT;
+  typedef pGraph<ITEM,ROWMAP,COLMAP> PGRAPH;
   
-  pMapItem   pItem;
-  pGraphItem grphItem(3);
+  ITEM grphItem(3);
+  ROWMAP pItem;
   
-  
-  //Main graph
-  pMap<pMapItem> colMap;
-  pGraph<ITEM,ROWMAP,COLMAP> grafo;
+  pMap<COLMAP> colMap;
+  PGRAPH       grafo;
   
   pItem.setLid(1); pItem.setGid(1); colMap.push_back(pItem);
   pItem.setLid(2); pItem.setGid(2); colMap.push_back(pItem);
@@ -60,69 +63,124 @@ int main(int argc, char *argv[])
   pItem.setLid(4); pItem.setGid(4); grphItem(1) = 2; grphItem(2) = 3; grphItem(3) = 4; grafo.push_back(pItem,grphItem);
   
   grafo.setColMap(colMap);
+  grafo.updateRowFinder();
+  grafo.updateColFinder();
+  
+  //Max-Min determination
+  set<ITEM> lista;
+  
+  for(UInt i=1; i <= grafo.rowSize(); ++i)
+  {
+    lista.insert(grafo.getItemL(i));
+  }
+  
+  ITEM minItem = *lista.begin();
+  ITEM maxItem;
+ 
+  set<ITEM>::iterator iter;
+  for(iter = lista.begin(); iter != lista.end(); ++iter)
+  { maxItem = *iter; }
+  
+  assert(minItem < maxItem);
+  
+  cout << "min: " << minItem << endl;
+  cout << "max: " << maxItem << endl;
   
   
-  //Secondary graph
-  pMap<pMapItem> colMapB;
-  pGraph<ITEM,ROWMAP,COLMAP> grafoB;
+  //Ordering test
+  ITEM itemA(3), itemB(3);
   
-  pItem.setLid(1); pItem.setGid(7); colMapB.push_back(pItem);
-  pItem.setLid(2); pItem.setGid(8); colMapB.push_back(pItem);
-  pItem.setLid(3); pItem.setGid(3); colMapB.push_back(pItem);
-  pItem.setLid(4); pItem.setGid(2); colMapB.push_back(pItem);
+  itemA(1) = 1; itemA(2) = 2; itemA(3) = 5;
+  itemB(1) = 1; itemB(2) = 3; itemB(3) = 2;
   
-  pItem.setLid(1); pItem.setGid(5); grphItem(1) = 1; grphItem(2) = 3; grphItem(3) = 4; grafoB.push_back(pItem,grphItem);
-  pItem.setLid(2); pItem.setGid(6); grphItem(1) = 1; grphItem(2) = 2; grphItem(3) = 3; grafoB.push_back(pItem,grphItem);
+  itemA.updateSorting();
+  itemB.updateSorting();
   
-  grafoB.setColMap(colMapB);
+  cout << "itemA" << endl;
+  itemA.printSorted();
   
-  //Finder test
-  pGraphManip<ITEM,ROWMAP,COLMAP> manipulator(grafo);
-    
-  manipulator.mergeGraph(grafoB);
-  cout << grafo << endl;
+  cout << "itemB" << endl;
+  itemB.printSorted();
+  
+  cout << "test: " << (itemB < itemA) << endl << endl;
+  
+  
+  //Subclass testing
+  UInt segments = 4;
+  
+  dataSegmentationUtility<ITEM> utility(segments,minItem,maxItem);
+  
+  cout << "Segments" << endl;
+  cout << utility << endl;
+  
+  
+  //Segmentation
+  sVect<PVECT> targetVects;
+  
+  pVectManip<ITEM,ROWMAP> segmenter(grafo);
+  segmenter.segmentationData(targetVects,segments,minItem,maxItem);
+  
+  
+  for(UInt i=1; i <= targetVects.size(); ++i)
+  {
+    cout << "SEGMENT: " << i << endl;
+    cout << targetVects(i) << endl << endl;
+  }
 }
 
-
 /*
-ROW
+min: Num Connected  : 3
+Connected Id's : 1 2 5 
+
+max: Num Connected  : 3
+Connected Id's : 2 4 5 
+
+itemA
+ordered ids
+1 2 5 
+itemB
+ordered ids
+1 2 3 
+test: 1
+
+Segments
+Num Connected  : 3
+Connected Id's : 1 2 5 
+
+Num Connected  : 3
+Connected Id's : 1 3 5 
+
+Num Connected  : 3
+Connected Id's : 2 4 5 
+
+
+SEGMENT: 1
+
+
+SEGMENT: 2
+1
+ map:  pid: 0 lid: 2 gid: 2
+ data: Num Connected  : 3
+Connected Id's : 1 2 5 
+
+
+
+SEGMENT: 3
+
+
+SEGMENT: 4
 1
  map:  pid: 0 lid: 1 gid: 1
  data: Num Connected  : 3
 Connected Id's : 1 5 6 
 
 2
- map:  pid: 0 lid: 2 gid: 2
- data: Num Connected  : 3
-Connected Id's : 1 2 5 
-
-3
  map:  pid: 0 lid: 3 gid: 3
  data: Num Connected  : 3
 Connected Id's : 2 4 5 
 
-4
+3
  map:  pid: 0 lid: 4 gid: 4
  data: Num Connected  : 3
-Connected Id's : 2 3 4 
-
-5
- map:  pid: 0 lid: 5 gid: 5
- data: Num Connected  : 3
-Connected Id's : 7 3 2 
-
-6
- map:  pid: 0 lid: 6 gid: 6
- data: Num Connected  : 3
-Connected Id's : 7 8 3 
-
-COL
-pid: 0 lid: 1 gid: 1
-pid: 0 lid: 2 gid: 2
-pid: 0 lid: 3 gid: 3
-pid: 0 lid: 4 gid: 4
-pid: 0 lid: 5 gid: 5
-pid: 0 lid: 6 gid: 6
-pid: 0 lid: 7 gid: 7
-pid: 0 lid: 8 gid: 8
+Connected Id's : 2 3 4
 */

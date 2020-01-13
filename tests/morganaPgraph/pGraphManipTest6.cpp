@@ -66,13 +66,17 @@ int main(int argc, char *argv[])
   pMap<pMapItem> colMapB;
   pGraph<ITEM,ROWMAP,COLMAP> grafoB;
   
-  pItem.setLid(1); pItem.setGid(7); colMapB.push_back(pItem);
-  pItem.setLid(2); pItem.setGid(8); colMapB.push_back(pItem);
+  pItem.setLid(1); pItem.setGid(1); colMapB.push_back(pItem);
+  pItem.setLid(2); pItem.setGid(2); colMapB.push_back(pItem);
   pItem.setLid(3); pItem.setGid(3); colMapB.push_back(pItem);
-  pItem.setLid(4); pItem.setGid(2); colMapB.push_back(pItem);
+  pItem.setLid(4); pItem.setGid(7); colMapB.push_back(pItem);
+  pItem.setLid(5); pItem.setGid(8); colMapB.push_back(pItem);
+  pItem.setLid(6); pItem.setGid(9); colMapB.push_back(pItem);
   
-  pItem.setLid(1); pItem.setGid(5); grphItem(1) = 1; grphItem(2) = 3; grphItem(3) = 4; grafoB.push_back(pItem,grphItem);
-  pItem.setLid(2); pItem.setGid(6); grphItem(1) = 1; grphItem(2) = 2; grphItem(3) = 3; grafoB.push_back(pItem,grphItem);
+  pItem.setLid(1); pItem.setGid(5); grphItem(1) = 4; grphItem(2) = 2; grphItem(3) = 1; grafoB.push_back(pItem,grphItem);
+  pItem.setLid(2); pItem.setGid(6); grphItem(1) = 4; grphItem(2) = 5; grphItem(3) = 2; grafoB.push_back(pItem,grphItem);
+  pItem.setLid(3); pItem.setGid(7); grphItem(1) = 5; grphItem(2) = 3; grphItem(3) = 2; grafoB.push_back(pItem,grphItem);
+  pItem.setLid(4); pItem.setGid(8); grphItem(1) = 5; grphItem(2) = 6; grphItem(3) = 3; grafoB.push_back(pItem,grphItem);
   
   grafoB.setColMap(colMapB);
   
@@ -109,12 +113,22 @@ Connected Id's : 2 3 4
 5
  map:  pid: 0 lid: 5 gid: 5
  data: Num Connected  : 3
-Connected Id's : 7 3 2 
+Connected Id's : 7 2 1 
 
 6
  map:  pid: 0 lid: 6 gid: 6
  data: Num Connected  : 3
-Connected Id's : 7 8 3 
+Connected Id's : 7 8 2 
+
+7
+ map:  pid: 0 lid: 7 gid: 7
+ data: Num Connected  : 3
+Connected Id's : 8 3 2 
+
+8
+ map:  pid: 0 lid: 8 gid: 8
+ data: Num Connected  : 3
+Connected Id's : 8 9 3 
 
 COL
 pid: 0 lid: 1 gid: 1
@@ -125,4 +139,5 @@ pid: 0 lid: 5 gid: 5
 pid: 0 lid: 6 gid: 6
 pid: 0 lid: 7 gid: 7
 pid: 0 lid: 8 gid: 8
+pid: 0 lid: 9 gid: 9
 */

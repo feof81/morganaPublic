@@ -34,7 +34,7 @@ that is updated at each operation. The \c push_back can, optionally, disable the
 ordered list. This flag prevents to access to an old ordered list throgh some assert checks.*/
 class pGraphItem
 { 
-    /*! @name Parallel support */ //@{
+  /*! @name Parallel support */ //@{
   public:
     friend class boost::serialization::access;
     
@@ -86,15 +86,12 @@ class pGraphItem
     /*! Memory allocation */
     void reserve(const UInt & n);
     
-    /*! Add an element. The \c update flag forces the rebuild of the ordered list of cids. 
+    /*! Add and element. The \c update flag forces the rebuild of the ordered list of cids. 
     If set to false the list is not updated.*/
     void push_back(const UInt & value, const bool & update = true);
     
-    /*! Add an element only if it is not already present */
+    /*! Add and element only if it is not already present */
     void merge(const pGraphItem & G);
-    
-    /*! Clear function */
-    void clear();
     //@}
     
     
@@ -119,10 +116,10 @@ class pGraphItem
     
     /*! @name Set functions */ //@{
   public:    
-    /*! Sets the id of the i-th node: updates the ordered cids list */
+    /*! Set the id of the i-th node: updates the ordered cids list */
     void setCid(const UInt & i, const UInt & value);
     
-    /*! Sets all the connected ids: updates the ordered cids list */
+    /*! Set all the connected ids: updates the ordered cids list */
     void setCids(const sVect<UInt> & Connected);
     //@}
 
