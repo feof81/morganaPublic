@@ -1,0 +1,120 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "typesInterface.hpp"
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "pGraph.hpp"
+
+#include "geoShapes.h"
+#include "mesh2d.hpp"
+#include "meshDoctor2d.hpp"
+#include "printMesh2dHDF5.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+int main(int argc, char *argv[])
+{
+  typedef geoElement<linearTriangle> GEOELEMENT;
+  typedef pMapItemShare              ELMAP;
+  typedef pMapItemShare              NODEMAP;
+  
+  typedef mesh2d<linearTriangle,ELMAP,NODEMAP>       MESH2D;
+  typedef connect2d<linearTriangle,ELMAP,NODEMAP>    CONNECT2D;
+  typedef meshDoctor2d<linearTriangle,ELMAP,NODEMAP> DOCTOR2D;
+  typedef printMesh2dHDF5<linearTriangle,ELMAP>      PRINTER2D;
+  
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  Teuchos::RCP<MESH2D> grid2d(new MESH2D);
+  
+  
+  if(world.rank() == 0)
+  {
+    //Nodes
+    pVect<point3d,NODEMAP> nodes;
+    
+    nodes.reserve(3);
+    nodes.push_back(point3d(0.0, 0.0, 0.0),NODEMAP(1,1));
+    nodes.push_back(point3d(1.0, 0.0, 0.0),NODEMAP(2,2));
+    nodes.push_back(point3d(1.0, 1.0, 0.0),NODEMAP(3,3));
+    
+    //Elements
+    GEOELEMENT tri(true);
+    pGraph<GEOELEMENT,ELMAP,NODEMAP> elList;
+    
+    elList.reserve(1);
+    tri.setGeoId(1); tri(1) = 1; tri(2) = 2; tri(3) = 3;
+    elList.push_back(tri, ELMAP(1,1,false,true));
+    
+    //The grid2d
+    grid2d->setNodes(nodes);
+    grid2d->setElements(elList);
+  }
+  else
+  {
+    //Nodes
+    pVect<point3d,NODEMAP> nodes;
+    
+    nodes.reserve(3);
+    nodes.push_back(point3d(0.0, 0.0, 0.0),NODEMAP(1,1));
+    nodes.push_back(point3d(1.0, 1.0, 0.0),NODEMAP(2,3));
+    nodes.push_back(point3d(0.0, 1.0, 0.0),NODEMAP(3,4));
+    
+    //Elements
+    GEOELEMENT tri(true);
+    pGraph<GEOELEMENT,ELMAP,NODEMAP> elList;
+    
+    elList.reserve(1);
+    tri.setGeoId(1); tri(1) = 1; tri(2) = 2; tri(3) = 3;
+    elList.push_back(tri, ELMAP(1,1,false,true));
+    
+    //The grid2d
+    grid2d->setNodes(nodes);
+    grid2d->setElements(elList);
+  }
+  
+  
+  //Refinement-------------------------------------------------------------------------------------
+  Teuchos::RCP<CONNECT2D> gridConnect(new CONNECT2D(world));
+  gridConnect->setMesh2d(grid2d);
+  gridConnect->buildConnectivity();
+
+  Teuchos::RCP<MESH2D>   newGrid(new MESH2D);
+  Teuchos::RCP<DOCTOR2D> doctor(new DOCTOR2D(world));
+  
+  doctor->refineUniform(newGrid,grid2d,gridConnect);
+  
+  //Printout---------------------------------------------------------------------------------------
+  string s = "newGrid";
+  
+  PRINTER2D printer(world);
+  printer.print(s,0,newGrid);
+}
+
+
+

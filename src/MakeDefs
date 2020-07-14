@@ -1,42 +1,42 @@
 ####### Compiler, tools and options
-MORGANAINC = /home/avilla/Documenti/morgana/src
-MORGANALIB = /home/avilla/Documenti/morgana/lib
+MORGANAINC = /home/avilla/Documenti/morganaPublic/src
+MORGANALIB = /home/avilla/Documenti/morganaPublic/lib
 
-TRILINOSINC = /home/avilla/Documenti/trilinos-12.10.1-mumps/include
-TRILINOSLIB = /home/avilla/Documenti/trilinos-12.10.1-mumps/lib
+TRILINOSINC = /home/avilla/Documenti/trilinos-12.10.1-old/include
+TRILINOSLIB = /home/avilla/Documenti/trilinos-12.10.1-old/lib
 
-PARMETISINC = /home/avilla/Documenti/parmetis-4.0.3-release/include
-PARMETISLIB = /home/avilla/Documenti/parmetis-4.0.3-release/lib
+PARMETISINC = /home/avilla/Documenti/parmetis-4.0.3-old/include
+PARMETISLIB = /home/avilla/Documenti/parmetis-4.0.3-old/lib
 
 METISINC = /home/avilla/Documenti/metis-4.0.3-release/include
 METISLIB = /home/avilla/Documenti/metis-4.0.3-release/lib
 
-BOOSTINC = /home/avilla/Documenti/boost-1.61.0-release/include
-BOOSTLIB = /home/avilla/Documenti/boost-1.61.0-release/lib
+BOOSTINC = /home/avilla/Documenti/boost-1.65.1-old/include
+BOOSTLIB = /home/avilla/Documenti/boost-1.65.1-old/lib
 
-HDF5INC = /home/avilla/Documenti/hdf5-1.8.17-release/include
-HDF5LIB = /home/avilla/Documenti/hdf5-1.8.17-release/lib
+HDF5INC = /home/avilla/Documenti/hdf5-1.8.17-old/include
+HDF5LIB = /home/avilla/Documenti/hdf5-1.8.17-old/lib
 
-MUMPSINC = /home/avilla/Documenti/MUMPS_5.0.2/include
-MUMPSLIB = /home/avilla/Documenti/MUMPS_5.0.2/lib
+MUMPSINC = /home/avilla/Documenti/MUMPS_5.1.2/include
+MUMPSLIB = /home/avilla/Documenti/MUMPS_5.1.2/lib
 
-BLASINC =
-BLASLIB =
+BLASINC = /home/avilla/Documenti/scalapack-2.1.0-old
+BLASLIB = /home/avilla/Documenti/scalapack-2.1.0-old
 
-LAPACKINC =
-LAPACKLIB =
+LAPACKINC = /home/avilla/Documenti/scalapack-2.1.0-old
+LAPACKLIB = /home/avilla/Documenti/scalapack-2.1.0-old
 
 EXPRTK = /home/avilla/Documenti/exprtk
 
-SOPATH = /home/avilla/Documenti/boost-1.61.0-release/lib
-SOMPI  = /usr/lib/openmpi/lib
+SOPATH = /home/avilla/Documenti/boost-1.65.1-old/lib
+SOMPI  = /home/avilla/Documenti/openmpi-1.8.4-release/lib
 SOMKL  =
 
 
 ####### Compile commands
-CC      = mpicc
-CXX     = mpic++
-LINK    = mpic++
+CC      = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpicc
+CXX     = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpic++
+LINK    = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpic++
 LFLAGS  =
 LINKSO  = -Wl,-rpath,
 
@@ -105,9 +105,9 @@ LIBLIST = -lnoxlapack \
  -lboost_system \
  -llapack \
  -lblas \
+ -lscalapack \
  -lgfortran \
- -lscalapack-openmpi \
- -lblacs-openmpi \
  -lmpi \
- -lmpi_f77 \
- -lz
+ -lmpi_mpifh \
+ -lz \
+ -ldl

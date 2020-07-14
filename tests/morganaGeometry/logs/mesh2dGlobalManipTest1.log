@@ -1,0 +1,108 @@
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 1 2 4 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 1 4 3 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 5
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 2 5 4 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+pid: 0 lid: 2 gid: 2 shared: 1 owned 0
+pid: 0 lid: 3 gid: 5 shared: 0 owned 1
+pid: 0 lid: 4 gid: 6 shared: 0 owned 1
+pid: 0 lid: 5 gid: 7 shared: 1 owned 1
+
+
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 1 owned 0
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 5 shared: 0 owned 1
+ data: 0 1 0
+
+4
+ map:  pid: 0 lid: 4 gid: 6 shared: 0 owned 1
+ data: 1 1 0
+
+5
+ map:  pid: 0 lid: 5 gid: 7 shared: 1 owned 1
+ data: 2 1 0
+
+
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 6
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 1 2 4 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 3
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 2 5 4 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 4
+ data: 
+GeoId          : 1
+Num Connected  : 3
+Connected Id's : 2 3 5 
+
+
+COL
+pid: 1 lid: 1 gid: 2 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 0 owned 1
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 7 shared: 1 owned 0
+pid: 1 lid: 5 gid: 8 shared: 0 owned 1
+
+
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 1 owned 1
+ data: 1 0 0
+
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 0 owned 1
+ data: 2 0 0
+
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 3 0 0
+
+4
+ map:  pid: 1 lid: 4 gid: 7 shared: 1 owned 0
+ data: 2 1 0
+
+5
+ map:  pid: 1 lid: 5 gid: 8 shared: 0 owned 1
+ data: 3 1 0
+
+

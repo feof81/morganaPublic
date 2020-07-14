@@ -1,0 +1,162 @@
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 8
+Connected Id's : 1 2 5 4 7 8 11 10 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 3 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 8
+Connected Id's : 2 3 6 5 8 9 12 11 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+pid: 0 lid: 4 gid: 6 shared: 0 owned 1
+pid: 0 lid: 5 gid: 7 shared: 0 owned 1
+pid: 0 lid: 6 gid: 8 shared: 1 owned 1
+pid: 0 lid: 7 gid: 11 shared: 0 owned 1
+pid: 0 lid: 8 gid: 12 shared: 0 owned 1
+pid: 0 lid: 9 gid: 13 shared: 1 owned 1
+pid: 0 lid: 10 gid: 16 shared: 0 owned 1
+pid: 0 lid: 11 gid: 17 shared: 0 owned 1
+pid: 0 lid: 12 gid: 18 shared: 1 owned 1
+
+
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 2 0 0
+
+4
+ map:  pid: 0 lid: 4 gid: 6 shared: 0 owned 1
+ data: 0 1 0
+
+5
+ map:  pid: 0 lid: 5 gid: 7 shared: 0 owned 1
+ data: 1 1 0
+
+6
+ map:  pid: 0 lid: 6 gid: 8 shared: 1 owned 1
+ data: 2 1 0
+
+7
+ map:  pid: 0 lid: 7 gid: 11 shared: 0 owned 1
+ data: 0 0 1
+
+8
+ map:  pid: 0 lid: 8 gid: 12 shared: 0 owned 1
+ data: 1 0 1
+
+9
+ map:  pid: 0 lid: 9 gid: 13 shared: 1 owned 1
+ data: 2 0 1
+
+10
+ map:  pid: 0 lid: 10 gid: 16 shared: 0 owned 1
+ data: 0 1 1
+
+11
+ map:  pid: 0 lid: 11 gid: 17 shared: 0 owned 1
+ data: 1 1 1
+
+12
+ map:  pid: 0 lid: 12 gid: 18 shared: 1 owned 1
+ data: 2 1 1
+
+
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 8
+Connected Id's : 1 2 5 4 7 8 11 10 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 
+GeoId          : 2
+Num Connected  : 8
+Connected Id's : 2 3 6 5 8 9 12 11 
+
+
+COL
+pid: 1 lid: 1 gid: 3 shared: 1 owned 0
+pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+pid: 1 lid: 5 gid: 9 shared: 0 owned 1
+pid: 1 lid: 6 gid: 10 shared: 0 owned 1
+pid: 1 lid: 7 gid: 13 shared: 1 owned 0
+pid: 1 lid: 8 gid: 14 shared: 0 owned 1
+pid: 1 lid: 9 gid: 15 shared: 0 owned 1
+pid: 1 lid: 10 gid: 18 shared: 1 owned 0
+pid: 1 lid: 11 gid: 19 shared: 0 owned 1
+pid: 1 lid: 12 gid: 20 shared: 0 owned 1
+
+
+1
+ map:  pid: 1 lid: 1 gid: 3 shared: 1 owned 0
+ data: 2 0 0
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 3 0 0
+
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 4 0 0
+
+4
+ map:  pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+ data: 2 1 0
+
+5
+ map:  pid: 1 lid: 5 gid: 9 shared: 0 owned 1
+ data: 3 1 0
+
+6
+ map:  pid: 1 lid: 6 gid: 10 shared: 0 owned 1
+ data: 4 1 0
+
+7
+ map:  pid: 1 lid: 7 gid: 13 shared: 1 owned 0
+ data: 2 0 1
+
+8
+ map:  pid: 1 lid: 8 gid: 14 shared: 0 owned 1
+ data: 3 0 1
+
+9
+ map:  pid: 1 lid: 9 gid: 15 shared: 0 owned 1
+ data: 4 0 1
+
+10
+ map:  pid: 1 lid: 10 gid: 18 shared: 1 owned 0
+ data: 2 1 1
+
+11
+ map:  pid: 1 lid: 11 gid: 19 shared: 0 owned 1
+ data: 3 1 1
+
+12
+ map:  pid: 1 lid: 12 gid: 20 shared: 0 owned 1
+ data: 4 1 1
+
+

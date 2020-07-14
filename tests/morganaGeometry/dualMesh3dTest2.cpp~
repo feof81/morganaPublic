@@ -1,0 +1,130 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit3d.hpp"
+
+#include "connect2d.hpp"
+#include "connect3d.hpp"
+#include "dualMesh1d.hpp"
+#include "dualMesh2d.hpp"
+#include "dualMesh3d.hpp"
+
+#include "printMesh.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using Teuchos::RCP;
+using Teuchos::rcp;
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+  
+  typedef linearTetra    GEOSHAPE3D;
+  typedef linearTriangle GEOSHAPE2D;
+  typedef linearLine     GEOSHAPE1D;
+  typedef pMapItemShare  ELMAP;
+  typedef pMapItemShare  NODEMAP;
+  typedef mesh3d<GEOSHAPE3D,ELMAP,NODEMAP>     MESH3D;
+  typedef mesh2d<GEOSHAPE2D,ELMAP,NODEMAP>     MESH2D;
+  typedef mesh1d<GEOSHAPE1D,ELMAP,NODEMAP>     MESH1D;
+  typedef connect3d<GEOSHAPE3D,ELMAP,NODEMAP>  CONNECT3D;
+  typedef connect2d<GEOSHAPE2D,ELMAP,NODEMAP>  CONNECT2D;
+  
+  
+  //Mesh Init
+  UInt pid = world.rank();
+  time_t start, end;
+  
+  string meshFile = "./geometries/cubes3d/testCubeB.msh";
+  
+  meshInit3d<GEOSHAPE3D,ELMAP,NODEMAP> init(world);
+  init.gmMesh_to_stdA(meshFile);
+  
+  RCP<MESH2D>           grid2d = init.getGrid2d();
+  RCP<MESH3D>           grid3d = init.getGrid3d();
+  RCP<CONNECT2D> connectGrid2d = init.getConnectGrid2d();
+  RCP<CONNECT3D> conenctGrid3d = init.getConnectGrid3d();
+  
+  
+  //Dual mesh 3d
+  dualMesh3d<GEOSHAPE3D,ELMAP,NODEMAP> dualGrid3d(world);
+  dualGrid3d.setMesh3d(grid3d);
+  dualGrid3d.setConnect3d(conenctGrid3d);
+  
+  if(pid == 0) {cout << "Dual Mesh 3d" << " "; time(&start); cout << endl;}
+  dualGrid3d.buildDualMesh();
+  if(pid == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
+  
+  if(pid == 0) {cout << "Finite volume 3d" << " "; time(&start); cout << endl;}
+  dualGrid3d.buildFiniteVolumeData();
+  if(pid == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
+  
+  
+  //Dual mesh 2d
+  dualMesh2d<GEOSHAPE2D,ELMAP,NODEMAP> dualGrid2d(world);
+  dualGrid2d.setMesh2d(grid2d);
+  dualGrid2d.setConnect2d(connectGrid2d);
+  
+  if(pid == 0) {cout << "Dual Mesh 2d" << " "; time(&start); cout << endl;}
+  dualGrid2d.buildDualMesh();
+  if(pid == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
+  
+  if(pid == 0) {cout << "Finite volume 2d" << " "; time(&start); cout << endl;}
+  dualGrid2d.buildFiniteVolumeData();
+  if(pid == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
+  
+  
+  //Extract the dual meshes
+  MESH3D dual3d_subCells   = dualGrid3d.getSubCellMesh();
+  MESH2D dual3d_interfaces = dualGrid3d.getInterfaceMesh();
+  
+  MESH2D dual2d_subCells   = dualGrid2d.getSubCellMesh();
+  MESH1D dual2d_interfaces = dualGrid2d.getInterfaceMesh();
+  
+  
+  //Local printing 3d
+  string local3d_subCells   = "local3d_subCells_" + num2str(world.rank()) + "pid.inp";
+  string local3d_interfaces = "local3d_interfaces_" + num2str(world.rank()) + "pid.inp";
+  
+  printMesh<GEOSHAPE3D,ELMAP,NODEMAP> localPrinter3d_subCells;
+  localPrinter3d_subCells.paraviewLocal(local3d_subCells, pid, dual3d_subCells);
+  
+  printMesh<GEOSHAPE2D,ELMAP,NODEMAP> localPrinter3d_interfaces;
+  localPrinter3d_interfaces.paraviewLocal(local3d_interfaces, pid, dual3d_interfaces);
+  
+  
+  //Local printing 2d
+  string local2d_subCells   = "local2d_subCells_" + num2str(world.rank()) + "pid.inp";
+  string local2d_interfaces = "local2d_interfaces_" + num2str(world.rank()) + "pid.inp";
+  
+  printMesh<GEOSHAPE2D,ELMAP,NODEMAP> localPrinter2d_subCells;
+  localPrinter2d_subCells.paraviewLocal(local2d_subCells, pid, dual2d_subCells);
+  
+  printMesh<GEOSHAPE1D,ELMAP,NODEMAP> localPrinter2d_interfaces;
+  localPrinter2d_interfaces.paraviewLocal(local2d_interfaces, pid, dual2d_interfaces);
+}

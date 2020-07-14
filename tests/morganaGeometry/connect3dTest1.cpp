@@ -1,0 +1,192 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "typesInterface.hpp"
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "pGraph.hpp"
+
+#include "geoShapes.h"
+#include "mesh3d.hpp"
+
+#include "connect3d.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+int main(int argc, char *argv[])
+{
+  typedef linearTetra            GEOSHAPE3D;
+  typedef linearTriangle         GEOSHAPE2D;
+  typedef geoElement<GEOSHAPE3D> GEOELEMENT3D;
+  typedef geoElement<GEOSHAPE2D> GEOELEMENT2D;
+  typedef pMapItemShare          ELMAP;
+  typedef pMapItem               NODEMAP;
+  typedef mesh2d<GEOSHAPE2D,ELMAP,NODEMAP> MESH2D;
+  typedef mesh3d<GEOSHAPE3D,ELMAP,NODEMAP> MESH3D;
+  
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  
+  Teuchos::RCP<MESH2D> grid2d = Teuchos::rcp(new MESH2D);
+  Teuchos::RCP<MESH3D> grid3d = Teuchos::rcp(new MESH3D);
+  
+  if(world.rank() == 0)
+  {
+    //Nodes 3d
+    pVect<point3d,NODEMAP> nodes3d;
+    
+    nodes3d.reserve(5);
+    nodes3d.push_back(point3d(0.0, 0.0, 0.0),pMapItem(1,1));
+    nodes3d.push_back(point3d(1.0, 0.0, 0.0),pMapItem(2,2));
+    nodes3d.push_back(point3d(1.0, 1.0, 0.0),pMapItem(3,3));
+    nodes3d.push_back(point3d(0.0, 1.0, 0.0),pMapItem(4,4));
+    nodes3d.push_back(point3d(0.5, 0.5, 1.0),pMapItem(5,5));
+    nodes3d.updateFinder();
+    
+    //Elements 3d
+    GEOELEMENT3D tet(true);
+    pGraph<GEOELEMENT3D,ELMAP,NODEMAP> elList3d;
+    
+    elList3d.reserve(2);
+    
+    tet.setGeoId(1); tet(1) = 1; tet(2) = 2; tet(3) = 3; tet(4) = 5;
+    elList3d.push_back(tet, pMapItemShare(1,1,true,true));
+    tet.setGeoId(2); tet(1) = 1; tet(2) = 3; tet(3) = 4; tet(4) = 5;
+    elList3d.push_back(tet, pMapItemShare(2,2,true,false));
+    
+    //The grid3d
+    grid3d->setNodes(nodes3d);
+    grid3d->setElements(elList3d);
+    
+    //Nodes 2d
+    pVect<point3d,NODEMAP> nodes2d;
+    
+    nodes2d.reserve(5);
+    nodes2d.push_back(point3d(0.0, 0.0, 0.0),pMapItem(5,5));
+    nodes2d.push_back(point3d(1.0, 0.0, 0.0),pMapItem(4,4));
+    nodes2d.push_back(point3d(1.0, 1.0, 0.0),pMapItem(3,3));
+    nodes2d.push_back(point3d(0.0, 1.0, 0.0),pMapItem(2,2));
+    nodes2d.push_back(point3d(0.5, 0.5, 1.0),pMapItem(1,1));
+    nodes2d.updateFinder();
+    
+    //Elements 2d
+    GEOELEMENT2D tri(true);
+    pGraph<GEOELEMENT2D,ELMAP,NODEMAP> elList2d;
+    
+    elList2d.reserve(6);
+    
+    tri.setGeoId(1); tri(1) = 5; tri(2) = 4; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(1,1,true,true));
+    tri.setGeoId(1); tri(1) = 4; tri(2) = 3; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(2,2,true,true));
+    tri.setGeoId(1); tri(1) = 3; tri(2) = 2; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(3,3,true,true));
+    tri.setGeoId(1); tri(1) = 2; tri(2) = 5; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(4,4,true,false));
+    tri.setGeoId(1); tri(1) = 5; tri(2) = 3; tri(3) = 4;
+    elList2d.push_back(tri, pMapItemShare(5,5,true,false));
+    tri.setGeoId(1); tri(1) = 2; tri(2) = 3; tri(3) = 5;
+    elList2d.push_back(tri, pMapItemShare(6,6,true,false));
+    
+    //The grid3d
+    grid2d->setNodes(nodes2d);
+    grid2d->setElements(elList2d);
+  }
+  else
+  {
+    //Nodes 3d
+    pVect<point3d,NODEMAP> nodes3d;
+    
+    nodes3d.reserve(5);
+    nodes3d.push_back(point3d(0.0, 0.0, 0.0),pMapItem(1,1));
+    nodes3d.push_back(point3d(1.0, 0.0, 0.0),pMapItem(2,2));
+    nodes3d.push_back(point3d(1.0, 1.0, 0.0),pMapItem(3,3));
+    nodes3d.push_back(point3d(0.0, 1.0, 0.0),pMapItem(4,4));
+    nodes3d.push_back(point3d(0.5, 0.5, 1.0),pMapItem(5,5));
+    nodes3d.updateFinder();
+    
+    //Elements 3d
+    GEOELEMENT3D tet(true);
+    pGraph<GEOELEMENT3D,ELMAP,NODEMAP> elList3d;
+    
+    elList3d.reserve(2);
+    
+    tet.setGeoId(2); tet(1) = 1; tet(2) = 2; tet(3) = 3; tet(4) = 5;
+    elList3d.push_back(tet, pMapItemShare(1,1,true,false));
+    tet.setGeoId(3); tet(1) = 1; tet(2) = 3; tet(3) = 4; tet(4) = 5;
+    elList3d.push_back(tet, pMapItemShare(2,2,true,true));
+    
+    //The grid3d
+    grid3d->setNodes(nodes3d);
+    grid3d->setElements(elList3d);
+    
+    //Nodes 2d
+    pVect<point3d,NODEMAP> nodes2d;
+    
+    nodes2d.reserve(5);
+    nodes2d.push_back(point3d(0.0, 0.0, 0.0),pMapItem(5,5));
+    nodes2d.push_back(point3d(1.0, 0.0, 0.0),pMapItem(4,4));
+    nodes2d.push_back(point3d(1.0, 1.0, 0.0),pMapItem(3,3));
+    nodes2d.push_back(point3d(0.0, 1.0, 0.0),pMapItem(2,2));
+    nodes2d.push_back(point3d(0.5, 0.5, 1.0),pMapItem(1,1));
+    nodes2d.updateFinder();
+    
+    //Elements 2d
+    GEOELEMENT2D tri(true);
+    pGraph<GEOELEMENT2D,ELMAP,NODEMAP> elList2d;
+    
+    elList2d.reserve(6);
+    
+    tri.setGeoId(1); tri(1) = 5; tri(2) = 4; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(1,1,true,true));
+    tri.setGeoId(1); tri(1) = 4; tri(2) = 3; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(2,2,true,true));
+    tri.setGeoId(1); tri(1) = 3; tri(2) = 2; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(3,3,true,true));
+    tri.setGeoId(1); tri(1) = 2; tri(2) = 5; tri(3) = 1;
+    elList2d.push_back(tri, pMapItemShare(4,4,true,false));
+    tri.setGeoId(1); tri(1) = 5; tri(2) = 3; tri(3) = 4;
+    elList2d.push_back(tri, pMapItemShare(5,5,true,false));
+    tri.setGeoId(1); tri(1) = 2; tri(2) = 3; tri(3) = 5;
+    elList2d.push_back(tri, pMapItemShare(6,6,true,false));
+    
+    //The grid3d
+    grid2d->setNodes(nodes2d);
+    grid2d->setElements(elList2d);
+  }
+  
+  
+  //Mesh doctor
+  connect3d<GEOSHAPE3D,ELMAP,NODEMAP> gridConnect(world);
+  gridConnect.setMesh3d(grid3d);
+  gridConnect.setMesh2d(grid2d);
+  
+  gridConnect.buildConnectivity();
+  gridConnect.buildBoundaryConnectivity();
+}
+
+

@@ -1,0 +1,218 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "typesInterface.h"
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "pGraph.hpp"
+
+#include "geoShapes.h"
+#include "mesh1d.hpp"
+#include "connect1d.hpp"
+#include "meshDoctor1d.hpp"
+#include "mesh1dGlobalManip.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+int main(int argc, char *argv[])
+{
+  typedef linearLine           GEOSHAPE;
+  typedef geoElement<GEOSHAPE> GEOELEMENT;
+  typedef pMapItemShare        ELMAP;
+  typedef pMapItem             NODEMAP;
+  
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  mesh1d<GEOSHAPE,ELMAP,NODEMAP> grid1d;
+  
+  
+  if(world.rank() == 0)
+  {
+    //Nodes
+    pVect<point3d,NODEMAP> nodes;
+    
+    nodes.reserve(5);
+    nodes.push_back(point3d(2.0, 0.0, 0.0),pMapItem(1,1,0));
+    nodes.push_back(point3d(3.0, 0.0, 0.0),pMapItem(2,2,0));
+    nodes.push_back(point3d(0.0, 0.0, 0.0),pMapItem(3,3,0));
+    nodes.push_back(point3d(1.0, 0.0, 0.0),pMapItem(4,4,0));
+    nodes.push_back(point3d(1.0, 1.0, 0.0),pMapItem(5,5,0));
+    
+    //Elements
+    GEOELEMENT li(true);
+    pGraph<GEOELEMENT,ELMAP,NODEMAP> elList;
+    
+    elList.reserve(2);
+    li.setGeoId(1); li(1) = 3; li(2) = 4;
+    elList.push_back(li, pMapItemShare(1,1,0,false,true));
+    li.setGeoId(1); li(1) = 4; li(2) = 5;
+    elList.push_back(li, pMapItemShare(2,2,0,false,true));
+    
+    //The grid2d
+    grid1d.setNodes(nodes);
+    grid1d.setElements(elList);
+  }
+  else
+  {
+    //Nodes    
+    pVect<point3d,NODEMAP> nodes;
+    
+    nodes.reserve(5);
+    nodes.push_back(point3d(2.0, 0.0, 0.0),pMapItem(1,1,0));
+    nodes.push_back(point3d(3.0, 0.0, 0.0),pMapItem(2,2,0));
+    nodes.push_back(point3d(0.0, 0.0, 0.0),pMapItem(3,3,1));
+    nodes.push_back(point3d(1.0, 1.0, 0.0),pMapItem(4,5,1));
+    nodes.push_back(point3d(0.0, 1.0, 0.0),pMapItem(5,6,1));
+    
+    //Elements
+    GEOELEMENT li(true);
+    pGraph<GEOELEMENT,ELMAP,NODEMAP> elList;
+    
+    elList.reserve(2);
+    li.setGeoId(2); li(1) = 4; li(2) = 5;
+    elList.push_back(li, pMapItemShare(1,3,1,false,true));
+    li.setGeoId(2); li(1) = 5; li(2) = 3;
+    elList.push_back(li, pMapItemShare(2,4,1,false,true));
+    
+    //The grid2d
+    grid1d.setNodes(nodes);
+    grid1d.setElements(elList);
+  }
+  
+  grid1d.transferMap();
+  
+  //Mesh doctoring
+  meshDoctor1d<GEOSHAPE,ELMAP,NODEMAP> doctor1d(world);
+  doctor1d.removeUnusedPoints(grid1d);
+  
+  bool checkIds = doctor1d.checkGeoIds(grid1d);
+  UInt numIds   = doctor1d.countGeoIds(grid1d);
+  
+  assert(checkIds);
+  
+  world.barrier();
+  if(world.rank() == 0)
+  {
+    cout << "Num ids: " << numIds << endl;
+    cout << grid1d.getNodes() << endl;
+    cout << grid1d.getElements() << endl;
+  }
+  sleep(1);
+  
+  world.barrier();
+  if(world.rank() == 1)
+  {
+    cout << "Num ids: " << numIds << endl;
+    cout << grid1d.getNodes() << endl;
+    cout << grid1d.getElements() << endl;
+  }
+  sleep(1);
+}
+
+
+/* PID 0
+GeoIds checking: 1
+Num GeoIds: 2
+1
+ map:  pid: 0 lid: 1 gid: 1
+GeoIds checking: 1
+Num GeoIds: 2
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 3
+ data: 1 1 0
+
+
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 2
+Connected Id's : 1 2 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+COL
+pid: 0 lid: 1 gid: 1
+pid: 0 lid: 2 gid: 2
+pid: 0 lid: 3 gid: 3
+*/
+
+
+/* PID 1
+GeoIds checking: 1
+Num GeoIds: 2
+GeoIds checking: 1
+Num GeoIds: 2
+1
+ map:  pid: 1 lid: 1 gid: 1
+ data: 0 0 0
+
+2
+ map:  pid: 1 lid: 2 gid: 3
+ data: 1 1 0
+
+3
+ map:  pid: 1 lid: 3 gid: 4
+ data: 0 1 0
+
+
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 3 shared: 0 owned 1
+ data: 
+GeoId          : 2
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 
+GeoId          : 2
+Num Connected  : 2
+Connected Id's : 3 1 
+
+
+COL
+pid: 1 lid: 1 gid: 1
+pid: 1 lid: 2 gid: 3
+pid: 1 lid: 3 gid: 4 
+ */

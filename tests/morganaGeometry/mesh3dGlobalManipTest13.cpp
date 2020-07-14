@@ -1,0 +1,165 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "typesInterface.hpp"
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "pGraph.hpp"
+
+#include "geoShapes.h"
+#include "mesh3d.hpp"
+
+#include "mesh3dGlobalManip.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+int main(int argc, char *argv[])
+{
+  typedef pMapItem             ELMAP;
+  typedef pMapItemShare        NODEMAP;
+  typedef linearHexa           GEOSHAPE;
+  typedef geoElement<GEOSHAPE> GEOELEMENT;
+  
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  
+  GEOELEMENT tet(true);
+  pVect<point3d,NODEMAP> nodes;
+  pGraph<GEOELEMENT,ELMAP,NODEMAP>  elList;
+  mesh3d<GEOSHAPE,ELMAP,NODEMAP> grid3d;
+  mesh3dGlobalManip<GEOSHAPE,ELMAP,NODEMAP> gridManipulator(world);
+  sVect<UInt> elWeights(2);
+  
+  
+  if(world.rank() == 0)
+  {
+    //Nodes
+    nodes.reserve(12);
+    nodes.push_back(point3d(0.0, 0.0, 0.0),pMapItemShare(1,1,false,true));
+    nodes.push_back(point3d(1.0, 0.0, 0.0),pMapItemShare(2,2,false,true));
+    nodes.push_back(point3d(2.0, 0.0, 0.0),pMapItemShare(3,3,true,true));
+    
+    nodes.push_back(point3d(0.0, 1.0, 0.0),pMapItemShare(4,6,false,true));
+    nodes.push_back(point3d(1.0, 1.0, 0.0),pMapItemShare(5,7,false,true));
+    nodes.push_back(point3d(2.0, 1.0, 0.0),pMapItemShare(6,8,true,true));
+    
+    nodes.push_back(point3d(0.0, 0.0, 1.0),pMapItemShare(7,11,false,true));
+    nodes.push_back(point3d(1.0, 0.0, 1.0),pMapItemShare(8,12,false,true));
+    nodes.push_back(point3d(2.0, 0.0, 1.0),pMapItemShare(9,13,true,true));
+    
+    nodes.push_back(point3d(0.0, 1.0, 1.0),pMapItemShare(10,16,false,true));
+    nodes.push_back(point3d(1.0, 1.0, 1.0),pMapItemShare(11,17,false,true));
+    nodes.push_back(point3d(2.0, 1.0, 1.0),pMapItemShare(12,18,true,true));
+    nodes.updateFinder();
+    
+    //Elements  
+    elList.reserve(2);
+    
+    tet.setGeoId(1);
+    tet(1) = 1; tet(2) = 2; tet(3) = 5;  tet(4) = 4;
+    tet(5) = 7; tet(6) = 8; tet(7) = 11; tet(8) = 10;
+    elList.push_back(tet, pMapItem(1,1));
+    
+    tet.setGeoId(1);
+    tet(1) = 2; tet(2) = 3; tet(3) = 6;  tet(4) = 5;
+    tet(5) = 8; tet(6) = 9; tet(7) = 12; tet(8) = 11;
+    elList.push_back(tet, pMapItem(2,2));
+    
+    //Weights 
+    elWeights(1) = 1;
+    elWeights(2) = 1;
+    
+    //The grid3d
+    elList.colIsLocal() = true;
+    grid3d.setElements(elList);
+    grid3d.setNodes(nodes);
+  }
+  else
+  {
+    //Nodes
+    nodes.reserve(12);
+    nodes.push_back(point3d(2.0, 0.0, 0.0),pMapItemShare(1,3,true,false));
+    nodes.push_back(point3d(3.0, 0.0, 0.0),pMapItemShare(2,4,false,true));
+    nodes.push_back(point3d(4.0, 0.0, 0.0),pMapItemShare(3,5,false,true));
+    
+    nodes.push_back(point3d(2.0, 1.0, 0.0),pMapItemShare(4,8,true,true));
+    nodes.push_back(point3d(3.0, 1.0, 0.0),pMapItemShare(5,9,false,true));
+    nodes.push_back(point3d(4.0, 1.0, 0.0),pMapItemShare(6,10,false,true));
+    
+    nodes.push_back(point3d(2.0, 0.0, 1.0),pMapItemShare(7,13,true,true));
+    nodes.push_back(point3d(3.0, 0.0, 1.0),pMapItemShare(8,14,false,true));
+    nodes.push_back(point3d(4.0, 0.0, 1.0),pMapItemShare(9,15,false,true));
+    
+    nodes.push_back(point3d(2.0, 1.0, 1.0),pMapItemShare(10,18,true,true));
+    nodes.push_back(point3d(3.0, 1.0, 1.0),pMapItemShare(11,19,false,true));
+    nodes.push_back(point3d(4.0, 1.0, 1.0),pMapItemShare(12,20,false,true));
+    nodes.updateFinder();
+    
+    //Elements
+    elList.reserve(2);
+    
+    tet.setGeoId(1);
+    tet(1) = 1; tet(2) = 2; tet(3) = 5;  tet(4) = 4;
+    tet(5) = 7; tet(6) = 8; tet(7) = 11; tet(8) = 10;
+    elList.push_back(tet, pMapItem(1,3));
+    
+    tet.setGeoId(1);
+    tet(1) = 2; tet(2) = 3; tet(3) = 6;  tet(4) = 5;
+    tet(5) = 8; tet(6) = 9; tet(7) = 12; tet(8) = 11;
+    elList.push_back(tet, pMapItem(2,4));
+    
+    //Weights 
+    elWeights(1) = 10;
+    elWeights(2) = 10;
+    
+    //The grid3d
+    elList.colIsLocal() = true;
+    grid3d.setElements(elList);
+    grid3d.setNodes(nodes);
+  }
+  
+  grid3d.setMeshStandard(STDB);
+  mesh3dGlobalManip<GEOSHAPE,ELMAP,NODEMAP> balancer(world);
+  balancer.meshBalancing(grid3d,elWeights);
+
+  
+  world.barrier();
+  if(world.rank() == 0)
+  {
+    cout << grid3d.getElements() << endl;
+    cout << grid3d.getNodes() << endl;
+  }
+  sleep(1);
+  
+  world.barrier();
+  if(world.rank() == 1)
+  {
+    cout << grid3d.getElements() << endl;
+    cout << grid3d.getNodes() << endl;
+  }
+  sleep(1);
+}

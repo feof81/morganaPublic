@@ -1,0 +1,63 @@
+Start mesh loading 
+LOADING FROM: ../tests/morganaMeshes/mignon3dA.msh
+Estimating mesh size
+Nodes       - global : 5
+Elements 2d - global : 6
+Elements 3d - global : 2
+Now loading
+Mesh loaded successfully
+done (0 s)
+
+Mesh partition 
+done (0 s)
+
+Mesh overlap 
+done (0 s)
+
+Connecting Volume 3d 
+done (0 s)
+
+Check Faces 
+done (0 s)
+
+Check Edges 
+done (0 s)
+
+Distribute elements 2d 
+done (0 s)
+
+Connecting surface 2d 
+done (0 s)
+
+Boundary connecting 3d 
+done (0 s)
+
+Cgal list
+0 0 0 1 1 0 1 0 0
+0 0 0 1 0 0 0.5 0.5 1
+0 0 0 0 1 0 1 1 0
+0 0 0 0.5 0.5 1 0 1 0
+1 0 0 1 1 0 0.5 0.5 1
+1 1 0 0 1 0 0.5 0.5 1
+
+Cell spacing: 0.34145
+
+Bounding box 
+0 0 0
+1 1 1
+
+NumCells: 8
+First test
+
+Element          : pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+Local coordinate : 0 0.5 0
+Distance         : 1
+Found            : 1
+
+Second test
+
+Element          : pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+Local coordinate : 0 0.5 0
+Distance         : 1
+Found            : 1
+

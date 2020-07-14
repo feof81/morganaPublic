@@ -1,0 +1,88 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit2d.hpp"
+
+#include "printMesh.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+  
+  typedef linearQuad     GEOSHAPE2D;
+  typedef linearLine     GEOSHAPE1D;
+  typedef pMapItemShare  ELMAP;
+  typedef pMapItemShare  NODEMAP;
+  typedef mesh2d<GEOSHAPE2D,ELMAP,NODEMAP>  MESH2D;
+  typedef mesh1d<GEOSHAPE1D,ELMAP,NODEMAP>  MESH1D;
+  
+  
+  string meshFile  = "../tests/morganaMeshes/mignonQuad2dA.unv";
+  string colorFile = "../tests/morganaMeshes/mignonQuad2dA_color.unv";
+  
+  meshInit2d<GEOSHAPE2D,ELMAP,NODEMAP> init(world);
+  init.femap_to_stdB(meshFile, colorFile);
+  
+  //Local printing 2d
+  RCP<MESH2D> grid2d = init.getGrid2d(); 
+  string     local2d = "init2dTest4_localMesh2d_" + num2str(world.rank()) + "pid.inp";
+  UInt           pid = world.rank();
+  
+  printMesh<GEOSHAPE2D,ELMAP,NODEMAP> localPrinter2d;
+  localPrinter2d.paraviewLocal(local2d, pid, *grid2d);
+  
+  //Local printing 1d
+  RCP<MESH1D> grid1d = init.getGrid1d();
+  string local1d = "init2dTest4_localMesh1d_" + num2str(world.rank()) + "pid.inp";
+  
+  printMesh<GEOSHAPE1D,ELMAP,NODEMAP> localPrinter1d;
+  localPrinter1d.paraviewLocal(local1d, pid, *grid1d);
+  
+  //Global printing 2d
+  UInt printPid = 0;
+  
+  mesh2d<GEOSHAPE2D,ELMAP,NODEMAP>            globalGrid2d;
+  mesh2dGlobalManip<GEOSHAPE2D,ELMAP,NODEMAP> gathering2d(world);
+  gathering2d.gather(printPid,globalGrid2d,*grid2d);
+  
+  printMesh<GEOSHAPE2D,ELMAP,NODEMAP> meshPrinter2d;
+  meshPrinter2d.paraviewSerial("init2dTest4_globalMesh2d.inp",globalGrid2d);
+  
+  
+  //Global printing 1d
+  mesh1d<GEOSHAPE1D,ELMAP,NODEMAP>            globalGrid1d;
+  mesh1dGlobalManip<GEOSHAPE1D,ELMAP,NODEMAP> gathering1d(world);
+  gathering1d.gather(printPid,globalGrid1d,*grid1d);
+  
+  printMesh<GEOSHAPE1D,ELMAP,NODEMAP> meshPrinter1d;
+  meshPrinter1d.paraviewSerial("init2dTest4_globalMesh1d.inp",globalGrid1d);
+}

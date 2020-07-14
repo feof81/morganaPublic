@@ -1,0 +1,74 @@
+Num ids: 2
+1
+ map:  pid: 0 lid: 1 gid: 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 3
+ data: 1 1 0
+
+
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 2
+Connected Id's : 1 2 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+GeoId          : 1
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+COL
+pid: 0 lid: 1 gid: 1
+pid: 0 lid: 2 gid: 2
+pid: 0 lid: 3 gid: 3
+
+
+Num ids: 2
+1
+ map:  pid: 1 lid: 1 gid: 1
+ data: 0 0 0
+
+2
+ map:  pid: 1 lid: 2 gid: 3
+ data: 1 1 0
+
+3
+ map:  pid: 1 lid: 3 gid: 4
+ data: 0 1 0
+
+
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 3 shared: 0 owned 1
+ data: 
+GeoId          : 2
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 
+GeoId          : 2
+Num Connected  : 2
+Connected Id's : 3 1 
+
+
+COL
+pid: 1 lid: 1 gid: 1
+pid: 1 lid: 2 gid: 3
+pid: 1 lid: 3 gid: 4
+
+

@@ -1,0 +1,75 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "time.h"
+#include <cmath>
+#include <iostream>
+
+#include "geoMapSupport1d.hpp"
+
+int main(int argc, char *argv[])
+{
+  //Geo support tor tretra
+  geoMapSupport1d<linearLine> supporter;
+ 
+  sVect<point3d> points(2); 
+  
+  points(1) = point3d(0.0, 0.0, 0.0);
+  points(2) = point3d(0.0, 2.0, 0.0);
+
+  supporter.setPoints(points);
+
+  //Projection test
+  point3d Y(1.25,0.25,1.0);
+  point3d P = supporter.getPosition(points,Y);
+  
+  cout << "P: " << P << endl;
+  cout << "Is found: " << supporter.mapGlobalToLocal(P,Y) << endl;
+  cout << "Y: " << Y << endl;
+  
+  //IsInternal test
+  bool isInternal;
+  supporter.isInternal(P,isInternal);
+  cout << "IsInternal: " << isInternal << endl;
+  
+  //Projection
+  point3d Yp;
+  supporter.projection(P,Yp);
+  cout << "Yp : " << Yp << endl;
+  cout << "Q  : " << supporter.getPosition(points,Y) << endl;
+  
+  //Normal
+  UInt Edge = 1;
+  point3d Ye(0.0,0.0,0.0);
+  cout << "Ne: " << supporter.normal(Ye,Edge) << endl;
+  
+  //Volume
+  cout << "Vol: " << supporter.volume<STANDARD,2>() << endl;
+}
+
+
+/*
+P: 0 2.5 0
+
+Is found: 1
+Y: 1.25 0 0
+
+IsInternal: 0
+Yp : 1 0 0
+
+Q  : 0 2.5 0
+
+Ne: -0 -1 -0
+
+Vol: 2 
+ */

@@ -1,0 +1,42 @@
+Start mesh loading 
+LOADING FROM: ./geometries/cubes3d/testCubeE.msh
+Estimating mesh size
+Nodes       - global : 20363
+Elements 2d - global : 13600
+Elements 3d - global : 104389
+Now loading
+Mesh loaded successfully
+done (2 s)
+
+Mesh partition 
+done (3 s)
+
+Mesh overlap 
+done (12 s)
+
+Connecting Volume 3d 
+done (9 s)
+
+Check Faces 
+done (3 s)
+
+Check Edges 
+done (1 s)
+
+Distribute elements 2d 
+done (3 s)
+
+Connecting surface 2d 
+done (0 s)
+
+Boundary connecting 3d 
+done (1 s)
+
+Local search init 
+done (6 s)
+
+Search 
+done (6 s)
+
+Total residual : 0
+Mean elements  : 11

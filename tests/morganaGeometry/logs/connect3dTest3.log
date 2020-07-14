@@ -1,0 +1,880 @@
+Check Faces : 1
+Check Edges : 1
+Check Faces : 1
+Check Edges : 1
+Grid3d--------------------------------------------------
+Mesh 3d
+Nodes    : 4
+Elements : 1
+Faces    : 4
+Edges    : 6
+
+
+Faces---------------------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 3 2 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 2 4 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+4
+ map:  pid: 0 lid: 4 gid: 7 shared: 1 owned 0
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 4 3 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+
+
+
+Edges---------------------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 2 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 7 shared: 1 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 3 1 
+
+
+4
+ map:  pid: 0 lid: 4 gid: 8 shared: 1 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 4 
+
+
+5
+ map:  pid: 0 lid: 5 gid: 3 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 2 4 
+
+
+6
+ map:  pid: 0 lid: 6 gid: 9 shared: 1 owned 0
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 3 4 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+
+
+
+Vertex to vertex----------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+Num Connected  : 3
+Connected Id's : 1 3 4 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 
+Num Connected  : 3
+Connected Id's : 2 1 4 
+
+
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 
+Num Connected  : 3
+Connected Id's : 1 2 3 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+
+
+
+Vertex to element---------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+
+
+
+Vertex to edge------------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 1; Orient: 1
+Id: 2 3; Orient: 0
+Id: 3 4; Orient: 1
+
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 1; Orient: 0
+Id: 2 2; Orient: 1
+Id: 3 5; Orient: 1
+
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 2; Orient: 0
+Id: 2 3; Orient: 1
+Id: 3 6; Orient: 1
+
+
+
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 4; Orient: 0
+Id: 2 5; Orient: 0
+Id: 3 6; Orient: 0
+
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 7 shared: 1 owned 1
+pid: 0 lid: 4 gid: 8 shared: 1 owned 1
+pid: 0 lid: 5 gid: 3 shared: 0 owned 1
+pid: 0 lid: 6 gid: 9 shared: 1 owned 0
+
+
+
+Face to element-----------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 1
+
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 2
+
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 3
+
+
+
+4
+ map:  pid: 0 lid: 4 gid: 7 shared: 1 owned 0
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 4
+
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+
+
+
+Element to edge-----------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+Num Connected  : 6
+Connected Id's : 1 2 3 4 5 6 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 7 shared: 1 owned 1
+pid: 0 lid: 4 gid: 8 shared: 1 owned 1
+pid: 0 lid: 5 gid: 3 shared: 0 owned 1
+pid: 0 lid: 6 gid: 9 shared: 1 owned 0
+
+
+
+Element to face-----------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+Num Connected  : 4
+Connected Id's : 1 2 3 4 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+pid: 0 lid: 4 gid: 7 shared: 1 owned 0
+
+
+
+Element to element--------------------------------------
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 
+Num Connected  : 0
+Connected Id's : 
+
+
+COL
+pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+
+
+
+Vertex is boundary--------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 1
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 1
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 1
+
+
+Element is boundary-------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 1
+
+
+Face is boundary----------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 1
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+ data: 1
+4
+ map:  pid: 0 lid: 4 gid: 7 shared: 1 owned 0
+ data: 0
+
+
+Edge is boundary----------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 1
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1
+3
+ map:  pid: 0 lid: 3 gid: 7 shared: 1 owned 1
+ data: 1
+4
+ map:  pid: 0 lid: 4 gid: 8 shared: 1 owned 1
+ data: 1
+5
+ map:  pid: 0 lid: 5 gid: 3 shared: 0 owned 1
+ data: 1
+6
+ map:  pid: 0 lid: 6 gid: 9 shared: 1 owned 0
+ data: 1
+
+
+Vertex to Bvertex---------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 1
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 2
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 1 owned 1
+ data: 3
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 4
+
+
+Face to Bface-------------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 3
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+ data: 2
+4
+ map:  pid: 0 lid: 4 gid: 7 shared: 1 owned 0
+ data: 0
+
+
+Edge to Bedge-------------------------------------------
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 1
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 2
+3
+ map:  pid: 0 lid: 3 gid: 7 shared: 1 owned 1
+ data: 3
+4
+ map:  pid: 0 lid: 4 gid: 8 shared: 1 owned 1
+ data: 4
+5
+ map:  pid: 0 lid: 5 gid: 3 shared: 0 owned 1
+ data: 5
+6
+ map:  pid: 0 lid: 6 gid: 9 shared: 1 owned 0
+ data: 6
+
+
+Grid3d--------------------------------------------------
+Mesh 3d
+Nodes    : 4
+Elements : 1
+Faces    : 4
+Edges    : 6
+
+
+Faces---------------------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 4 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 3 2 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 7 shared: 1 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 2 4 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+4
+ map:  pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 3
+Connected Id's : 1 4 3 
+
+
+COL
+pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+
+
+
+Edges---------------------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 7 shared: 1 owned 0
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 2 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 2 3 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 3 1 
+
+
+4
+ map:  pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 4 
+
+
+5
+ map:  pid: 1 lid: 5 gid: 9 shared: 1 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 2 4 
+
+
+6
+ map:  pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 3 4 
+
+
+COL
+pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+
+
+
+Vertex to vertex----------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+ data: 
+Num Connected  : 3
+Connected Id's : 1 3 4 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 
+Num Connected  : 3
+Connected Id's : 2 1 4 
+
+
+4
+ map:  pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+ data: 
+Num Connected  : 3
+Connected Id's : 1 2 3 
+
+
+COL
+pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+
+
+
+Vertex to element---------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+4
+ map:  pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+ data: 
+Num Connected  : 1
+Connected Id's : 1 
+
+
+COL
+pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+
+
+
+Vertex to edge------------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 1; Orient: 1
+Id: 2 3; Orient: 0
+Id: 3 4; Orient: 1
+
+
+
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 1; Orient: 0
+Id: 2 2; Orient: 1
+Id: 3 5; Orient: 1
+
+
+
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 2; Orient: 0
+Id: 2 3; Orient: 1
+Id: 3 6; Orient: 1
+
+
+
+4
+ map:  pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+ data: 
+Num Points : 3
+Nodes Id's : 
+Id: 1 4; Orient: 0
+Id: 2 5; Orient: 0
+Id: 3 6; Orient: 0
+
+
+
+COL
+pid: 1 lid: 1 gid: 7 shared: 1 owned 0
+pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+pid: 1 lid: 5 gid: 9 shared: 1 owned 1
+pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+
+
+
+Face to element-----------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 4 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 1
+
+
+
+2
+ map:  pid: 1 lid: 2 gid: 7 shared: 1 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 2
+
+
+
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 3
+
+
+
+4
+ map:  pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+ data: 
+Num Points : 1
+Nodes Id's : 
+Id: 1 ConnectedId: 1 SubLoc: 4
+
+
+
+COL
+pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+
+
+
+Element to edge-----------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+ data: 
+Num Connected  : 6
+Connected Id's : 1 2 3 4 5 6 
+
+
+COL
+pid: 1 lid: 1 gid: 7 shared: 1 owned 0
+pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+pid: 1 lid: 5 gid: 9 shared: 1 owned 1
+pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+
+
+
+Element to face-----------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+ data: 
+Num Connected  : 4
+Connected Id's : 1 2 3 4 
+
+
+COL
+pid: 1 lid: 1 gid: 4 shared: 0 owned 1
+pid: 1 lid: 2 gid: 7 shared: 1 owned 1
+pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+
+
+
+Element to element--------------------------------------
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+ data: 
+Num Connected  : 0
+Connected Id's : 
+
+
+COL
+pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+
+
+
+Vertex is boundary--------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+ data: 1
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 1
+4
+ map:  pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+ data: 1
+
+
+Element is boundary-------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 2 shared: 0 owned 1
+ data: 1
+
+
+Face is boundary----------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 4 shared: 0 owned 1
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 7 shared: 1 owned 1
+ data: 0
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 1
+4
+ map:  pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+ data: 1
+
+
+Edge is boundary----------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 7 shared: 1 owned 0
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 1
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 1
+4
+ map:  pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+ data: 1
+5
+ map:  pid: 1 lid: 5 gid: 9 shared: 1 owned 1
+ data: 1
+6
+ map:  pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+ data: 1
+
+
+Vertex to Bvertex---------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 3 shared: 1 owned 0
+ data: 2
+3
+ map:  pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+ data: 3
+4
+ map:  pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+ data: 4
+
+
+Face to Bface-------------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 4 shared: 0 owned 1
+ data: 3
+2
+ map:  pid: 1 lid: 2 gid: 7 shared: 1 owned 1
+ data: 0
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 1
+4
+ map:  pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+ data: 2
+
+
+Edge to Bedge-------------------------------------------
+1
+ map:  pid: 1 lid: 1 gid: 7 shared: 1 owned 0
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: 2
+3
+ map:  pid: 1 lid: 3 gid: 5 shared: 0 owned 1
+ data: 3
+4
+ map:  pid: 1 lid: 4 gid: 8 shared: 1 owned 0
+ data: 4
+5
+ map:  pid: 1 lid: 5 gid: 9 shared: 1 owned 1
+ data: 5
+6
+ map:  pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+ data: 6
+
+

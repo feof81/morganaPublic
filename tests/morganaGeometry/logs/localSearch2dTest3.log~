@@ -1,0 +1,40 @@
+Start mesh loading 
+LOADING FROM: ./geometries/rectangles2d/rectangleF.msh
+Estimating mesh size
+Nodes       - global : 4702
+Elements 1d - global : 252
+Elements 2d - global : 9150
+Now loading
+Mesh loaded successfully
+done (1 s)
+
+Mesh partition 
+done (0 s)
+
+Mesh overlap 
+done (0 s)
+
+Connecting Surface 2d 
+done (1 s)
+
+Check Edges 
+done (0 s)
+
+Distribute elements 1d 
+done (0 s)
+
+Connecting surface 1d 
+done (0 s)
+
+Boundary connecting 2d 
+done (0 s)
+
+Local search init 
+done (0 s)
+
+Search 
+done (0 s)
+
+Last point     : 0 0 0
+Total residual : 1
+Mean elements  : 19

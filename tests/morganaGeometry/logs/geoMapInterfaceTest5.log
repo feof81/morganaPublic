@@ -1,0 +1,15 @@
+refShape   : 6
+refGeo     : 4
+dim        : 3
+numFaces   : 4 4
+numEdges   : 6 6
+numVertices: 4 4
+eval:     1 1.5 1.5
+
+gradient: Tensor components
+1 0 0 
+0 1 0 
+0 0 1 
+
+
+degree:   1

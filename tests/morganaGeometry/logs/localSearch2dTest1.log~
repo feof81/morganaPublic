@@ -1,0 +1,62 @@
+Start mesh loading 
+LOADING FROM: ./geometries/rectangles2d/rectangleA.msh
+Estimating mesh size
+Nodes       - global : 5
+Elements 1d - global : 4
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+done (0 s)
+
+Mesh partition 
+done (0 s)
+
+Mesh overlap 
+done (0 s)
+
+Connecting Surface 2d 
+done (0 s)
+
+Check Edges 
+done (0 s)
+
+Distribute elements 1d 
+done (0 s)
+
+Connecting surface 1d 
+done (0 s)
+
+Boundary connecting 2d 
+done (0 s)
+
+Cell spacing: 0.390862
+
+Bounding box 
+0 0 0
+1 1 0
+
+Printing
+Cell: 1
+Connect: Num Connected  : 2
+Connected Id's : 2 3 
+
+Cell: 2
+Connect: Num Connected  : 3
+Connected Id's : 1 2 3 
+
+Cell: 3
+Connect: Num Connected  : 3
+Connected Id's : 2 3 4 
+
+Cell: 4
+Connect: Num Connected  : 4
+Connected Id's : 1 2 3 4 
+
+
+Element          : pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+Local coordinate : 0 0 0
+Distance         : 1
+Found            : 1
+
+Ps : 0.5 0.5 0
+

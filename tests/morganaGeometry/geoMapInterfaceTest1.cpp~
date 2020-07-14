@@ -1,0 +1,75 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include "typesInterface.h"
+#include "geoMapInterface.hpp"
+
+int main(int argc, char *argv[])
+{
+  geoMapInterface<linearLine> interface;
+  
+  cout << "refShape   : " << interface.getReferenceShapes() << endl;
+  cout << "refGeo     : " << interface.getReferenceGeometry() << endl;
+  cout << "dim        : " << interface.getNDim() << endl;
+  cout << "numFaces   : " << interface.getNumFaces()    << " " << interface.getNumGeoTypes(FACE) << endl;
+  cout << "numEdges   : " << interface.getNumEdges()    << " " << interface.getNumGeoTypes(EDGE) << endl;
+  cout << "numVertices: " << interface.getNumVertices() << " " << interface.getNumGeoTypes(VERTEX) << endl;
+
+  
+  point3d Y(0.5,0.0,0.0);
+  sVect<point3d> points(2);
+  
+  points(1) = point3d(1.0,2.0,3.0);
+  points(2) = point3d(2.0,3.0,4.0);
+  
+  //Test static iterator
+  cout << baseEvalIter<linearLine,linearLine::numPoints>::eval(points,Y) << endl;
+  cout << baseDerXIter<linearLine,linearLine::numPoints>::eval(points,Y) << endl;
+  cout << baseDerYIter<linearLine,linearLine::numPoints>::eval(points,Y) << endl;
+  cout << baseDerZIter<linearLine,linearLine::numPoints>::eval(points,Y) << endl;
+  
+  //Test eval
+  cout << "eval:     " << interface.getPosition(points,Y) << endl;
+  cout << "gradient: " << interface.getGradient(points,Y) << endl;
+  cout << "degree:   " << interface.getDegree() << endl;
+}
+
+
+/*
+refShape   : 2
+refGeo     : 2
+dim        : 1
+numFaces   : 0 0
+numEdges   : 1 1
+numVertices: 2 2
+1.5 2.5 3.5
+
+1 1 1
+
+0 0 0
+
+0 0 0
+
+eval:     1.5 2.5 3.5
+
+gradient: Tensor components
+1 0 0 
+1 0 0 
+1 0 0 
+
+
+degree:   1
+*/
