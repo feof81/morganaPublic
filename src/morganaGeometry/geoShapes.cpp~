@@ -1,0 +1,982 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "geoShapes.h"
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_segment_primitive.h>
+
+using namespace std;
+
+//_________________________________________________________________________________________________
+// LINEAR LINE 
+//-------------------------------------------------------------------------------------------------
+point3d
+linearLine::
+getRefNodes(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 2);
+  
+  //Data definition
+  static const point3d refNodes[2] =  { 
+    point3d(0.0, 0.0, 0.0),
+    point3d(1.0, 0.0, 0.0) };
+    
+  return(refNodes[i-1]);
+}
+
+UInt
+linearLine::
+getPointsOnEdge(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2e = 2;
+  return(p2e);
+}
+
+UInt
+linearLine::
+getPointsOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 0;
+  return(p2f);
+}
+
+UInt
+linearLine::
+getEdgesOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt e2f = 0;
+  return(e2f);
+}
+
+UInt
+linearLine::
+edgeToPoint(const UInt & localEdge, const UInt & pointId)
+{
+  assert(1==2);
+  assert(localEdge == localEdge);
+  assert(pointId   == pointId);
+  
+  return(0);
+}
+
+UInt
+linearLine::
+faceToPoint(const UInt & localFace, const UInt & pointId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(pointId   == pointId);
+  
+  return(0);
+}
+
+UInt
+linearLine::
+faceToEdge(const UInt & localFace, const UInt & edgeId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(edgeId    == edgeId);
+  
+  return(0);
+}
+
+bool
+linearLine::
+isInside(const point3d & P)
+{
+  return(
+     ( (P.getX() >= -geoToll) && (P.getX() <= (1.0 + geoToll)) )
+  && ( (P.getY() >= -geoToll) && (P.getY() <= geoToll)         )
+  && ( (P.getZ() >= -geoToll) && (P.getZ() <= geoToll)         )  
+  );
+}
+
+bool
+linearLine::
+projectInside(const sVect<point3d> & points, const point3d & P, point3d & Q)
+{
+  point3d D = points(2) - points(1);
+  Real  out = max(0.0,min(1.0, (point3d::dot(P - points(1), D)) / point3d::dot(D,D)) );
+          Q = points(1) * (1.0-out) + points(2) * out;
+  
+  return(true);
+}
+
+point3d
+linearLine::
+projection(const point3d & P)
+{
+  point3d Y;
+  
+  Y.setX( max(0.0, P.getX()) ); Y.setX( min(1.0, Y.getX()) );
+  
+  return(Y);
+}
+
+point3d
+linearLine::
+getBarycenter()
+{
+  static point3d Pb = point3d(0.5,0.0,0.);
+  return(Pb);
+}
+
+void
+linearLine::
+boundingBox(const sVect<point3d> & points, point3d & Pmin, point3d & Pmax)
+{
+  assert(points.size() == 2);
+  
+  Pmin = points(1);
+  Pmax = points(1);
+  
+  for(UInt i=1; i <= 2; ++i)
+  {
+    Pmin.setX( std::min(Pmin.getX(), points(i).getX()) );
+    Pmin.setY( std::min(Pmin.getY(), points(i).getY()) );
+    Pmin.setZ( std::min(Pmin.getZ(), points(i).getZ()) );
+    
+    Pmax.setX( std::min(Pmax.getX(), points(i).getX()) );
+    Pmax.setY( std::min(Pmax.getY(), points(i).getY()) );
+    Pmax.setZ( std::min(Pmax.getZ(), points(i).getZ()) );
+  }
+}
+
+
+
+//_________________________________________________________________________________________________
+// LINEAR TRIANGLE
+//-------------------------------------------------------------------------------------------------
+point3d
+linearTriangle::
+getRefNodes(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 3);
+  
+  //Data definition
+  static const point3d refNodes[3] =  { 
+    point3d(0.0, 0.0, 0.0),
+    point3d(1.0, 0.0, 0.0),
+    point3d(0.0, 1.0, 0.0)};
+    
+  return(refNodes[i-1]);
+}
+
+UInt
+linearTriangle::
+getPointsOnEdge(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2e = 2;
+  return(p2e);
+}
+
+UInt
+linearTriangle::
+getPointsOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 0;
+  return(p2f);
+}
+
+UInt
+linearTriangle::
+getEdgesOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt e2f = 0;
+  return(e2f);
+}
+
+UInt
+linearTriangle::
+edgeToPoint(const UInt & localEdge, const UInt & pointId)
+{
+  static const UInt eToP[ 2 * numEdges ] =  { 1, 2, 2, 3, 3, 1 };
+    
+  assert( pointId > 0 && pointId < 3 ) ;
+  assert( localEdge > 0 && localEdge <= numEdges ) ;
+  return eToP[ 2 * localEdge + pointId - 3 ];
+}
+
+UInt
+linearTriangle::
+faceToPoint(const UInt & localFace, const UInt & pointId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(pointId   == pointId);
+  
+  return(0);
+}
+
+UInt
+linearTriangle::
+faceToEdge(const UInt & localFace, const UInt & edgeId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(edgeId    == edgeId);
+  
+  return(0);
+}
+
+bool
+linearTriangle::
+isInside(const point3d & P)
+{
+  return(
+  (P.getX() >= -geoToll) &&
+  (P.getY() >= -geoToll) &&
+  ( (P.getX() + P.getY()) <= (1.0 + geoToll) ) &&
+  (P.getZ() >= -geoToll) && (P.getZ() <= geoToll) );
+}
+
+bool
+linearTriangle::
+projectInside(const sVect<point3d> & points, const point3d & P, point3d & Q)
+{
+  typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+  typedef CGAL_KER::Point_3             CGAL_POINT3D;
+  typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  typedef std::vector<CGAL_TRIANGLE>::iterator               CGAL_ITER;
+  typedef CGAL::AABB_triangle_primitive<CGAL_KER,CGAL_ITER>  CGAL_PRIMITIVE;
+  typedef CGAL::AABB_traits<CGAL_KER,CGAL_PRIMITIVE>         CGAL_TRAITS;
+  typedef CGAL::AABB_tree<CGAL_TRAITS>                       CGAL_TREE;
+  
+  point3d B = ( points(1) + points(2) + points(3) ) / 3.0;
+  
+  sVect<CGAL_TRIANGLE> outList(3);
+  
+  outList(1) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  outList(2) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  outList(3) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  CGAL_TREE cgalTree(outList.begin(),outList.end());
+  CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(),P.getY(),P.getZ()) );
+  
+  Q.setX(cgalQ.x());
+  Q.setY(cgalQ.y());
+  Q.setZ(cgalQ.z());
+  
+  return(true);
+}
+
+point3d
+linearTriangle::
+projection(const point3d & P)
+{  
+  //Plane projection
+  point3d Y = P;
+  Y.setZ(0.0);
+  
+  if( isInside(Y) )
+  { return(Y); }
+  else
+  {
+    point3d Y1, Y2, Y3;
+    sVect<point3d> points(2);
+    
+    points(1) = point3d(1.0, 0.0, 0.0); points(2) = point3d(0.0, 1.0, 0.0); linearLine::projectInside(points,Y,Y1);
+    points(1) = point3d(0.0, 0.0, 0.0), points(2) = point3d(0.0, 1.0, 0.0); linearLine::projectInside(points,Y,Y2);
+    points(1) = point3d(0.0, 0.0, 0.0), points(2) = point3d(1.0, 0.0, 0.0); linearLine::projectInside(points,Y,Y3);
+    
+    Real dist1 = point3d::norm2(Y1-Y);
+    Real dist2 = point3d::norm2(Y2-Y);
+    Real dist3 = point3d::norm2(Y3-Y);
+    
+    if( (dist1 <= dist2) && (dist1 <= dist3) )
+    { return(Y1); }
+    
+    if( (dist2 <= dist1) && (dist2 <= dist3) )
+    { return(Y2); }
+    
+    if( (dist3 <= dist2) && (dist3 <= dist1) )
+    { return(Y3); }
+  }
+  
+  assert(2==1);
+  return(P);
+}
+
+point3d
+linearTriangle::
+getBarycenter()
+{
+  static point3d Pb = point3d(1.0/3.0 , 1.0/3.0 ,0.);
+  return(Pb);
+}
+
+void
+linearTriangle::
+boundingBox(const sVect<point3d> & points, point3d & Pmin, point3d & Pmax)
+{
+  assert(points.size() == 3);
+  
+  Pmin = points(1);
+  Pmax = points(1);
+  
+  for(UInt i=1; i <= 3; ++i)
+  {
+    Pmin.setX( std::min(Pmin.getX(), points(i).getX()) );
+    Pmin.setY( std::min(Pmin.getY(), points(i).getY()) );
+    Pmin.setZ( std::min(Pmin.getZ(), points(i).getZ()) );
+    
+    Pmax.setX( std::min(Pmax.getX(), points(i).getX()) );
+    Pmax.setY( std::min(Pmax.getY(), points(i).getY()) );
+    Pmax.setZ( std::min(Pmax.getZ(), points(i).getZ()) );
+  }
+}
+
+
+
+//_________________________________________________________________________________________________
+// LINEAR QUAD
+//-------------------------------------------------------------------------------------------------
+point3d
+linearQuad::
+getRefNodes(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 4);
+  
+  //Data definition
+  static const point3d refNodes[4] =  { 
+    point3d(0.0, 0.0, 0.0),
+    point3d(1.0, 0.0, 0.0),
+    point3d(1.0, 1.0, 0.0),
+    point3d(0.0, 1.0, 0.0)};
+    
+  return(refNodes[i-1]);
+}
+
+UInt
+linearQuad::
+getPointsOnEdge(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2e = 2;
+  return(p2e);
+}
+
+UInt
+linearQuad::
+getPointsOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 0;
+  return(p2f);
+}
+
+UInt
+linearQuad::
+getEdgesOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt e2f = 0;
+  return(e2f);
+}
+
+UInt
+linearQuad::
+edgeToPoint(const UInt & localEdge, const UInt & pointId)
+{
+  static const UInt eToP[ 2 * numEdges ] = { 1, 2, 2, 3, 3, 4, 4, 1 };
+  
+  assert( pointId > 0 && pointId < 3 ) ;
+  assert( localEdge > 0 && localEdge <= numEdges ) ;
+  return eToP[ 2 * localEdge + pointId - 3 ];
+}
+
+UInt
+linearQuad::
+faceToPoint(const UInt & localFace, const UInt & pointId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(pointId   == pointId);
+  
+  return(0);
+}
+
+UInt
+linearQuad::
+faceToEdge(const UInt & localFace, const UInt & edgeId)
+{
+  assert(1==2);
+  assert(localFace == localFace);
+  assert(edgeId    == edgeId);
+  
+  return(0);
+}
+    
+bool
+linearQuad::
+isInside(const point3d & P)
+{
+  return(
+  (P.getX() >= -geoToll)        &&
+  (P.getY() >= -geoToll)        &&
+  (P.getX() <= (1.0 + geoToll)) &&
+  (P.getY() <= (1.0 + geoToll))  );
+}
+
+bool
+linearQuad::
+projectInside(const sVect<point3d> & points, const point3d & P, point3d & Q)
+{
+  typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+  typedef CGAL_KER::Point_3             CGAL_POINT3D;
+  typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  typedef std::vector<CGAL_TRIANGLE>::iterator               CGAL_ITER;
+  typedef CGAL::AABB_triangle_primitive<CGAL_KER,CGAL_ITER>  CGAL_PRIMITIVE;
+  typedef CGAL::AABB_traits<CGAL_KER,CGAL_PRIMITIVE>         CGAL_TRAITS;
+  typedef CGAL::AABB_tree<CGAL_TRAITS>                       CGAL_TREE;
+  
+  point3d B = ( points(1) + points(2) + points(3) + points(4) ) / 4.0;
+  
+  sVect<CGAL_TRIANGLE> outList(4);
+  
+  outList(1) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+ 
+  outList(2) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  outList(3) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D( points(4).getX(), points(4).getY(), points(4).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  outList(4) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(4).getX(), points(4).getY(), points(4).getZ() ),
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() )  );
+  
+  CGAL_TREE cgalTree(outList.begin(),outList.end());
+  CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(),P.getY(),P.getZ()) );
+  
+  Q.setX(cgalQ.x());
+  Q.setY(cgalQ.y());
+  Q.setZ(cgalQ.z());
+  
+  return(true);
+}
+
+point3d
+linearQuad::
+projection(const point3d & P)
+{
+  point3d Y;
+  
+  Y.setX( max(0.0, P.getX()) ); Y.setX( min(1.0, Y.getX()) );
+  Y.setY( max(0.0, P.getY()) ); Y.setY( min(1.0, Y.getY()) );
+  
+  return(Y);
+}
+
+point3d
+linearQuad::
+getBarycenter()
+{
+  return(point3d(0.5,0.5,0.0));
+}
+
+void
+linearQuad::
+boundingBox(const sVect<point3d> & points, point3d & Pmin, point3d & Pmax)
+{
+  assert(points.size() == 4);
+  
+  Pmin = points(1);
+  Pmax = points(1);
+  
+  for(UInt i=1; i <= 4; ++i)
+  {
+    Pmin.setX( std::min(Pmin.getX(), points(i).getX()) );
+    Pmin.setY( std::min(Pmin.getY(), points(i).getY()) );
+    Pmin.setZ( std::min(Pmin.getZ(), points(i).getZ()) );
+    
+    Pmax.setX( std::min(Pmax.getX(), points(i).getX()) );
+    Pmax.setY( std::min(Pmax.getY(), points(i).getY()) );
+    Pmax.setZ( std::min(Pmax.getZ(), points(i).getZ()) );
+  }
+}
+
+
+
+//_________________________________________________________________________________________________
+// LINEAR TETRA
+//-------------------------------------------------------------------------------------------------
+point3d
+linearTetra::
+getRefNodes(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 4);
+  
+  //Data definition
+  static const point3d refNodes[4] =  {
+  point3d(0.0, 0.0, 0.0),
+  point3d(1.0, 0.0, 0.0),
+  point3d(0.0, 1.0, 0.0),
+  point3d(0.0, 0.0, 1.0) };
+  
+  return(refNodes[i-1]);
+}
+
+UInt
+linearTetra::
+getPointsOnEdge(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2e = 2;
+  return(p2e);
+}
+
+UInt
+linearTetra::
+getPointsOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 3;
+  return(p2f);
+}
+
+UInt
+linearTetra::
+getEdgesOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt e2f = 3;
+  return(e2f);
+}
+
+UInt
+linearTetra::
+edgeToPoint(const UInt & localEdge, const UInt & pointId)
+{
+  static const UInt eToP[ 2 * numEdges ] = { 1, 2, 2, 3, 3, 1, 1, 4, 2, 4, 3, 4 };
+    
+  assert( pointId > 0 && pointId < 3 ) ;
+  assert( localEdge > 0 && localEdge <= numEdges ) ;
+  return eToP[ 2 * localEdge + pointId - 3 ];
+}
+
+UInt
+linearTetra::
+faceToPoint(const UInt & localFace, const UInt & pointId)
+{
+  static const UInt fToP[ 3 * numFaces ] = { 1, 3, 2, 1, 2, 4, 2, 3, 4, 1, 4, 3 }; 
+
+  assert( pointId > 0 && pointId < 4 ) ;
+  assert( localFace > 0 && localFace <= numFaces ) ;
+  return fToP[ 3 * localFace + pointId - 4 ];
+}
+
+UInt
+linearTetra::
+faceToEdge(const UInt & localFace, const UInt & edgeId)
+{
+  static const UInt fToE[ 3 * numFaces ] = { 3, 2, 1, 1, 5, 4, 2, 6, 5, 4, 6, 3 };
+  
+  assert( edgeId > 0 && edgeId < 4 ) ;
+  assert( localFace > 0 && localFace <= numFaces ) ;
+  return fToE[ 3 * localFace + edgeId - 4 ];
+}
+
+UInt
+linearTetra::
+faceOppositeToNode(const UInt & localNode)
+{
+  assert(localNode >= 1);
+  assert(localNode <= 4);
+  
+  static const UInt fOpN[ 4 ] = {3, 4, 2, 1};
+  
+  return( fOpN[ localNode-1 ] );
+}
+
+bool
+linearTetra::
+isInside(const point3d & P)
+{
+  return(
+  (P.getX() >= -geoToll) &&
+  (P.getY() >= -geoToll) &&
+  (P.getZ() >= -geoToll) &&
+  ( (P.getX() + P.getY() + P.getZ()) <= (1.0 + geoToll) )
+  );
+}
+
+bool
+linearTetra::
+projectInside(const sVect<point3d> & points, const point3d & P, point3d & Q)
+{
+  typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+  typedef CGAL_KER::Point_3             CGAL_POINT3D;
+  typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  typedef std::vector<CGAL_TRIANGLE>::iterator               CGAL_ITER;
+  typedef CGAL::AABB_triangle_primitive<CGAL_KER,CGAL_ITER>  CGAL_PRIMITIVE;
+  typedef CGAL::AABB_traits<CGAL_KER,CGAL_PRIMITIVE>         CGAL_TRAITS;
+  typedef CGAL::AABB_tree<CGAL_TRAITS>                       CGAL_TREE;
+  
+  UInt id1, id2, id3;
+  sVect<CGAL_TRIANGLE> outList(numFaces);
+  
+  for(UInt f=1; f <= numFaces; ++f)
+  {
+    id1 = faceToPoint(f,1);
+    id2 = faceToPoint(f,2);
+    id3 = faceToPoint(f,3);
+    
+    outList(f) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(id1).getX(), points(id1).getY(), points(id1).getZ() ),
+      CGAL_POINT3D( points(id2).getX(), points(id2).getY(), points(id2).getZ() ),
+      CGAL_POINT3D( points(id3).getX(), points(id3).getY(), points(id3).getZ() )  );
+  }
+  
+  CGAL_TREE cgalTree(outList.begin(),outList.end());
+  CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(),P.getY(),P.getZ()) );
+  
+  Q.setX(cgalQ.x());
+  Q.setY(cgalQ.y());
+  Q.setZ(cgalQ.z());
+  
+  return(true);
+}
+
+point3d
+linearTetra::
+projection(const point3d & P)
+{ 
+  if( isInside(P) )
+  { 
+    return(P);
+  }
+  else
+  {
+    point3d Y1, Y2, Y3, Y4;
+    sVect<point3d> points(3);
+    
+    points(1) = point3d(0.0, 0.0, 0.0); points(2) = point3d(0.0, 1.0, 0.0); points(3) = point3d(1.0, 0.0, 0.0); linearTriangle::projectInside(points,P,Y1);
+    points(1) = point3d(0.0, 0.0, 0.0); points(2) = point3d(1.0, 0.0, 0.0); points(3) = point3d(0.0, 0.0, 1.0); linearTriangle::projectInside(points,P,Y2);
+    points(1) = point3d(1.0, 0.0, 0.0); points(2) = point3d(0.0, 1.0, 0.0); points(3) = point3d(0.0, 0.0, 1.0); linearTriangle::projectInside(points,P,Y3);
+    points(1) = point3d(0.0, 0.0, 0.0); points(2) = point3d(0.0, 0.0, 1.0); points(3) = point3d(0.0, 1.0, 0.0); linearTriangle::projectInside(points,P,Y4);
+    
+    Real dist1 = point3d::norm2(Y1 - P);
+    Real dist2 = point3d::norm2(Y2 - P);
+    Real dist3 = point3d::norm2(Y3 - P);
+    Real dist4 = point3d::norm2(Y4 - P);
+    
+    Real minDist = min(min(dist1, dist2) , min(dist3 , dist4));
+    
+    if(dist1 <= minDist + geoToll)
+    { return(Y1); }
+    
+    if(dist2 <= minDist + geoToll)
+    { return(Y2); }
+    
+    if(dist3 <= minDist + geoToll)
+    { return(Y3); }
+    
+    if(dist4 <= minDist + geoToll)
+    { return(Y4); }
+  }
+  
+  assert(2==1);
+  return(P);
+}
+
+point3d
+linearTetra::
+getBarycenter()
+{
+  static point3d Pb = point3d(1.0/4.0 , 1.0/4.0, 1.0/4.0);
+  return(Pb);
+}
+
+void
+linearTetra::
+boundingBox(const sVect<point3d> & points, point3d & Pmin, point3d & Pmax)
+{
+  assert(points.size() == 4);
+  
+  Pmin = points(1);
+  Pmax = points(1);
+  
+  for(UInt i=1; i <= 4; ++i)
+  {
+    Pmin.setX( std::min(Pmin.getX(), points(i).getX()) );
+    Pmin.setY( std::min(Pmin.getY(), points(i).getY()) );
+    Pmin.setZ( std::min(Pmin.getZ(), points(i).getZ()) );
+    
+    Pmax.setX( std::min(Pmax.getX(), points(i).getX()) );
+    Pmax.setY( std::min(Pmax.getY(), points(i).getY()) );
+    Pmax.setZ( std::min(Pmax.getZ(), points(i).getZ()) );
+  }
+}
+
+
+
+//_________________________________________________________________________________________________
+// LINEAR HEXA
+//-------------------------------------------------------------------------------------------------
+point3d
+linearHexa::
+getRefNodes(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 8);
+  
+  //Data definition
+  static const point3d refNodes[8] =  {
+    point3d(0.0, 0.0, 0.0),
+    point3d(1.0, 0.0, 0.0),
+    point3d(1.0, 1.0, 0.0),
+    point3d(0.0, 1.0, 0.0),
+    point3d(0.0, 0.0, 1.0),
+    point3d(1.0, 0.0, 1.0),
+    point3d(1.0, 1.0, 1.0),
+    point3d(0.0, 1.0, 1.0) };
+  
+  return(refNodes[i-1]);
+}
+
+UInt
+linearHexa::
+getPointsOnEdge(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 3;
+  return(p2f);
+}
+
+UInt
+linearHexa::
+getPointsOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt p2f = 4;
+  return(p2f);
+}
+
+UInt
+linearHexa::
+getEdgesOnFace(const UInt & i)
+{
+  assert(i==i);
+  
+  static const UInt e2f = 4;
+  return(e2f);
+}
+
+UInt
+linearHexa::
+edgeToPoint(const UInt & localEdge, const UInt & pointId)
+{
+  static const UInt eToP[ 2 * numEdges ] = {
+            1, 2, 2, 3, 3, 4, 4, 1,
+            1, 5, 2, 6, 3, 7, 4, 8,
+            5, 6, 6, 7, 7, 8, 8, 5 };
+	
+    assert( pointId > 0 && pointId < 3 ) ;
+    assert( localEdge > 0 && localEdge <= numEdges ) ;
+    return eToP[ 2 * localEdge + pointId - 3 ];
+}
+
+UInt
+linearHexa::
+faceToPoint(const UInt & localFace, const UInt & pointId)
+{
+  static const UInt fToP[ 4 * numFaces ] = {
+            1, 4, 3, 2,
+            1, 5, 8, 4,
+            1, 2, 6, 5,
+            2, 3, 7, 6,
+            3, 4, 8, 7,
+            5, 6, 7, 8 };
+	    
+    assert( pointId > 0 && pointId < 5 ) ;
+    assert( localFace > 0 && localFace <= numFaces ) ;
+    return fToP[ 4 * localFace + pointId - 5 ];
+}
+
+UInt
+linearHexa::
+faceToEdge(const UInt & localFace, const UInt & edgeId)
+{
+  static const UInt fToE[ 4 * numFaces ] = {
+            4, 3, 2, 1, 5, 12, 8, 4, 1, 6, 9, 5,
+            2, 7, 10, 6, 3, 8, 11, 7, 9, 10, 11, 12 };
+
+  assert( edgeId > 0 && edgeId < 5 ) ;
+  assert( localFace > 0 && localFace <= numFaces ) ;
+  return  fToE[ 4 * localFace + edgeId - 5 ];
+}
+    
+bool
+linearHexa::
+isInside(const point3d & P)
+{
+  return(
+  (P.getX() >= -geoToll)        &&
+  (P.getY() >= -geoToll)        &&
+  (P.getZ() >= -geoToll)        &&
+  (P.getX() <= (1.0 + geoToll)) &&
+  (P.getY() <= (1.0 + geoToll)) &&
+  (P.getZ() <= (1.0 + geoToll))  
+  );
+}
+
+bool
+linearHexa::
+projectInside(const sVect<point3d> & points, const point3d & P, point3d & Q)
+{
+  typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+  typedef CGAL_KER::Point_3             CGAL_POINT3D;
+  typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  typedef std::vector<CGAL_TRIANGLE>::iterator               CGAL_ITER;
+  typedef CGAL::AABB_triangle_primitive<CGAL_KER,CGAL_ITER>  CGAL_PRIMITIVE;
+  typedef CGAL::AABB_traits<CGAL_KER,CGAL_PRIMITIVE>         CGAL_TRAITS;
+  typedef CGAL::AABB_tree<CGAL_TRAITS>                       CGAL_TREE;
+  
+  point3d B;
+  UInt id1, id2, id3, id4;
+  sVect<CGAL_TRIANGLE> outList(numFaces * 4);
+  
+  for(UInt f=1; f <= numFaces; ++f)
+  {
+    id1 = faceToPoint(f,1);
+    id2 = faceToPoint(f,2);
+    id3 = faceToPoint(f,3);
+    id4 = faceToPoint(f,4);
+    
+    B = ( points(id1) + points(id2) + points(id3) + points(id4) ) / 4.0;
+    
+    outList( (f-1) * 4 + 1 ) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(id1).getX(), points(id1).getY(), points(id1).getZ() ),
+      CGAL_POINT3D( points(id2).getX(), points(id2).getY(), points(id2).getZ() ),
+      CGAL_POINT3D(           B.getX(),           B.getY(),           B.getZ() )  );
+    
+    outList( (f-1) * 4 + 2 ) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(id2).getX(), points(id2).getY(), points(id2).getZ() ),
+      CGAL_POINT3D( points(id3).getX(), points(id3).getY(), points(id3).getZ() ),
+      CGAL_POINT3D(           B.getX(),           B.getY(),           B.getZ() )  );
+    
+    outList( (f-1) * 4 + 3 ) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(id3).getX(), points(id3).getY(), points(id3).getZ() ),
+      CGAL_POINT3D( points(id4).getX(), points(id4).getY(), points(id4).getZ() ),
+      CGAL_POINT3D(           B.getX(),           B.getY(),           B.getZ() )  );
+    
+    outList( (f-1) * 4 + 4 ) = CGAL_TRIANGLE(
+      CGAL_POINT3D( points(id4).getX(), points(id4).getY(), points(id4).getZ() ),
+      CGAL_POINT3D( points(id1).getX(), points(id1).getY(), points(id1).getZ() ),
+      CGAL_POINT3D(           B.getX(),           B.getY(),           B.getZ() )  );
+  }
+  
+  CGAL_TREE cgalTree(outList.begin(),outList.end());
+  CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(),P.getY(),P.getZ()) );
+  
+  Q.setX(cgalQ.x());
+  Q.setY(cgalQ.y());
+  Q.setZ(cgalQ.z());
+  
+  return(true);
+}
+
+point3d
+linearHexa::
+projection(const point3d & P)
+{
+  point3d Y;
+  
+  Y.setX( max(0.0, P.getX()) ); Y.setX( min(1.0, Y.getX()) );
+  Y.setY( max(0.0, P.getY()) ); Y.setY( min(1.0, Y.getY()) );
+  Y.setZ( max(0.0, P.getZ()) ); Y.setZ( min(1.0, Y.getZ()) );
+  
+  return(Y);
+}
+
+point3d
+linearHexa::
+getBarycenter()
+{
+  static point3d Pb = point3d(0.5,0.5,0.5);
+  return(Pb);
+}
+
+void
+linearHexa::
+boundingBox(const sVect<point3d> & points, point3d & Pmin, point3d & Pmax)
+{
+  assert(points.size() == 8);
+  
+  Pmin = points(1);
+  Pmax = points(1);
+  
+  for(UInt i=1; i <= 8; ++i)
+  {
+    Pmin.setX( std::min(Pmin.getX(), points(i).getX()) );
+    Pmin.setY( std::min(Pmin.getY(), points(i).getY()) );
+    Pmin.setZ( std::min(Pmin.getZ(), points(i).getZ()) );
+    
+    Pmax.setX( std::min(Pmax.getX(), points(i).getX()) );
+    Pmax.setY( std::min(Pmax.getY(), points(i).getY()) );
+    Pmax.setZ( std::min(Pmax.getZ(), points(i).getZ()) );
+  }
+}

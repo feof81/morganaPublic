@@ -14,7 +14,9 @@ You should have received a copy of the GNU General Public License along with Mor
 #ifndef SOCTTREE_H
 #define SOCTTREE_H
 
+#include <map>
 #include "sOctTreeItem.h"
+
 
 template<typename DATA>
 class sOctTree

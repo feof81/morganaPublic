@@ -1157,7 +1157,7 @@ getVertexToElement(const UInt & i, const UInt & j) const
 {
   assert(connectCreated);
   assert(i >=1); assert(j >= 1);
-  assert(i <= vertexToElement.rowSizeL());
+  assert(i <= vertexToElement.rowSize());
   assert(j <= vertexToElement.getItemL(i).size());
   return(vertexToElement.getCid_LL(i,j));
 }

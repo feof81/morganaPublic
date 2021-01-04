@@ -1,0 +1,26 @@
+1
+ map:  pid: 1 lid: 1 gid: 4
+ data: -1 -1 -1
+
+2
+ map:  pid: 0 lid: 2 gid: 6
+ data: -1 6 4
+
+
+1
+ map:  pid: 0 lid: 1 gid: 5
+ data: 1 -2 0
+
+2
+ map:  pid: 1 lid: 2 gid: 1
+ data: 0.5 1 0
+
+3
+ map:  pid: 1 lid: 3 gid: 2
+ data: 0 1 0
+
+4
+ map:  pid: 1 lid: 4 gid: 3
+ data: 0 0 1
+
+

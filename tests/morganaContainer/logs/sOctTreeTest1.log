@@ -1,0 +1,172 @@
+Son******************
+father : 1
+Id     : 7
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Father***************
+father : 0
+Id     : 1
+VVV : 2
+FVV : 3
+VFV : 4
+FFV : 5
+VVF : 6
+FVF : 7
+VFF : 8
+FFF : 9
+isLeaf : 0
+
+Tree*****************
+Map - - - - - - -
+father : 0
+Id     : 1
+VVV : 2
+FVV : 3
+VFV : 4
+FFV : 5
+VVF : 6
+FVF : 7
+VFF : 8
+FFF : 9
+isLeaf : 0
+
+Data
+0
+
+Map - - - - - - -
+father : 1
+Id     : 2
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+1
+
+Map - - - - - - -
+father : 1
+Id     : 3
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+2
+
+Map - - - - - - -
+father : 1
+Id     : 4
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+3
+
+Map - - - - - - -
+father : 1
+Id     : 5
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+4
+
+Map - - - - - - -
+father : 1
+Id     : 6
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+5
+
+Map - - - - - - -
+father : 1
+Id     : 7
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+6
+
+Map - - - - - - -
+father : 1
+Id     : 8
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+7
+
+Map - - - - - - -
+father : 1
+Id     : 9
+VVV : 0
+FVV : 0
+VFV : 0
+FFV : 0
+VVF : 0
+FVF : 0
+VFF : 0
+FFF : 0
+isLeaf : 1
+
+Data
+8
+
+

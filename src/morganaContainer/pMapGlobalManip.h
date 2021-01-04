@@ -15,12 +15,14 @@ You should have received a copy of the GNU General Public License along with Mor
 #define PMAPGLOBALMANIP_H
 
 #include "Teuchos_RCP.hpp"
+#include "Teuchos_Comm.hpp"
 #include "Teuchos_ScalarTraits.hpp"
+#include "Teuchos_OrdinalTraits.hpp"
 #include "Epetra_Map.h"
 #include "Epetra_MpiComm.h"
-#include "Tpetra_ConfigDefs.hpp"
-#include "Tpetra_DefaultPlatform.hpp"
-#include "Tpetra_Map_decl.hpp"
+#include "Tpetra_Core.hpp"
+#include "Tpetra_Vector.hpp"
+#include "Tpetra_Version.hpp"
 #include "Kokkos_DefaultNode.hpp"
 
 #include <boost/mpi.hpp>
@@ -58,10 +60,11 @@ template<> class pMapGlobalManip<pMapItem>
     typedef pMapItem  ITEM;
     typedef pMap<ITEM> MAP;
     
-    typedef int                                                     ORDINALTYPE;
-    typedef Tpetra::DefaultPlatform::DefaultPlatformType            PLATFORM;
-    typedef Tpetra::DefaultPlatform::DefaultPlatformType::NodeType  NODE;
-    typedef Tpetra::Map<ORDINALTYPE,ORDINALTYPE,NODE>               TPETRA_MAP;
+    typedef Tpetra::global_size_t                    TPETRA_GLOBAL_TYPE;
+    typedef Tpetra::Map<>                            TPETRA_MAP;
+    typedef typename TPETRA_MAP::global_ordinal_type TPETRA_GLOBAL_ORDINAL;
+    typedef Teuchos::Comm<int>                       TPETRA_COMM;
+    typedef Teuchos::MpiComm<int>                    TPETRA_MPICOMM;
     //@}
   
     
@@ -128,13 +131,15 @@ template<> class pMapGlobalManip<pMapItem>
     \param Map the input map
     \param tpetraMap the output map */
     void exportTpetraMap(const Teuchos::RCP<const MAP>  & Map,
-                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const;
+                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                         const UInt                     & base = 0) const;
     
     /*! Export the map to an \c Tpetra_Map
     \param Map the input map
     \param tpetraMap the output map */
     void exportTpetraMap(const MAP                      & Map,
-                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const;
+                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                         const UInt                     & base = 0) const;
     
     /*! Import the map from an \c Epetra_Map
     \param EpetraMap the input map 
@@ -202,10 +207,11 @@ template<> class pMapGlobalManip<pMapItemShare>
     typedef pMap<ITEM>    MAP;
     typedef pMap<pMapItemSendRecv> SENDRECV;
     
-    typedef int                                                     ORDINALTYPE;
-    typedef Tpetra::DefaultPlatform::DefaultPlatformType            PLATFORM;
-    typedef Tpetra::DefaultPlatform::DefaultPlatformType::NodeType  NODE;
-    typedef Tpetra::Map<ORDINALTYPE,ORDINALTYPE,NODE>               TPETRA_MAP;
+    typedef Tpetra::global_size_t                    TPETRA_GLOBAL_TYPE;
+    typedef Tpetra::Map<>                            TPETRA_MAP;
+    typedef typename TPETRA_MAP::global_ordinal_type TPETRA_GLOBAL_ORDINAL;
+    typedef Teuchos::Comm<int>                       TPETRA_COMM;
+    typedef Teuchos::MpiComm<int>                    TPETRA_MPICOMM;
     //@}
   
     
@@ -323,13 +329,15 @@ template<> class pMapGlobalManip<pMapItemShare>
     \param Map the input map
     \param tpetraMap the output map */
     void exportTpetraMap(const Teuchos::RCP<const MAP>  & Map,
-                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const;
+                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                         const UInt                     & base = 0) const;
     
     /*! Export the map to an \c Tpetra_Map
     \param Map the input map
     \param tpetraMap the output map */
     void exportTpetraMap(const MAP                      & Map,
-                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const;
+                         Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                         const UInt                     & base = 0) const;
     
     /*! Import the map from an \c Epetra_Map
     \param EpetraMap the input map 

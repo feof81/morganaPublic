@@ -1,0 +1,390 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef _TRAITSCGAL_H_
+#define _TRAITSCGAL_H_
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_segment_primitive.h>
+
+
+#include "mesh1d.hpp"
+#include "mesh2d.hpp"
+#include "mesh3d.hpp"
+
+#include "connect1d.hpp"
+#include "connect2d.hpp"
+#include "connect3d.hpp"
+
+using namespace std;
+
+
+//_________________________________________________________________________________________________
+// 3 DIMENSIONAL TRAITS
+//-------------------------------------------------------------------------------------------------
+
+/*! SubClass interface 3d for the use of CGAL - unspecialized, empty */
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder3d
+{ };
+
+
+/*! SubClass interface 3d for the use of CGAL - Linear tetra specialization */
+template<typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder3d<linearTetra,ELMAP,NODEMAP>
+{
+  public:
+    typedef mesh3d<linearTetra,ELMAP,NODEMAP>     MESH3D;
+    typedef connect3d<linearTetra,ELMAP,NODEMAP>  CONNECT3D;
+    typedef typename MESH3D::GEOELEMENT2D         GEOELEMENT2D;
+    
+    typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+    typedef CGAL_KER::Point_3             CGAL_POINT3D;
+    typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  public:
+    cgalTreeFeeder3d();
+    sVect<CGAL_TRIANGLE> feedCgal(const MESH3D & grid3d, const CONNECT3D & gridConnect3d);
+};
+
+template<typename ELMAP, typename NODEMAP>
+cgalTreeFeeder3d<linearTetra,ELMAP,NODEMAP>::
+cgalTreeFeeder3d()
+{ }
+
+template<typename ELMAP, typename NODEMAP>
+sVect<typename cgalTreeFeeder3d<linearTetra,ELMAP,NODEMAP>::CGAL_TRIANGLE >
+cgalTreeFeeder3d<linearTetra,ELMAP,NODEMAP>::
+feedCgal(const MESH3D & grid3d, const CONNECT3D & gridConnect3d)
+{
+  typedef typename set<GEOELEMENT2D>::iterator ITERATOR;
+  set<GEOELEMENT2D>    faceList;
+  sVect<CGAL_TRIANGLE> outList;
+  
+  //Find the local boundary faces
+  for(UInt i=1; i <= grid3d.getNumFaces(); ++i)
+  {
+    assert(gridConnect3d.getNumFaceToElement(i) != 0);
+    assert(gridConnect3d.getNumFaceToElement(i) <= 2);
+    
+    if(gridConnect3d.getNumFaceToElement(i) == 1)
+    {
+      faceList.insert(grid3d.getFaceL(i));
+    }
+  }
+  
+  //Create the list;
+  UInt id1, id2, id3;
+  point3d P1, P2, P3;
+  
+  outList.reserve(faceList.size());
+  
+  for(ITERATOR iter = faceList.begin(); iter != faceList.end(); ++iter)
+  {
+    id1 = iter->getCid(1);
+    id2 = iter->getCid(2);
+    id3 = iter->getCid(3);
+    
+    P1 = grid3d.getNodeL(id1);
+    P2 = grid3d.getNodeL(id2);
+    P3 = grid3d.getNodeL(id3);
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( P1.getX(), P1.getY(), P1.getZ() ),
+      CGAL_POINT3D( P2.getX(), P2.getY(), P2.getZ() ),
+      CGAL_POINT3D( P3.getX(), P3.getY(), P3.getZ() ) 
+                                    ));
+  }
+  
+  return(outList);
+}
+
+
+/*! SubClass interface 3d for the use of CGAL - Linear Hexa specialization */
+template<typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder3d<linearHexa,ELMAP,NODEMAP>
+{
+  public:
+    typedef mesh3d<linearHexa,ELMAP,NODEMAP>      MESH3D;
+    typedef connect3d<linearHexa,ELMAP,NODEMAP>   CONNECT3D;
+    typedef typename MESH3D::GEOELEMENT2D         GEOELEMENT2D;
+    
+    typedef CGAL::Simple_cartesian<Real>       CGAL_KER;
+    typedef CGAL_KER::Point_3                  CGAL_POINT3D;
+    typedef CGAL_KER::Triangle_3               CGAL_TRIANGLE;
+    
+  public:
+    cgalTreeFeeder3d();
+    sVect<CGAL_TRIANGLE> feedCgal(const MESH3D & grid3d, const CONNECT3D & gridConnect3d);
+};
+
+template<typename ELMAP, typename NODEMAP>
+cgalTreeFeeder3d<linearHexa,ELMAP,NODEMAP>::
+cgalTreeFeeder3d()
+{
+}
+
+template<typename ELMAP, typename NODEMAP>
+sVect<typename cgalTreeFeeder3d<linearHexa,ELMAP,NODEMAP>::CGAL_TRIANGLE >
+cgalTreeFeeder3d<linearHexa,ELMAP,NODEMAP>::
+feedCgal(const MESH3D & grid3d, const CONNECT3D & gridConnect3d)
+{
+  typedef typename set<GEOELEMENT2D>::iterator ITERATOR;
+  set<GEOELEMENT2D>    faceList;
+  sVect<CGAL_TRIANGLE> outList;  
+  
+  //Find the local boundary faces
+  for(UInt i=1; i <= grid3d.getNumFaces(); ++i)
+  {
+    assert(gridConnect3d.getNumFaceToElement(i) != 0);
+    assert(gridConnect3d.getNumFaceToElement(i) <= 2);
+    
+    if(gridConnect3d.getNumFaceToElement(i) == 1)
+    {
+      faceList.insert(grid3d.getFaceL(i));
+    }
+  }
+  
+  //Create the list
+  UInt id1, id2, id3, id4;
+  point3d P1, P2, P3, P4, B;
+  
+  outList.reserve(4 * faceList.size());
+  
+  for(ITERATOR iter = faceList.begin(); iter != faceList.end(); ++iter)
+  {
+    id1 = iter->getCid(1);
+    id2 = iter->getCid(2);
+    id3 = iter->getCid(3);
+    id4 = iter->getCid(4);
+    
+    P1 = grid3d.getNodeL(id1);
+    P2 = grid3d.getNodeL(id2);
+    P3 = grid3d.getNodeL(id3);
+    P4 = grid3d.getNodeL(id4);
+    
+    B = (P1 + P2 + P3 + P4) / 4.0;
+    
+    outList.push_back( CGAL_TRIANGLE(
+      CGAL_POINT3D( P1.getX(), P1.getY(), P1.getZ() ),
+      CGAL_POINT3D( P2.getX(), P2.getY(), P2.getZ() ),
+      CGAL_POINT3D(  B.getX(),  B.getY(),  B.getZ() )  ) );
+    
+    outList.push_back( CGAL_TRIANGLE(
+      CGAL_POINT3D( P2.getX(), P2.getY(), P2.getZ() ),
+      CGAL_POINT3D( P3.getX(), P3.getY(), P3.getZ() ),
+      CGAL_POINT3D(  B.getX(),  B.getY(),  B.getZ() )  ) );
+    
+    outList.push_back( CGAL_TRIANGLE(
+      CGAL_POINT3D( P3.getX(), P3.getY(), P3.getZ() ),
+      CGAL_POINT3D( P4.getX(), P4.getY(), P4.getZ() ),
+      CGAL_POINT3D(  B.getX(),  B.getY(),  B.getZ() )  ) );
+    
+    outList.push_back( CGAL_TRIANGLE(
+      CGAL_POINT3D( P4.getX(), P4.getY(), P4.getZ() ),
+      CGAL_POINT3D( P1.getX(), P1.getY(), P1.getZ() ),
+      CGAL_POINT3D(  B.getX(),  B.getY(),  B.getZ() )  ) );
+  }
+  
+  return(outList);
+}
+
+
+
+
+//_________________________________________________________________________________________________
+// 2 DIMENSIONAL TRAITS
+//-------------------------------------------------------------------------------------------------
+/*! SubClass interface 2d for the use of CGAL - unspecialized, empty */
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder2d
+{ };
+
+/*! SubClass interface 2d for the use of CGAL - Linear triangle specialization */
+template<typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder2d<linearTriangle,ELMAP,NODEMAP>
+{
+  public:
+    typedef mesh2d<linearTriangle,ELMAP,NODEMAP>     MESH2D;
+    typedef connect2d<linearTriangle,ELMAP,NODEMAP>  CONNECT2D;
+    
+    typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+    typedef CGAL_KER::Point_3             CGAL_POINT3D;
+    typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  public:
+    cgalTreeFeeder2d();
+    sVect<CGAL_TRIANGLE> feedCgal(const MESH2D & grid2d, const CONNECT2D & gridConnect2d);
+};
+
+template<typename ELMAP, typename NODEMAP>
+cgalTreeFeeder2d<linearTriangle,ELMAP,NODEMAP>::
+cgalTreeFeeder2d()
+{ }
+
+template<typename ELMAP, typename NODEMAP>
+sVect<typename cgalTreeFeeder2d<linearTriangle,ELMAP,NODEMAP>::CGAL_TRIANGLE >
+cgalTreeFeeder2d<linearTriangle,ELMAP,NODEMAP>::
+feedCgal(const MESH2D & grid2d, const CONNECT2D & gridConnect2d)
+{  
+  assert(&gridConnect2d == &gridConnect2d);
+  
+  //Create the list;
+  sVect<point3d> points;
+  sVect<CGAL_TRIANGLE> outList;
+  outList.reserve(grid2d.getNumElements());
+  
+  for(UInt i=1; i <= grid2d.getNumElements(); ++i)
+  {
+    points = grid2d.getElementNodesL(i);
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ) 
+                                    ));
+  }
+  
+  return(outList);
+}
+
+
+/*! SubClass interface 2d for the use of CGAL - Linear quad specialization */
+template<typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder2d<linearQuad,ELMAP,NODEMAP>
+{
+  public:
+    typedef mesh2d<linearQuad,ELMAP,NODEMAP>     MESH2D;
+    typedef connect2d<linearQuad,ELMAP,NODEMAP>  CONNECT2D;
+    
+    typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+    typedef CGAL_KER::Point_3             CGAL_POINT3D;
+    typedef CGAL_KER::Triangle_3          CGAL_TRIANGLE;
+    
+  public:
+    cgalTreeFeeder2d();
+    sVect<CGAL_TRIANGLE> feedCgal(const MESH2D & grid2d, const CONNECT2D & gridConnect2d);
+};
+
+template<typename ELMAP, typename NODEMAP>
+cgalTreeFeeder2d<linearQuad,ELMAP,NODEMAP>::
+cgalTreeFeeder2d()
+{ }
+
+template<typename ELMAP, typename NODEMAP>
+sVect<typename cgalTreeFeeder2d<linearQuad,ELMAP,NODEMAP>::CGAL_TRIANGLE >
+cgalTreeFeeder2d<linearQuad,ELMAP,NODEMAP>::
+feedCgal(const MESH2D & grid2d, const CONNECT2D & gridConnect2d)
+{ 
+  assert(&gridConnect2d == &gridConnect2d);
+  
+  //Create the list;
+  point3d B;
+  sVect<point3d> points;
+  sVect<CGAL_TRIANGLE> outList;
+  outList.reserve(4 * grid2d.getNumElements());
+  
+  for(UInt i=1; i <= grid2d.getNumElements(); ++i)
+  {
+    points = grid2d.getElementNodesL(i);
+    B = (points(1) + points(2) + points(3) + points(4)) / 4.0;
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() ) 
+                                    ));
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() ),
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() ) 
+                                    ));
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( points(3).getX(), points(3).getY(), points(3).getZ() ),
+      CGAL_POINT3D( points(4).getX(), points(4).getY(), points(4).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() ) 
+                                    ));
+    
+    outList.push_back(CGAL_TRIANGLE(
+      CGAL_POINT3D( points(4).getX(), points(4).getY(), points(4).getZ() ),
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D(         B.getX(),         B.getY(),         B.getZ() ) 
+                                    ));
+  }
+  
+  return(outList);
+}
+
+
+
+//_________________________________________________________________________________________________
+// 1 DIMENSIONAL TRAITS
+//-------------------------------------------------------------------------------------------------
+/*! SubClass interface 1d for the use of CGAL - unspecialized, empty */
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder1d
+{ };
+
+/*! SubClass interface 1d for the use of CGAL - Linear triangle specialization */
+template<typename ELMAP, typename NODEMAP>
+class cgalTreeFeeder1d<linearLine,ELMAP,NODEMAP>
+{
+  public:
+    typedef mesh1d<linearLine,ELMAP,NODEMAP>     MESH1D;
+    typedef connect1d<linearLine,ELMAP,NODEMAP>  CONNECT1D;
+    
+    typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+    typedef CGAL_KER::Point_3             CGAL_POINT3D;
+    typedef CGAL_KER::Segment_3           CGAL_SEGMENT;
+    
+  public:
+    cgalTreeFeeder1d();
+    sVect<CGAL_SEGMENT> feedCgal(const MESH1D & grid1d, const CONNECT1D & gridConnect1d);
+};
+
+template<typename ELMAP, typename NODEMAP>
+cgalTreeFeeder1d<linearLine,ELMAP,NODEMAP>::
+cgalTreeFeeder1d()
+{ }
+
+template<typename ELMAP, typename NODEMAP>
+sVect<typename cgalTreeFeeder1d<linearLine,ELMAP,NODEMAP>::CGAL_SEGMENT >
+cgalTreeFeeder1d<linearLine,ELMAP,NODEMAP>::
+feedCgal(const MESH1D & grid1d, const CONNECT1D & gridConnect1d)
+{
+  assert(&gridConnect1d == &gridConnect1d);
+  
+  //Create the list;
+  sVect<point3d> points;
+  sVect<CGAL_SEGMENT> outList;
+  outList.reserve(grid1d.getNumElements());
+  
+  for(UInt i=1; i <= grid1d.getNumElements(); ++i)
+  {
+    points = grid1d.getElementNodesL(i);
+    
+    outList.push_back( CGAL_SEGMENT(
+      CGAL_POINT3D( points(1).getX(), points(1).getY(), points(1).getZ() ),
+      CGAL_POINT3D( points(2).getX(), points(2).getY(), points(2).getZ() )
+		       ) );
+  }
+  
+  return(outList);
+}
+
+#endif

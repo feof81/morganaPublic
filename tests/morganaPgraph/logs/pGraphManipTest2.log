@@ -1,0 +1,22 @@
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 11
+ data: 
+Num Connected  : 3
+Connected Id's : 1 2 3 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 12
+ data: 
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+COL
+pid: 0 lid: 1 gid: 21
+pid: 0 lid: 2 gid: 22
+pid: 0 lid: 3 gid: 23
+pid: 0 lid: 4 gid: 24
+
+

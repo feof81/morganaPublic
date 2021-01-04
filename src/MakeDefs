@@ -1,42 +1,42 @@
 ####### Compiler, tools and options
-MORGANAINC = /home/avilla/Documenti/morganaPublic/src
-MORGANALIB = /home/avilla/Documenti/morganaPublic/lib
+MORGANAINC = /home/avilla/Documents/morgana/src
+MORGANALIB = /home/avilla/Documents/morgana/lib
 
-TRILINOSINC = /home/avilla/Documenti/trilinos-12.10.1-old/include
-TRILINOSLIB = /home/avilla/Documenti/trilinos-12.10.1-old/lib
+TRILINOSINC = /home/avilla/Documents/trilinos-release/include
+TRILINOSLIB = /home/avilla/Documents/trilinos-release/lib
 
-PARMETISINC = /home/avilla/Documenti/parmetis-4.0.3-old/include
-PARMETISLIB = /home/avilla/Documenti/parmetis-4.0.3-old/lib
+PARMETISINC = /home/avilla/Documents/parmetis-4.0.3-release/include
+PARMETISLIB = /home/avilla/Documents/parmetis-4.0.3-release/lib
 
-METISINC = /home/avilla/Documenti/metis-4.0.3-release/include
-METISLIB = /home/avilla/Documenti/metis-4.0.3-release/lib
+METISINC = /home/avilla/Documents/metis-4.0.3-release/include
+METISLIB = /home/avilla/Documents/metis-4.0.3-release/lib
 
-BOOSTINC = /home/avilla/Documenti/boost-1.65.1-old/include
-BOOSTLIB = /home/avilla/Documenti/boost-1.65.1-old/lib
+BOOSTINC = /home/avilla/Documents/boost-1.72.0-release/include
+BOOSTLIB = /home/avilla/Documents/boost-1.72.0-release/lib
 
-HDF5INC = /home/avilla/Documenti/hdf5-1.8.17-old/include
-HDF5LIB = /home/avilla/Documenti/hdf5-1.8.17-old/lib
+HDF5INC = /home/avilla/Documents/hdf5-1.10.6-release/include
+HDF5LIB = /home/avilla/Documents/hdf5-1.10.6-release/lib
 
-MUMPSINC = /home/avilla/Documenti/MUMPS_5.1.2/include
-MUMPSLIB = /home/avilla/Documenti/MUMPS_5.1.2/lib
+MUMPSINC = /home/avilla/Documents/MUMPS_5.3.5/include
+MUMPSLIB = /home/avilla/Documents/MUMPS_5.3.5/lib
 
-BLASINC = /home/avilla/Documenti/scalapack-2.1.0-old
-BLASLIB = /home/avilla/Documenti/scalapack-2.1.0-old
+BLASINC = /home/avilla/Documents/scalapack-2.1.0
+BLASLIB = /home/avilla/Documents/scalapack-2.1.0
 
-LAPACKINC = /home/avilla/Documenti/scalapack-2.1.0-old
-LAPACKLIB = /home/avilla/Documenti/scalapack-2.1.0-old
+LAPACKINC = /home/avilla/Documents/scalapack-2.1.0
+LAPACKLIB = /home/avilla/Documents/scalapack-2.1.0
 
-EXPRTK = /home/avilla/Documenti/exprtk
+EXPRTK = /home/avilla/Documents/exprtk
 
-SOPATH = /home/avilla/Documenti/boost-1.65.1-old/lib
-SOMPI  = /home/avilla/Documenti/openmpi-1.8.4-release/lib
-SOMKL  =
+SOPATH = /home/avilla/Documents/boost-1.72.0-release/lib
+SOMPI  = /home/avilla/Documents/openmpi-4.1.0-release/lib
+SOMKL  = /home/avilla/Documents/scalapack-2.1.0
 
 
 ####### Compile commands
-CC      = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpicc
-CXX     = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpic++
-LINK    = /home/avilla/Documenti/openmpi-1.8.4-release/bin/mpic++
+CC      = /home/avilla/Documents/openmpi-4.1.0-release/bin/mpicc
+CXX     = /home/avilla/Documents/openmpi-4.1.0-release/bin/mpic++
+LINK    = /home/avilla/Documents/openmpi-4.1.0-release/bin/mpic++
 LFLAGS  =
 LINKSO  = -Wl,-rpath,
 
@@ -69,19 +69,22 @@ LIBLIST = -lnoxlapack \
  -lifpack \
  -lamesos2 \
  -lamesos \
+ -ltacho \
  -laztecoo \
  -lzoltan \
  -lepetraext \
  -lepetra \
  -ltpetra \
+ -ltpetraclassic \
+ -ltpetraclassiclinalg \
  -ltpetraclassicnodeapi \
- -ltpetrakernels \
+ -ltpetrainout \
  -ltpetraext \
- -ltpi \
  -lthyracore \
  -lthyraepetra \
  -lthyraepetraext \
  -lrtop \
+ -ltrilinosss \
  -lteuchosremainder \
  -lteuchosnumerics \
  -lteuchoskokkoscompat \
@@ -92,6 +95,7 @@ LIBLIST = -lnoxlapack \
  -lkokkoscontainers \
  -lkokkostsqr \
  -lkokkoscore \
+ -lkokkoskernels \
  -ltriutils \
  -ldmumps \
  -lmumps_common \

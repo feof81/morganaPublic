@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   ROWMAP pItem;
   
   pGraph<ITEM,ROWMAP,COLMAP> newGraph;
-  pGraphGlobalManip<ITEM,ROWMAP,COLMAP> fixer(oldCommDev.rank());
+  pGraphGlobalManip<ITEM,ROWMAP,COLMAP> fixer;
   
   //Testing----------------------------------------------------------
   if(commActive)

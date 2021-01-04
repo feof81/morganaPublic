@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
       for(UInt i=1; i <= numEndNodes; ++i) { cout << branch->getEndNodeToIntNormal(i) << " "; } cout << endl;
                     
       cout << "getEndNodeToExtNodes : ";
-      for(UInt i=1; i <= numEndNodes; ++i) { cout << branch->getEndNodeToExtNodes(i) << " "; } cout << endl;
+      for(UInt i=1; i <= numEndNodes; ++i) { cout << branch->getEndNodeToExtNodeG(i) << " "; } cout << endl;
                     
       cout << "getNumEndNodeToExtElements : " << endl;
       for(UInt i=1; i <= numEndNodes; ++i)

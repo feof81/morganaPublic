@@ -1,0 +1,7 @@
+pid: 0 lid: 1 gid: 5
+pid: 0 lid: 2 gid: 6
+pid: 0 lid: 3 gid: 8
+
+is? 1
+lid: 3
+is? 0

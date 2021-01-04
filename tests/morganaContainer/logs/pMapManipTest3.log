@@ -1,0 +1,18 @@
+Segment: 1
+pid: 0 lid: 1 gid: 2
+pid: 0 lid: 2 gid: 4
+pid: 0 lid: 3 gid: 6
+
+--------------------
+
+Segment: 2
+pid: 0 lid: 4 gid: 8
+pid: 0 lid: 5 gid: 10
+
+--------------------
+
+Segment: 3
+pid: 0 lid: 6 gid: 15
+
+--------------------
+

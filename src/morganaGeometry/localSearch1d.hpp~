@@ -1,0 +1,590 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef LOCALSEARCH1D_H
+#define LOCALSEARCH1D_H
+
+#include "traitsCgal.hpp"
+#include "mesh1d.hpp"
+#include "geoMapSupport1d.hpp"
+#include "morganaTypes.hpp"
+#include "searchData.hpp"
+
+using namespace std;
+namespace mpi = boost::mpi;
+
+
+
+//_________________________________________________________________________________________________
+// SEARCHING CLASS
+//-------------------------------------------------------------------------------------------------
+
+/*! Local-serial search algorithm, 1d geometries */
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+class localSearch1d
+{
+  /*! @name Typedefs */ //@{
+  public:
+    typedef geoElement<GEOSHAPE>               GEOELEMENT1D;
+    typedef mesh1d<GEOSHAPE,ELMAP,NODEMAP>     MESH1D;
+    typedef connect1d<GEOSHAPE,ELMAP,NODEMAP>  CONNECT1D;
+    typedef searchData<ELMAP>                  SEARCHDATA;
+    
+    typedef CGAL::Simple_cartesian<Real>  CGAL_KER;
+    typedef CGAL_KER::Point_3             CGAL_POINT3D;
+    typedef CGAL_KER::Segment_3           CGAL_SEGMENT;
+    
+    typedef std::vector<CGAL_SEGMENT>::iterator                CGAL_ITER;
+    typedef CGAL::AABB_segment_primitive<CGAL_KER,CGAL_ITER>   CGAL_PRIMITIVE;
+    typedef CGAL::AABB_traits<CGAL_KER,CGAL_PRIMITIVE>         CGAL_TRAITS;
+    typedef CGAL::AABB_tree<CGAL_TRAITS>                       CGAL_TREE;
+    //@}
+  
+    /*! @name Internal flags */ //@{
+  public:
+    bool startupLocal;
+    bool meshLoaded;
+    //@}
+    
+    /*! @name Internal structures */ //@{
+  public:
+    geoMapSupport1d<GEOSHAPE> geoSupport1d;
+    UInt localQuery, numFeasibElements;
+    //@}
+    
+    /*! @name Local internal data */ //@{
+  public:
+    Real precision;                            //! precision H = meanH * precision
+    Real H;                                    //! net spacing
+    Real Xmax, Xmin, Ymax, Ymin, Zmax, Zmin;   //! coordinate of the bounding box 
+    Real Lx, Ly, Lz;                           //! bounding box size
+    UInt NCx, NCy, NCz;                        //! numbers of cells on the three axis
+    sVect<pGraphItem> cellToElement;           //! cell to element connectivity
+    CGAL_TREE cgalTree;                        //! the CGAL AABB tree
+    //@}
+    
+     /*! @name Links */ //@{
+  public:
+    Teuchos::RCP<const MESH1D>    grid1d;
+    Teuchos::RCP<const CONNECT1D> connectGrid1d;
+    //@}
+
+    /*! @name Constructor and setting functions */ //@{
+  public:
+    localSearch1d();
+    void setMesh1d(const Teuchos::RCP<const MESH1D> & Grid1d, const Teuchos::RCP<const CONNECT1D> & ConnectGrid1d);
+    void setMesh1d(const MESH1D & Grid1d, const CONNECT1D & ConnectGrid1d);
+    void setMesh(const Teuchos::RCP<const MESH1D> & Grid1d, const Teuchos::RCP<const CONNECT1D> & ConnectGrid1d);
+    void setMesh(const MESH1D & Grid1d, const CONNECT1D & ConnectGrid1d);
+    void setPrecision(const Real & Hrel);
+    const Real & getMaxH() const;
+    //@}
+    
+    /*! @name Internal local functions */ //@{
+  public:
+    /*! The cell lower bound w.r.t X */
+    UInt cellXmin(const point3d & P) const;
+    
+    /*! The cell lower bound w.r.t Y */
+    UInt cellYmin(const point3d & P) const;
+    
+    /*! The cell lower bound w.r.t Z */
+    UInt cellZmin(const point3d & P) const;
+    
+    /*! The cell upper bound w.r.t X */
+    UInt cellXmax(const point3d & P) const;
+    
+    /*! The cell upper bound w.r.t Y */
+    UInt cellYmax(const point3d & P) const;
+    
+    /*! The cell upper bound w.r.t Z */
+    UInt cellZmax(const point3d & P) const;
+    
+    /*! The cells can be identified by three indices but there is also a serialization
+     ix, iy, iz -> I where I is an index. This function provides such a serialization */
+    UInt cellIndex(const UInt & Ix, const UInt & Iy, const UInt & Iz) const;
+    
+    /*! The cells indices that are contained in the box defined by \c Pmin, \c Pmax */
+    sVect<UInt> getMatchingCells(const point3d & Pmin, const point3d & Pmax) const;
+    
+    /*! Find the list of the element in the box defined by \c Pmin and \c Pmax */
+    sVect<UInt> getMatchingElements(const point3d & Pmin, const point3d & Pmax) const;
+    
+    /*! Finds the elements that may be associated with the point \c P. */
+    sVect<UInt> getMatchingElements(const point3d & P) const;
+    //@}
+    
+    /*! @name Startup and search function */ //@{
+  public:
+    /*! Creates the elements bounding boxes and creates the grid. Each grid is associated to a number of elements. */
+    void localInit();
+    
+    /*! Given a set of matchingElements fids the nearest one in the list */
+    SEARCHDATA findLocal(const sVect<UInt> & matchingElements, const point3d & P);
+    
+    /*! Given a point \c P find the element \c Id and the local coordinates \c L such that the distance is minimum.
+    The distance is returned in \c D.
+    \return in this implementation is always true*/
+    SEARCHDATA findLocal(const point3d & P);
+    //@}
+    
+    /*! @name Printing functions */ //@{
+ public:
+    void printCells() const;
+    //@}
+};
+
+
+
+//_________________________________________________________________________________________________
+// CONSTRUCTORS AND SET FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+localSearch1d()
+{
+  assert(staticAssert<GEOSHAPE::nDim == 1>::returnValue);
+  
+  precision    = 1.0;
+  
+  startupLocal  = false;
+  meshLoaded    = false;
+  
+  localQuery        = 0;
+  numFeasibElements = 0;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+setMesh1d(const Teuchos::RCP<const MESH1D> & Grid1d, const Teuchos::RCP<const CONNECT1D> & ConnectGrid1d)
+{ 
+  grid1d        = Grid1d;
+  connectGrid1d = ConnectGrid1d;
+  meshLoaded    = true;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+setMesh1d(const MESH1D & Grid1d, const CONNECT1D & ConnectGrid1d)
+{
+  grid1d        = Teuchos::rcp(new MESH1D(Grid1d));
+  connectGrid1d = Teuchos::rcp(new CONNECT1D(ConnectGrid1d));
+  meshLoaded    = true;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+setMesh(const Teuchos::RCP<const MESH1D> & Grid1d, const Teuchos::RCP<const CONNECT1D> & ConnectGrid1d)
+{ 
+  grid1d        = Grid1d;
+  connectGrid1d = ConnectGrid1d;
+  meshLoaded    = true;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+setMesh(const MESH1D & Grid1d, const CONNECT1D & ConnectGrid1d)
+{
+  grid1d        = Teuchos::rcp(new MESH1D(Grid1d));
+  connectGrid1d = Teuchos::rcp(new CONNECT1D(ConnectGrid1d));
+  meshLoaded    = true;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+setPrecision(const Real & Hrel)
+{
+  precision = Hrel;
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+const Real &
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+getMaxH() const
+{
+  return(H);
+}
+
+
+
+//_________________________________________________________________________________________________
+// INTERNAL LOCAL FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellXmin(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getX() -Xmin -geoToll) / H) + 1, int(NCx)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellYmin(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getY() -Ymin -geoToll) / H) + 1, int(NCy)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellZmin(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getZ() -Zmin -geoToll) / H) + 1, int(NCz)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellXmax(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getX() -Xmin + geoToll) / H) + 1, int(NCx)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellYmax(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getY() -Ymin + geoToll) / H) + 1, int(NCy)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellZmax(const point3d & P) const
+{
+  assert(startupLocal);
+  return( max(min(int((P.getZ() -Zmin +geoToll) / H) + 1, int(NCz)), 1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+UInt
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+cellIndex(const UInt & Ix, const UInt & Iy, const UInt & Iz) const
+{
+  assert(startupLocal);
+  assert( (Ix + NCx * (Iy-1) + (NCx*NCy) * (Iz-1)) <= cellToElement.size());
+  
+  return( Ix + NCx * (Iy-1) + (NCx*NCy) * (Iz-1) );
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+sVect<UInt>
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+getMatchingCells(const point3d & Pmin, const point3d & Pmax) const
+{
+  assert(startupLocal);
+  
+  //Array
+  sVect<UInt> out;
+  
+  // Ricerca intervallo indici
+  UInt ixmin = cellXmin(Pmin); UInt iymin = cellYmin(Pmin); UInt izmin = cellZmin(Pmin);
+  UInt ixmax = cellXmax(Pmax); UInt iymax = cellYmax(Pmax); UInt izmax = cellZmax(Pmax);
+ 
+  // Ciclo costruzione indici
+  for(UInt ix = ixmin; ix <= ixmax; ++ix)
+  {
+    for(UInt iy = iymin; iy <= iymax; ++iy)
+    {
+      for(UInt iz = izmin; iz <= izmax; ++iz)
+      {
+	out.push_back(cellIndex(ix,iy,iz));
+      }
+    }
+  }
+  
+  return(out);
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+sVect<UInt>
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+getMatchingElements(const point3d & Pmin, const point3d & Pmax) const
+{
+  //Allocations 
+  UInt I;
+  set<UInt> temp;
+  sVect<UInt> out;
+  
+  // Ricerca intervallo indici
+  UInt ixmin = cellXmin(Pmin); UInt iymin = cellYmin(Pmin); UInt izmin = cellZmin(Pmin);
+  UInt ixmax = cellXmax(Pmax); UInt iymax = cellYmax(Pmax); UInt izmax = cellZmax(Pmax);
+  
+  // Ciclo costruzione indici
+  for(UInt ix = ixmin; ix <= ixmax; ++ix)
+  {
+    for(UInt iy = iymin; iy <= iymax; ++iy)
+    {
+      for(UInt iz = izmin; iz <= izmax; ++iz)
+      {
+	I = cellIndex(ix,iy,iz);
+	
+	for(UInt k=1; k <= cellToElement(I).size(); k++)
+	{
+	  temp.insert(cellToElement(I).getCid(k));
+	}
+      }
+    }
+  }
+  
+  //Copy to vector
+  typedef set<UInt>::iterator ITERATOR;
+  for(ITERATOR iter = temp.begin(); iter != temp.end(); iter++)
+  {
+    out.push_back(*iter);
+  }
+  
+  return(out);
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+sVect<UInt>
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+getMatchingElements(const point3d & P) const
+{
+  assert(startupLocal);
+  
+  //Indici cella
+  UInt ix = cellXmin(P);
+  UInt iy = cellYmin(P);
+  UInt iz = cellZmin(P); 
+  UInt I  = cellIndex(ix,iy,iz);
+  
+  return(cellToElement(I).getCids());
+}
+
+
+
+//_________________________________________________________________________________________________
+// STARTUP FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+localInit()
+{
+  startupLocal = true;
+  
+  
+  //! Allocations__________________________________________________________________________________
+  Real V, r;
+  point3d P, Pmin, Pmax;
+  sVect<UInt> indices;
+  
+  
+  //! Bounding box construction____________________________________________________________________
+  UInt id = grid1d->getElementL(1).getCid(1);
+  Xmax = grid1d->getNodeL(id).getX(); Xmin = grid1d->getNodeL(id).getX();
+  Ymax = grid1d->getNodeL(id).getY(); Ymin = grid1d->getNodeL(id).getY();
+  Zmax = grid1d->getNodeL(id).getZ(); Zmin = grid1d->getNodeL(id).getZ();
+  
+  H = 0.0;
+  
+  for(UInt i=1; i <= grid1d->getNumElements(); ++i)
+  {
+    for(UInt j=1; j <= grid1d->getElementL(i).size(); ++j)
+    {
+      id = grid1d->getElementL(i).getCid(j);
+      P  = grid1d->getNodeL(id);
+      
+      Xmax = max(P.getX(),Xmax);
+      Ymax = max(P.getY(),Ymax);
+      Zmax = max(P.getZ(),Zmax);
+      
+      Xmin = min(P.getX(),Xmin);
+      Ymin = min(P.getY(),Ymin);
+      Zmin = min(P.getZ(),Zmin);
+    }
+    
+    geoSupport1d.setPoints(grid1d->getElementNodesL(i));
+    V  = geoSupport1d.template volume<STANDARD,2>();
+    r  = pow((V/3.14) * (3.0/4.0), 1.0/3.0);
+    H += r;
+  }
+  
+  Lx = Xmax - Xmin;
+  Ly = Ymax - Ymin;
+  Lz = Zmax - Zmin;
+  
+  H /= Real(grid1d->getNumElements());
+  H *= precision;
+  
+  
+  //! Grid partitioning____________________________________________________________________________
+  NCx = max( int(Lx / H), 1);
+  NCy = max( int(Ly / H), 1);
+  NCz = max( int(Lz / H), 1); 
+  
+  cellToElement.clear();
+  cellToElement.resize(NCx * NCy * NCz);
+  
+
+  //! Assignment cell to element___________________________________________________________________
+  for(UInt i=1; i <= grid1d->getNumElements(); ++i)
+  {
+    id   = grid1d->getElementL(i).getCid(1);
+    Pmin = grid1d->getNodeL(id);
+    Pmax = grid1d->getNodeL(id);
+    
+    for(UInt j=1; j <= grid1d->getNumPoints(); ++j)
+    {
+      id = grid1d->getElementL(i).getCid(j);
+      P  = grid1d->getNodeL(id);
+      
+      Pmin.setX( min(P.getX(), Pmin.getX()) );
+      Pmin.setY( min(P.getY(), Pmin.getY()) );
+      Pmin.setZ( min(P.getZ(), Pmin.getZ()) );
+      
+      Pmax.setX( max(P.getX(), Pmax.getX()) );
+      Pmax.setY( max(P.getY(), Pmax.getY()) );
+      Pmax.setZ( max(P.getZ(), Pmax.getZ()) );
+    }
+    
+    indices = getMatchingCells(Pmin,Pmax);
+    
+    for(UInt k=1; k <= indices.size(); ++k)
+    {
+      cellToElement(indices(k)).push_back(i); 
+    }
+  }
+  
+  
+  //! CGAL feeding_________________________________________________________________________________
+  cgalTreeFeeder1d<GEOSHAPE,ELMAP,NODEMAP> cgalFeeder;
+  sVect<CGAL_SEGMENT> cgalList = cgalFeeder.feedCgal(*grid1d,*connectGrid1d);
+  
+  cgalTree.rebuild(cgalList.begin(),cgalList.end());
+  cgalTree.accelerate_distance_queries();
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+typename localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::SEARCHDATA
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+findLocal(const sVect<UInt> & matchingElements, const point3d & P)
+{
+  bool prjFlag;
+  UInt el;
+  point3d Pg, Y;
+  Real d = numeric_limits<Real>::infinity();
+  
+  SEARCHDATA outData;
+  outData.setDistance(d);
+  
+  for(UInt i=1; i <= matchingElements.size(); ++i)
+  {
+    el = matchingElements(i);    
+    
+    geoSupport1d.setPoints( grid1d->getElementNodesL(el) );
+    prjFlag = geoSupport1d.projection(P,Y);
+    assert(prjFlag);
+    
+    Pg = geoSupport1d.getPosition(grid1d->getElementNodesL(el), Y);
+    d  = point3d::norm2(Pg - P);
+       
+    if(d < outData.getDistance())
+    {
+      outData.setElMap(grid1d->getElements().getRowMapL(el)); 
+      outData.setLocCoord(Y);
+      outData.setDistance(d);
+      outData.setFound(true);
+    }
+  }
+  
+  return(outData);
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+typename localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::SEARCHDATA
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+findLocal(const point3d & P)
+{
+  assert(startupLocal);
+  localQuery++;
+  
+  //Find the matching elements
+  sVect<UInt> matchingElements = getMatchingElements(P);
+  
+  if(matchingElements.size() == 0)  //If the point is outside this is projected in the domain                                
+  {    
+    CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(), P.getY(), P.getZ()) );
+    matchingElements   = getMatchingElements( point3d(cgalQ.x(), cgalQ.y(), cgalQ.z()) );
+    
+    assert(matchingElements.size() > 0);
+    numFeasibElements += matchingElements.size();
+    
+    return( findLocal(matchingElements,P) );
+  }
+  else                             //If the search cell is not empy
+  {
+    SEARCHDATA outData = findLocal(matchingElements,P);
+    
+    if(outData.getDistance() <= geoToll)
+    {      
+      numFeasibElements += matchingElements.size();
+      return(outData);
+    }
+    else                          //If the distance is not zero a pojection attempt is carried out
+    {     
+      CGAL_POINT3D cgalQ = cgalTree.closest_point( CGAL_POINT3D(P.getX(), P.getY(), P.getZ()) );
+      matchingElements   = getMatchingElements( point3d(cgalQ.x(), cgalQ.y(), cgalQ.z()) );
+      
+      assert(matchingElements.size() > 0);
+      numFeasibElements += matchingElements.size();
+    
+      return( findLocal(matchingElements,P) );
+    }
+  }
+}
+
+
+//________________________________________________________________________________________________
+// PRINTING FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+localSearch1d<GEOSHAPE,ELMAP,NODEMAP>::
+printCells() const
+{
+  assert(startupLocal);
+  
+  cout << "Cell spacing: " << H << endl << endl;
+  
+  cout << "Bounding box " << endl;
+  cout << Xmin << " " << Ymin << " " << Zmin << endl;
+  cout << Xmax << " " << Ymax << " " << Zmax << endl << endl;
+  
+  cout << "Printing" << endl;
+    
+  for(UInt i=1; i <= cellToElement.size(); ++i)
+  {
+    cout << "Cell: " << i << endl;
+    cout << "Connect: " << cellToElement(i) << endl;
+  }
+
+}
+
+
+#endif

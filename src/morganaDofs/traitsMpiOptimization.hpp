@@ -52,7 +52,6 @@ namespace boost
     template<>
     struct is_mpi_datatype<komplex> : mpl::true_{ };
     
-    template<>
     template<size_t N>
     struct is_mpi_datatype<staticVector<N> > : mpl::true_{ };
   }

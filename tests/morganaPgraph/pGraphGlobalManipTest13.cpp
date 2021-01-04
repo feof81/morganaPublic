@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   
   pMap<COLMAP> colMap;
   pGraph<ITEM,ROWMAP,COLMAP> oldGraph;
-  pGraphGlobalManip<ITEM,ROWMAP,COLMAP> fixer(oldCommDev.rank());
+  pGraphGlobalManip<ITEM,ROWMAP,COLMAP> fixer;
   
   if(oldCommDev.rank() == 0)
   {

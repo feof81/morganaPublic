@@ -1,0 +1,70 @@
+%%% Direct product test %%%
+Real-Real: 4
+Real-Point2d: 2 4
+
+Real-Point3d: 2 4 2
+
+Real-Tensor2d: Tensor components
+2 4 
+4 6 
+
+
+Real-Tensor3d: Tensor components
+2 4 2 
+4 6 4 
+6 2 6 
+
+
+Real-StateVector: 2 4 
+
+Real-StateMatrix: 2 4 
+6 2 
+
+
+Real-StaticVector: 2 4 
+
+Point2d-Real: 2 4
+
+Point2d-Point2d: Tensor components
+1 2 
+2 4 
+
+
+Point3d-Real: 2 4 2
+
+Point3d-Point3d: Tensor components
+1 2 1 
+2 4 2 
+1 2 1 
+
+
+Tensor2d-Real: Tensor components
+2 4 
+4 6 
+
+
+Tensor3d-Real: Tensor components
+2 4 2 
+4 6 4 
+6 2 6 
+
+
+StateVector-Real: 2 4 
+
+StateMatrix-Real: 2 4 
+6 2 
+
+
+StaticVector-Real: 2 4 
+
+
+%%% Cross product test %%%
+Cross P2: 0 0 1
+
+Cross P3: 0 0 1
+
+
+%%% Scalar product test %%%
+Scalar - Real: 4
+Scalar - Point2d: 5
+Scalar - Point3d: 6

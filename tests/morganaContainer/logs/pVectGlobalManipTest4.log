@@ -1,0 +1,26 @@
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 1 owned 1
+ data: 1 -2 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 1 owned 1
+ data: -1 -1 -1
+
+
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 1 owned 0
+ data: 1 -2 0
+
+2
+ map:  pid: 1 lid: 2 gid: 2 shared: 1 owned 0
+ data: -1 -1 -1
+
+3
+ map:  pid: 1 lid: 3 gid: 3 shared: 0 owned 1
+ data: 0 0 1
+
+4
+ map:  pid: 1 lid: 4 gid: 4 shared: 0 owned 1
+ data: -1 -1 -1
+
+

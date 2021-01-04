@@ -1,0 +1,15 @@
+Process: 0 Size: 2
+Num Points : 2
+Nodes Id's : 
+Id: 1 6; Orient: 1
+Id: 2 7; Orient: 1
+
+
+Process: 1 Size: 2
+Num Points : 3
+Nodes Id's : 
+Id: 1 3; Orient: 1
+Id: 2 4; Orient: 0
+Id: 3 5; Orient: 1
+
+

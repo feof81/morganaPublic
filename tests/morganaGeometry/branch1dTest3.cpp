@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   typedef branch1d<GEOSHAPE1D,ELMAP,NODEMAP> BRANCH1D;
   
   //Loading----------------------------------------------------------
-  string meshFile = "./geometries/cadInterface/mignonBranch2.msh";
+  string meshFile = "./geometries/cadInterface/mignonBranch3.msh";
   
   INIT init(world);
   init.gmMesh_to_stdA(meshFile);
@@ -80,16 +80,16 @@ int main(int argc, char *argv[])
     if(k == world.rank())
     {
       cout << "Proc - " << k << "-------------------------------" << endl;
-      cout << "Mesh - nodes" << endl;
+      cout << "Mesh - nodes********************" << endl;
       cout << branch->getNodes() << endl;
       
-      cout << "Mesh - elements" << endl;
+      cout << "Mesh - elements*****************" << endl;
       cout << branch->getElements() << endl;
       
-      cout << "endNodes : " << endl;
+      cout << "endNodes************************" << endl;
       cout << branch->endNodes << endl;
       
-      cout << "bifurcation : " << endl;
+      cout << "bifurcation*********************" << endl;
       cout << branch->bifurcationNodes << endl;
       
       cout << endl << endl;

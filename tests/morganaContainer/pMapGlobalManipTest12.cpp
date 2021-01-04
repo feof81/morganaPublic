@@ -13,9 +13,6 @@ You should have received a copy of the GNU General Public License along with Mor
 
 
 #include <Kokkos_DefaultNode.hpp>
-
-#include "Tpetra_DefaultPlatform.hpp"
-#include "Tpetra_CrsMatrix.hpp"
 #include "Tpetra_Map.hpp"
 
 #include <cmath>
@@ -62,12 +59,7 @@ int main(int argc, char *argv[])
   
 
   //The Tpetra map
-  typedef int                                                     ORDINALTYPE;
-  typedef Tpetra::DefaultPlatform::DefaultPlatformType            PLATFORM;
-  typedef Tpetra::DefaultPlatform::DefaultPlatformType::NodeType  NODE;
-  typedef const Tpetra::Map<ORDINALTYPE,ORDINALTYPE,NODE>         TPETRA_MAP;
-  
-  PLATFORM & tpetraPlatform = Tpetra::DefaultPlatform::getDefaultPlatform();
+  typedef const Tpetra::Map<> TPETRA_MAP;
   RCP<TPETRA_MAP> tpetraMap;
   
   pMapGlobalManip<MAPITEM> manipulator(world);

@@ -1,0 +1,54 @@
+ROW
+1
+ map:  pid: 0 lid: 1 gid: 1
+ data: 
+Num Connected  : 3
+Connected Id's : 1 5 6 
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2
+ data: 
+Num Connected  : 3
+Connected Id's : 1 2 5 
+
+
+3
+ map:  pid: 0 lid: 3 gid: 3
+ data: 
+Num Connected  : 3
+Connected Id's : 2 4 5 
+
+
+4
+ map:  pid: 0 lid: 4 gid: 4
+ data: 
+Num Connected  : 3
+Connected Id's : 2 3 4 
+
+
+5
+ map:  pid: 0 lid: 5 gid: 5
+ data: 
+Num Connected  : 3
+Connected Id's : 7 3 2 
+
+
+6
+ map:  pid: 0 lid: 6 gid: 6
+ data: 
+Num Connected  : 3
+Connected Id's : 7 8 3 
+
+
+COL
+pid: 0 lid: 1 gid: 1
+pid: 0 lid: 2 gid: 2
+pid: 0 lid: 3 gid: 3
+pid: 0 lid: 4 gid: 4
+pid: 0 lid: 5 gid: 5
+pid: 0 lid: 6 gid: 6
+pid: 0 lid: 7 gid: 7
+pid: 0 lid: 8 gid: 8
+
+

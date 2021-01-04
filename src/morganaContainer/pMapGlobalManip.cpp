@@ -14,6 +14,9 @@ You should have received a copy of the GNU General Public License along with Mor
 
 #include "pMapGlobalManip.h"
 
+using Teuchos::Array;
+using Teuchos::ArrayView;
+
 
 //_________________________________________________________________________________________________
 // PMAPITEM
@@ -251,32 +254,37 @@ exportEpetraMap(const MAP                & Map,
 void
 pMapGlobalManip<pMapItem>::
 exportTpetraMap(const Teuchos::RCP<const MAP>  & Map,
-                Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const
+                Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                const UInt                     & base) const
 {
   assert(commDevLoaded);
   assert(Map.total_count() > 0);
-  exportTpetraMap(*Map,tpetraMap);
+  exportTpetraMap(*Map,tpetraMap,base);
 }
     
 void
 pMapGlobalManip<pMapItem>::
 exportTpetraMap(const MAP                      & Map,
-                Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const
+                Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                const UInt                     & base) const
 {
   assert(commDevLoaded);
   
-  const Teuchos::RCP<const Teuchos::Comm<int> > tpetraComm = Teuchos::rcp(new Teuchos::MpiComm<int> (*commDev));
+  const Teuchos::RCP<const TPETRA_COMM> tpetraComm = Teuchos::rcp(new TPETRA_MPICOMM(*commDev));
   
-  std::vector<ORDINALTYPE> tpetraGids(Map.size());
-  
+  std::vector<TPETRA_GLOBAL_ORDINAL> tpetraGids(Map.size());
   for(UInt i=1; i <= Map.size(); ++i)
-  {
-    tpetraGids[i-1] = Map(i).getGid() - 1;
-  }
+  { tpetraGids[i-1] = Map(i).getGid() - 1; }
   
-  Teuchos::ArrayView<const ORDINALTYPE> teuchosArray(tpetraGids);
+  Teuchos::ArrayView<const TPETRA_GLOBAL_ORDINAL> teuchosArray(tpetraGids);
   
-  tpetraMap = Tpetra::createNonContigMap<ORDINALTYPE,ORDINALTYPE>(teuchosArray,tpetraComm);
+  
+  TPETRA_GLOBAL_TYPE indexBase = base;
+  TPETRA_GLOBAL_TYPE globSize = Teuchos::OrdinalTraits<TPETRA_GLOBAL_TYPE>::invalid();
+  tpetraMap = Teuchos::RCP<TPETRA_MAP>(new TPETRA_MAP(globSize,
+                                                      teuchosArray,
+                                                      indexBase,
+                                                      tpetraComm));
 }
 
 void
@@ -334,7 +342,7 @@ importTpetraMap(const Teuchos::RCP<const TPETRA_MAP> & TpetraMap,
   Map->reserve(TpetraMap->getNodeNumElements());
   
   //Downloading
-  Teuchos::ArrayView<const ORDINALTYPE> newArray = TpetraMap->getNodeElementList();
+  Teuchos::ArrayView<const TPETRA_GLOBAL_ORDINAL> newArray = TpetraMap->getNodeElementList();
   
   for(UInt i=1; i <= newArray.size(); ++i)
   {
@@ -343,7 +351,7 @@ importTpetraMap(const Teuchos::RCP<const TPETRA_MAP> & TpetraMap,
     item.setGid(newArray[i-1] + 1);
     
     Map->push_back(item);
-  } 
+  }
 }
 
 void
@@ -1120,9 +1128,7 @@ exportEpetraMap(const MAP                & Map,
   
   //Renumbering
   for(int i=1; i <= numMyElements; ++i)
-  {
-    MyGlobalElements[i-1] = Map.get(i).getGid() -1 + base;
-  }
+  { MyGlobalElements[i-1] = Map.get(i).getGid() -1 + base; }
   
   //Build map
   epetraMap = Teuchos::rcp(new Epetra_Map(-1,numMyElements,MyGlobalElements,base,epetraComm));
@@ -1131,32 +1137,37 @@ exportEpetraMap(const MAP                & Map,
 void
 pMapGlobalManip<pMapItemShare>::
 exportTpetraMap(const Teuchos::RCP<const MAP>  & Map,
-                Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const
+                Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                const UInt                     & base) const
 {
   assert(commDevLoaded);
   assert(Map.total_count() > 0);
-  exportTpetraMap(*Map,tpetraMap);
+  exportTpetraMap(*Map,tpetraMap,base);
 }
     
 void
 pMapGlobalManip<pMapItemShare>::
 exportTpetraMap(const MAP                      & Map,
-                Teuchos::RCP<const TPETRA_MAP> & tpetraMap) const
-{
+                Teuchos::RCP<const TPETRA_MAP> & tpetraMap,
+                const UInt                     & base) const
+{  
   assert(commDevLoaded);
   
-  const Teuchos::RCP<const Teuchos::Comm<int> > tpetraComm = Teuchos::rcp(new Teuchos::MpiComm<int> (*commDev));
+  const Teuchos::RCP<const TPETRA_COMM> tpetraComm = Teuchos::rcp(new TPETRA_MPICOMM(*commDev));
   
-  std::vector<ORDINALTYPE> tpetraGids(Map.size());
-  
+  std::vector<TPETRA_GLOBAL_ORDINAL> tpetraGids(Map.size());
   for(UInt i=1; i <= Map.size(); ++i)
-  {
-    tpetraGids[i-1] = Map(i).getGid() - 1;
-  }
+  { tpetraGids[i-1] = Map(i).getGid() - 1; }
   
-  Teuchos::ArrayView<const ORDINALTYPE> teuchosArray(tpetraGids);
+  Teuchos::ArrayView<const TPETRA_GLOBAL_ORDINAL> teuchosArray(tpetraGids);
   
-  tpetraMap = Tpetra::createNonContigMap<ORDINALTYPE,ORDINALTYPE>(teuchosArray,tpetraComm);
+  
+  TPETRA_GLOBAL_TYPE indexBase = base;
+  TPETRA_GLOBAL_TYPE globSize = Teuchos::OrdinalTraits<TPETRA_GLOBAL_TYPE>::invalid();
+  tpetraMap = Teuchos::RCP<TPETRA_MAP>(new TPETRA_MAP(globSize,
+                                                      teuchosArray,
+                                                      indexBase,
+                                                      tpetraComm));
 }
 
 void
@@ -1210,7 +1221,7 @@ importTpetraMap(const Teuchos::RCP<const TPETRA_MAP> & TpetraMap,
   Map->reserve(TpetraMap->getNodeNumElements());
   
   //Downloading
-  Teuchos::ArrayView<const ORDINALTYPE> newArray = TpetraMap->getNodeElementList();
+  Teuchos::ArrayView<const TPETRA_GLOBAL_ORDINAL> newArray = TpetraMap->getNodeElementList();
   
   for(UInt i=1; i <= newArray.size(); ++i)
   {
@@ -1219,7 +1230,7 @@ importTpetraMap(const Teuchos::RCP<const TPETRA_MAP> & TpetraMap,
     item.setGid(newArray[i-1] + 1);
     
     Map->push_back(item);
-  } 
+  }
 }
 
 void

@@ -1,0 +1,141 @@
+%%%%% Real Trait %%%%%
+I: 1 J: 1
+Zero: 0
+
+Unity: 1
+
+Set Zero: 0
+
+IJ test
+I: 1 J: 1 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+
+
+%%%%% Point2d Trait %%%%%
+I: 2 J: 1
+Zero: 0 0
+
+Unity: 1 1
+
+Set Zero: 0 0
+
+IJ test
+I: 1 J: 1 Value: 1
+I: 2 J: 1 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+I: 2 J: 1 Value: 2
+
+
+%%%%% Point3d Trait %%%%%
+I: 3 J: 1
+Zero: 0 0 0
+
+Unity: 1 1 1
+
+Set Zero: 0 0 0
+
+IJ test
+I: 1 J: 1 Value: 1
+I: 2 J: 1 Value: 1
+I: 3 J: 1 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+I: 2 J: 1 Value: 2
+I: 3 J: 1 Value: 2
+
+
+%%%%% Tensor2d Trait %%%%%
+I: 2 J: 2
+Zero: Tensor components
+0 0 
+0 0 
+
+
+Unity: Tensor components
+1 1 
+1 1 
+
+
+Set Zero: Tensor components
+0 0 
+0 0 
+
+
+IJ test
+I: 1 J: 1 Value: 1
+I: 1 J: 2 Value: 1
+I: 2 J: 1 Value: 1
+I: 2 J: 2 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+I: 1 J: 2 Value: 2
+I: 2 J: 1 Value: 2
+I: 2 J: 2 Value: 2
+
+
+%%%%% Tensor3d Trait %%%%%
+I: 3 J: 3
+Zero: Tensor components
+0 0 0 
+0 0 0 
+0 0 0 
+
+
+Unity: Tensor components
+1 1 1 
+1 1 1 
+1 1 1 
+
+
+Set Zero: Tensor components
+0 0 0 
+0 0 0 
+0 0 0 
+
+
+IJ test
+I: 1 J: 1 Value: 1
+I: 1 J: 2 Value: 1
+I: 1 J: 3 Value: 1
+I: 2 J: 1 Value: 1
+I: 2 J: 2 Value: 1
+I: 2 J: 3 Value: 1
+I: 3 J: 1 Value: 1
+I: 3 J: 2 Value: 1
+I: 3 J: 3 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+I: 1 J: 2 Value: 2
+I: 1 J: 3 Value: 2
+I: 2 J: 1 Value: 2
+I: 2 J: 2 Value: 2
+I: 2 J: 3 Value: 2
+I: 3 J: 1 Value: 2
+I: 3 J: 2 Value: 2
+I: 3 J: 3 Value: 2
+
+
+%%%%% StaticVector Trait %%%%%
+I: 2 J: 1
+Zero: 0 0 
+
+Unity: 1 1 
+
+Set Zero: 0 0 
+
+IJ test
+I: 1 J: 1 Value: 1
+I: 2 J: 1 Value: 1
+
+Set IJ test 2.0
+I: 1 J: 1 Value: 2
+I: 2 J: 1 Value: 2
+
+

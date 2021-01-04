@@ -766,7 +766,6 @@ bool
 pGraph<ITEM,ROWMAP,COLMAP>::
 isRowG(const UInt & gid) const
 {
-  assert(PVECT::isG(gid));
   return(PVECT::isG(gid));
 }
 

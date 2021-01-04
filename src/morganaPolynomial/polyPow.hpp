@@ -137,9 +137,9 @@ struct polyDerIter
   {
     return(polyDerIter<SON,dx,dy,dz,S-1>::eval(P) +
     POLYCARD::C *
-    polyFactorial<dx>::eval(UInt(POLYCARD::Px)) * polyPosPow<POLYCARD::Px - dx>::eval(P.getX()) *
-    polyFactorial<dy>::eval(UInt(POLYCARD::Py)) * polyPosPow<POLYCARD::Py - dy>::eval(P.getY()) *
-    polyFactorial<dz>::eval(UInt(POLYCARD::Pz)) * polyPosPow<POLYCARD::Pz - dz>::eval(P.getZ()) );
+    polyFactorial<dx>::eval(UInt(POLYCARD::Px)) * polyPosPow<UInt(POLYCARD::Px - dx)>::eval(P.getX()) *
+    polyFactorial<dy>::eval(UInt(POLYCARD::Py)) * polyPosPow<UInt(POLYCARD::Py - dy)>::eval(P.getY()) *
+    polyFactorial<dz>::eval(UInt(POLYCARD::Pz)) * polyPosPow<UInt(POLYCARD::Pz - dz)>::eval(P.getZ()) );
   }
 };
 
@@ -149,9 +149,9 @@ struct polyDerIter<POLYCARD,dx,dy,dz,1>
   static Real eval(const point3d & P)
   {   
     return(POLYCARD::C *
-    polyFactorial<dx>::eval(UInt(POLYCARD::Px)) * polyPosPow<POLYCARD::Px - dx>::eval(P.getX()) *
-    polyFactorial<dy>::eval(UInt(POLYCARD::Py)) * polyPosPow<POLYCARD::Py - dy>::eval(P.getY()) *
-    polyFactorial<dz>::eval(UInt(POLYCARD::Pz)) * polyPosPow<POLYCARD::Pz - dz>::eval(P.getZ()) );
+    polyFactorial<dx>::eval(UInt(POLYCARD::Px)) * polyPosPow<UInt(POLYCARD::Px - dx)>::eval(P.getX()) *
+    polyFactorial<dy>::eval(UInt(POLYCARD::Py)) * polyPosPow<UInt(POLYCARD::Py - dy)>::eval(P.getY()) *
+    polyFactorial<dz>::eval(UInt(POLYCARD::Pz)) * polyPosPow<UInt(POLYCARD::Pz - dz)>::eval(P.getZ()) );
   }
 };
 

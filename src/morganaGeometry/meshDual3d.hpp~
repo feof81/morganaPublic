@@ -1,0 +1,345 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef MESHDUAL3D_HH_
+#define MESHDUAL3D_HH_
+
+#include "algorithm"
+
+#include "mesh3d.hpp"
+#include "connect3d.hpp"
+
+using namespace std;
+
+
+//_______________________________________________________________________________________________________
+// DUMMY IMPLEMENTATION
+//-------------------------------------------------------------------------------------------------------
+/*! General dummy implementation */
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+class meshDual3d
+{ };
+
+
+
+//_______________________________________________________________________________________________________
+// LINEAR TETRA SPECILIZATION
+//-------------------------------------------------------------------------------------------------------
+
+/*! Support class for the implementation of vertex-centered finite volume schemes. Every tetrahedra is decomposed in sub-cells and then aggregated to the mesh vertices.
+Also the interfaces between the cells are created.
+
+<b>Data</b>
+<ol>
+<li> dualPoints = the dual points: they are the union of the original grid vertices and of the barycentric nodes of the elements, of the faces and of the edges;
+<li> dualCells = the grid subcells. Every tetrahedra is divided into 4 x 6 subcelss. Every subcell is a tetrahedron. Every subcell is linked to a vertex of the 
+original tetrahedron, therefore each of the original 4 vertices of the tetrahedron has 6 subcells. Every subcell is built joining a vertex of the original 
+tetrahedron to: the element barycenter, the barycenter of a face and the barycenter of an edge (the face should be adjacent with the edge). Given the set of
+the nodes p1, p2, p3, p4 of the subcell the node p4 is a vertex of the original tetra and the remaining nodes are arranged so that [(p2-p1)^(p3-p1)] * (p1-p4) > 0; 
+<li> interfaces = the interfaces between the subcells. The finite volume method require the definition of interaces between cells. In our case the cell is the
+union of the subcells sharing a given vertex of the original mesh. In the tetra case the interfaces are made on triangles. Denoting with p1, p2, p3 the nodes
+of the interface the node p1 is on ad edge, the node p2 rests on a face and the node p3 is the barycenter of the element.
+</ol>
+
+<b>Connectivity data</b>
+<ol>
+<li> subCellToElement: the connectivity of the subCells to the father element;
+<li> subCellToNode: the connetivity of the subCell to a node;
+<li> interfaceToEdge: the connectivity of the interface to the edge;
+</ol>
+  
+<b>Finite volume data</b>
+<ol>
+<li> cellVolume: the volume of the cell;
+<li> edgeN: the mean normal vector to the interface. The normal is obtained as a weighted normal vector of the nornals of the triangles that compose the interface.
+Every interface is associated to an edge.
+<li> edgeSurf: the surface of the interface
+</ol>
+*/
+template<typename ELMAP, typename NODEMAP>
+class meshDual3d<linearTetra,ELMAP,NODEMAP>
+{
+    /*! @name Typedefs */ //@{
+  public:
+    typedef linearTetra             GEOSHAPE3D;
+    typedef linearTetra::GEOBSHAPE  GEOSHAPE2D;
+    typedef GEOSHAPE2D::GEOBSHAPE   GEOSHAPE1D;
+    typedef geoElement<GEOSHAPE3D>  GEOELEMENT3D;
+    typedef geoElement<GEOSHAPE2D>  GEOELEMENT2D;
+    typedef geoElement<GEOSHAPE1D>  GEOELEMENT1D;
+    
+    typedef mesh3d<GEOSHAPE3D,ELMAP,NODEMAP>    MESH3D;
+    typedef connect3d<GEOSHAPE2D,ELMAP,NODEMAP> CONNECT3D;
+    
+    typedef pVect<point3d,NODEMAP>              NODESVECT;
+    typedef pGraph<GEOELEMENT3D,ELMAP,NODEMAP>  GRAPH3D;
+    typedef pGraph<GEOELEMENT2D,ELMAP,NODEMAP>  GRAPH2D;
+    
+    typedef pVect<Real,ELMAP>       CELLVOLUMESVECT;
+    typedef pVect<point3d,ELMAP>    EDGENSVECT;
+    typedef pVect<Real,ELMAP>       EDGESSURFVECT;
+    
+    typedef pVect<UInt,ELMAP>       SUBCELL_TO_ELEMENT;
+    typedef pVect<UInt,ELMAP>       SUBCELL_TO_NODE;
+    typedef pVect<UInt,ELMAP>       INTERFACE_TO_EDGE;
+    //@}
+      
+    /*! @name Internal flags */ //@{ 
+  public:
+    bool commDevLoaded;
+    bool grid3dLoaded;
+    bool connectGrid3dLoaded;
+    bool connectCreated;
+    bool finiteVolumeCreated;
+    //@}
+      
+    /*! @name Links */ //@{
+  public:
+    RCP<communicator> commDev;
+    RCP<MESH3D>       grid3d;
+    RCP<CONNECT3D>    connectGrid3d;
+    //@}
+    
+    /*! @name Internal data */ //@{
+  public:
+    geoMapInterface<GEOSHAPE3D>  refShape3d;
+    NODESVECT dualPoints;
+    GRAPH3D   subCells;
+    GRAPH2D   interfaces;
+    //@}
+    
+     /*! @name Finite Volumes data */ //@{ 
+  public:
+    CELLVOLUMESVECT cellVolume;
+    EDGENSVECT      edgeN;
+    EDGESSURFVECT   edgeSurf;
+    //@}
+    
+    /*! @name Internal connectivity data */ //@{ 
+  public:
+    SUBCELL_TO_ELEMENT subCellToElement;
+    SUBCELL_TO_NODE    subcellToNode;  
+    INTERFACE_TO_EDGE  interfaceToEdge;
+    //@}
+    
+    /*! @name Constructors */ //@{ 
+  public:
+    meshDual3d();
+    meshDual3d(const RCP<communicator> & CommDev);
+    meshDual3d(communicator & CommDev);
+    void setMesh3d(const RCP<MESH3D> & Grid3d);
+    void setMesh3d(const MESH3D & Grid3d);
+    void setConnect3d(const RCP<CONNECT3D> & Connect3d);
+    void setConnect3d(const CONNECT3D & Connect3d);
+    //@}
+    
+    /*! @name Funzioni interne e buildup */ //@{ 
+  public:    
+    /*! The dual nodes is the union of the original nodes + the elements barycentric nodes + the faces barycentric nodes + the edges ones.
+    Given the id of a geoItem (such as an element, face, etc) this function produces the local id of the dual node associated.
+    \param flag = 1 the original vertices, = 2 the element barycenter, = 3 the face one, = 4 the edge one
+    \param lid the local numbering of the geoItem (such as an element, face, etc) */
+    UInt getLocalNodeId(const UInt & flag, const UInt & lid) const;
+      
+    /*! Build dual mesh */
+    void buildDualMesh();
+      
+    /*! Build finite volume data */
+    void buildFiniteVolumeData();
+      
+    /*! Clear the finite volume data only */
+    void clearFiniteVolume();
+      
+    /*! Clear all the data */
+    void clear();     
+    //@}
+      
+    /*! @name Get numbers */ //@{ 
+  public:
+    const UInt & getNumDualPoints() const;
+    const UInt & getNumSubCells() const;
+    const UInt & getNumInterfaces() const;
+    //@}
+      
+    /*! @name Get numbers connect */ //@{ 
+  public:
+    const UInt & getNumSubCellToElement() const;
+    const UInt & getNumSubCellToNode() const;
+    const UInt & getNumInterfaceToEdge() const;
+    //@}
+    
+    /*! @name Get dual functions */ //@{
+  public:
+    const point3d      & getDualPoints(const UInt & i) const;
+    const GEOELEMENT3D & getSubCells(const UInt & i) const;
+    const GEOELEMENT2D & getinterfaces(const UInt & i) const;
+    //@}
+    
+     /*! @name Get dual connecting functions */ //@{
+  public:
+    const UInt & getSubCellToElement(const UInt & i, const UInt & j) const;
+    const UInt & getSubcellToNode(const UInt & i, const UInt & j) const;  
+    const UInt & getInterfaceToEdge(const UInt & i, const UInt & j) const;
+    //@}
+    
+    /*! @name Get finite volume functions */ //@{
+  public:
+    const Real    & getCellVolume(const UInt & i) const;
+    const point3d & getEdgeN(const UInt & i) const;
+    const Real    & getEdgeSurf(const UInt & i) const;
+    //@}
+    
+    /*! @name Dump internal arrays */ //@{ 
+  public:
+    const NODESVECT & getDualPoints() const;
+    const GRAPH3D   & getSubCells() const;
+    const GRAPH2D   & getInterfaces() const;
+    //@}
+      
+    /*! @name Dump internal connect arrays */ //@{ 
+  public:
+    const SUBCELL_TO_ELEMENT & getSubCellToElement() const;
+    const SUBCELL_TO_NODE    & getSubCellToNode() const;
+    const INTERFACE_TO_EDGE  & getInterfaceToEdge() const;
+    //@}
+};
+
+template<typename ELMAP, typename NODEMAP>
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+meshDual3d()
+{
+  assert(GEOSHAPE::nDim == 3);
+  
+  commDevLoaded       = false;
+  grid3dLoaded        = false;
+  connectGrid3dLoaded = false;
+  connectCreated      = false;
+  finiteVolumeCreated = false;
+}
+
+template<typename ELMAP, typename NODEMAP>
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+meshDual3d(const RCP<communicator> & CommDev)
+{
+  assert(GEOSHAPE::nDim == 3);
+  
+  commDevLoaded       = true;
+  grid3dLoaded        = false;
+  connectGrid3dLoaded = false;
+  connectCreated      = false;
+  finiteVolumeCreated = false;
+  
+  commDev = CommDev;
+}
+
+template<typename ELMAP, typename NODEMAP>
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+meshDual3d(communicator & CommDev)
+{
+  assert(GEOSHAPE::nDim == 3);
+  
+  commDevLoaded       = true;
+  grid3dLoaded        = false;
+  connectGrid3dLoaded = false;
+  connectCreated      = false;
+  finiteVolumeCreated = false;
+  
+  commDev = rcpFromRef(CommDev);
+}
+
+template<typename ELMAP, typename NODEMAP>
+void
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+setMesh3d(const RCP<MESH3D> & Grid3d)
+{
+  grid3dLoaded = true;
+  grid3d       = Grid3d;
+}
+
+template<typename ELMAP, typename NODEMAP>
+void
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+setMesh3d(const MESH3D & Grid3d)
+{
+  grid3dLoaded = true;
+  grid3d       = rcpFromRef(Grid3d);
+}
+
+template<typename ELMAP, typename NODEMAP>
+void
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+setConnect3d(const RCP<CONNECT3D> & Connect3d)
+{
+  connectGrid3dLoaded = true;
+  connectGrid3d       = Connect3d;
+}
+
+template<typename ELMAP, typename NODEMAP>
+void
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+setConnect3d(const CONNECT3D & Connect3d)
+{
+  connectGrid3dLoaded = true;
+  connectGrid3d       = rcpFromRef(Connect3d);
+}
+
+template<typename ELMAP, typename NODEMAP> 
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+getNodeId(const UInt & flag, const UInt & lid) const
+{ 
+  return( UInt(flag > 1) * grid3d->getNumNodes()
+        + UInt(flag > 2) * grid3d->getNumElements()
+        + UInt(flag > 3) * grid3d->getNumFaces()
+        + lid );
+}
+
+template<typename ELMAP, typename NODEMAP> 
+void
+meshDual3d<linearTetra,ELMAP,NODEMAP>::
+buildDualMesh()
+{
+  //Assert_________________________________________________________________________________________
+  assert(commDevLoaded);
+  assert(grid3dLoaded);
+  assert(connectGrid3dLoaded);
+  
+  connectCreated = true;
+  
+  
+  //Allocations____________________________________________________________________________________
+  UInt    id1, id2, id3, id4;
+  point3d P1, P2, P3, P4, PM;
+  
+  UInt numElements = grid3d->getNumElements();
+  UInt numFaces    = grid3d->getNumFaces();
+  UInt numEdges    = grid3d->getNumEdges();
+  
+  GEOELEMENT3D subCell(true);
+  sVect<UInt>  f(4), e(6), p(4);
+  UInt ba;
+  sVect<point3d> F(4), E(6), P(4);
+  point3d BA;
+  
+  Real test;
+  UInt no1, no2, edgeId;
+  
+  GEOELEMENT2D interface;
+  UInt numSubCells = 1;
+  UInt numInterfaces = 1;
+  UInt numPoints;
+  
+  
+  //Nodes construction_____________________________________________________________________________
+}
+
+#endif

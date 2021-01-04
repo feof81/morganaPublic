@@ -29,6 +29,7 @@ You should have received a copy of the GNU General Public License along with Mor
 #include "pVectManip.hpp"
 #include "pVectComm.hpp"
 
+#include "traitsBasic.h"
 #include "traitsMapItemFixer.hpp"
 
 
@@ -155,6 +156,14 @@ template<typename DATA> class pVectGlobalManip<DATA,pMapItem>
     \param Vect contains the data to send, then is cleared and loaded with the new data
     */
     Epetra_Map vectorLinear(PVECT & Vect);
+    
+    /*! AllReduce - the repeated elements are reduced */
+    template<typename OP>
+    void allReduce(Teuchos::RCP<PVECT> & Vect, OP op) const;
+    
+    /*! AllReduce - the repeated elements are reduced */
+    template<typename OP>
+    void allReduce(PVECT & Vect, OP op) const;
     //@}
     
     
@@ -752,6 +761,81 @@ vectorLinear(PVECT & Vect)
 }
 
 template<typename DATA>
+template<typename OP>
+void
+pVectGlobalManip<DATA,pMapItem>::
+allReduce(Teuchos::RCP<PVECT> & Vect, OP op) const
+{
+  allReduce(*Vect,op);
+}
+
+template<typename DATA>
+template<typename OP>
+void
+pVectGlobalManip<DATA,pMapItem>::
+allReduce(PVECT & Vect, OP op) const
+{
+  //Assert-----------------------------------------------------------
+  assert(commDevLoaded);
+  assert(check(Vect));
+  
+  //Typedef----------------------------------------------------------
+  typedef traitsBasic<DATA> TRAITS;
+  
+  //Normal distribution----------------------------------------------
+  pVectComm<DATA,pMapItem> pComm(commDev);
+  pComm.vectorNormal(Vect);
+  
+  //Perform the reduction--------------------------------------------
+  UInt gid;
+  UInt minGid = std::numeric_limits<UInt>::max();
+  UInt maxGid = 0;
+  
+  static const UInt numI = traitsBasic<DATA>::numI;
+  static const UInt numJ = traitsBasic<DATA>::numJ;
+  
+  for(UInt i=1; i <= Vect.size(); ++i)
+  {
+    minGid = std::min(minGid, Vect.getMapL(i).getGid());
+    maxGid = std::max(maxGid, Vect.getMapL(i).getGid());
+  }
+  
+  sVect<DATA> redVect(maxGid -minGid +1);
+  Real valueA, valueB, valueT;
+  
+  if(Vect.size() != 0)
+  {
+    gid = Vect.getMapL(1).getGid();
+    redVect(gid -minGid +1) = Vect(1);
+    
+    for(UInt i=2; i <= Vect.size(); ++i)
+    {
+      gid = Vect.getMapL(i).getGid();
+      
+      for(UInt I=1; I <= numI; ++I)
+      {
+        for(UInt J=1; J <= numJ; J++)
+        {
+          valueA = TRAITS::getIJ(I,J,redVect(gid -minGid +1));
+          valueB = TRAITS::getIJ(I,J,Vect(i));
+          valueT = op.operator()(valueA,valueB);
+          TRAITS::setIJ(I,J,valueT,redVect(gid -minGid +1));
+        }
+      }
+    }
+  }
+  
+  for(UInt i=1; i <= Vect.size(); ++i)
+  {
+    gid     = Vect.getMapL(i).getGid();
+    Vect(i) = redVect(gid -minGid +1);
+  }
+  
+  //Comm back--------------------------------------------------------
+  pComm.vectorPid(Vect);
+}
+
+template<typename DATA>
 void
 pVectGlobalManip<DATA,pMapItem>::
 reduceCommunicator(const bool                             & isActive,
@@ -913,8 +997,8 @@ template<typename DATA> class pVectGlobalManip<DATA,pMapItemShare>
     
     /*! Computes the minimum and maximum data */
     void dataMinMax(const PVECT & Vect,
-                           DATA & DataMin,
-                           DATA & DataMax);
+                          DATA & DataMin,
+                          DATA & DataMax);
     //@}
     
     
@@ -1007,6 +1091,14 @@ template<typename DATA> class pVectGlobalManip<DATA,pMapItemShare>
     \param Vect contains the data to send, then is cleared and loaded with the new data
     */
     Epetra_Map vectorLinear(PVECT & Vect);
+    
+    /*! AllReduce - the repeated elements are reduced */
+    template<typename OP>
+    void allReduce(Teuchos::RCP<PVECT> & Vect, OP op) const;
+    
+    /*! AllReduce - the repeated elements are reduced */
+    template<typename OP>
+    void allReduce(PVECT & Vect, OP op) const;
     //@}
     
     /*! @name Non-pending update */ //@{
@@ -2056,6 +2148,132 @@ vectorLinear(PVECT & Vect)
   //Return
   return(newMap_epetra);
 }
+
+template<typename DATA>
+template<typename OP>
+void
+pVectGlobalManip<DATA,pMapItemShare>::
+allReduce(Teuchos::RCP<PVECT> & Vect, OP op) const
+{
+  allReduce(*Vect,op);
+}
+    
+template<typename DATA>
+template<typename OP>
+void
+pVectGlobalManip<DATA,pMapItemShare>::
+allReduce(PVECT & Vect, OP op) const
+{
+  //Assert-----------------------------------------------------------
+  assert(commDevLoaded);
+  assert(check(Vect));
+  
+  //Typedef----------------------------------------------------------
+  typedef traitsBasic<DATA>          TRAITS;
+  typedef std::map<UInt,DATA>        STD_MAP;
+  typedef std::pair<UInt,DATA>       STD_PAIR;
+  typedef typename STD_MAP::iterator STD_ITER;
+  typedef std::pair<STD_ITER,bool>   STD_RET;
+  
+  //Create comm sub-vect---------------------------------------------
+  PVECT commVect;
+  
+  for(UInt i=1; i <= Vect.size(); ++i)
+  {
+    if(Vect.getMapL(i).getShared())
+    { 
+      commVect.push_back(Vect.getMapL(i),
+                         Vect.getDataL(i));
+    }
+  }
+  
+  commVect.updateFinder();
+  
+  //Normal distribution----------------------------------------------
+  pVectComm<DATA,pMapItemShare> pComm(commDev);
+  pComm.vectorNormal(commVect);
+  
+  //Perform the reduction--------------------------------------------
+  STD_MAP  stdMap;
+  STD_RET  stdRet;
+  STD_PAIR stdPair;
+  STD_ITER stdIter;
+  Real valueA, valueB, valueT;
+  UInt gid;
+  
+  static const UInt numI = traitsBasic<DATA>::numI;
+  static const UInt numJ = traitsBasic<DATA>::numJ;
+  
+  for(UInt i=1; i <= commVect.size(); ++i)
+  {
+    stdPair.first  = commVect.getMapL(i).getGid();
+    stdPair.second = commVect.getDataL(i);
+    
+    stdRet = stdMap.insert(stdPair);
+    
+    if(!stdRet.second)
+    {
+      stdIter = stdRet.first;
+      
+      for(UInt I=1; I <= numI; ++I)
+      {
+        for(UInt J=1; J <= numJ; J++)
+        {
+          valueA = TRAITS::getIJ(I,J,stdIter->second);
+          valueB = TRAITS::getIJ(I,J,commVect(i));
+          valueT = op.operator()(valueA,valueB);
+          TRAITS::setIJ(I,J,valueT,stdIter->second);
+        }
+      }
+    } 
+  }
+  
+  for(UInt i=1; i <= commVect.size(); ++i)
+  {
+    gid = commVect.getMapL(i).getGid();
+    assert(stdMap.count(gid));
+    
+    stdIter     = stdMap.find(gid);
+    commVect(i) = stdIter->second;
+  }
+  
+  //Comm back--------------------------------------------------------
+  pComm.vectorPid(commVect);
+  
+  //Insert in the original vector------------------------------------
+  for(UInt i=1; i <= commVect.size(); ++i)
+  {
+    gid = commVect.getMapL(i).getGid();
+    
+    assert(Vect.isG(gid));
+    Vect.getDataG(gid) = commVect(i);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //_________________________________________________________________________________________________
