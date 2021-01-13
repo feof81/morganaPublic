@@ -1,0 +1,45 @@
+LOADING FROM: ./tests/morganaMeshes/mignonQuad2dB.unv
+Read 2 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 10
+Elements 2d - global : 4
+
+El Card --------------------
+Nodes--------------------------------
+1 0 0
+
+2 0 0
+
+2 1 0
+
+1 1 0
+
+
+
+
+GlobalEval
+1
+0
+0
+0
+
+GlobalGradX
+-1
+1
+0
+0
+
+GlobalGradY
+-1
+0
+0
+1
+
+GlobalGradZ
+0
+0
+0
+0
+

@@ -1,0 +1,9 @@
+LOADING FROM: ./tests/morganaMeshes/mignonHexaB.unv
+Read 15 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 20
+Elements 3d - global : 4
+
+Val : 3

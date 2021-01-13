@@ -1,0 +1,43 @@
+NumBasis : 2
+DofCards
+GeoType : 4
+Level   : 1
+LocId   : 1
+
+GeoType : 4
+Level   : 2
+LocId   : 1
+
+
+Local eval  : 
+1
+0.5
+
+Local gradX : 
+0
+-1
+
+Local gradY : 
+0
+-0.5
+
+Local gradZ : 
+0
+0
+
+Global eval  : 
+1
+0.5
+
+Global gradX : 
+0
+-0.5
+
+Global gradY : 
+0
+1
+
+Global gradZ : 
+0
+0
+

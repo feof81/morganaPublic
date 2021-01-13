@@ -1,0 +1,102 @@
+Dof Cards ------------------
+1
+GeoType : 3
+Level   : 1
+LocId   : 1
+
+2
+GeoType : 3
+Level   : 1
+LocId   : 2
+
+3
+GeoType : 3
+Level   : 1
+LocId   : 3
+
+4
+GeoType : 3
+Level   : 1
+LocId   : 4
+
+LocEval
+0 0 -1
+
+0 -1 0
+
+0 0 0
+
+-1 0 0
+
+
+LocGradX
+1 0 0
+
+1 0 0
+
+1 0 0
+
+1 0 0
+
+
+LocGradY
+0 1 0
+
+0 1 0
+
+0 1 0
+
+0 1 0
+
+
+LocGradZ
+0 0 1
+
+0 0 1
+
+0 0 1
+
+0 0 1
+
+
+
+GlobalEval
+-0 -0 1
+
+-0 -1 -0
+
+-0 -0 -0
+
+-1 -0 -0
+
+
+GlobalGradX
+-1 0 0
+
+-1 0 0
+
+-1 0 0
+
+-1 0 0
+
+
+GlobalGradY
+0 -1 0
+
+0 -1 0
+
+0 -1 0
+
+0 -1 0
+
+
+GlobalGradZ
+0 0 -1
+
+0 0 -1
+
+0 0 -1
+
+0 0 -1
+
+

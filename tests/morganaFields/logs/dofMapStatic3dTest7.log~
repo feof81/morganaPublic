@@ -1,0 +1,68 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Dof Map 
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 1 owned 1
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+pid: 1 lid: 5 gid: 6 shared: 1 owned 0
+pid: 1 lid: 6 gid: 11 shared: 0 owned 1
+pid: 1 lid: 7 gid: 12 shared: 0 owned 1
+pid: 1 lid: 8 gid: 18 shared: 1 owned 0
+pid: 1 lid: 9 gid: 17 shared: 1 owned 1
+pid: 1 lid: 10 gid: 13 shared: 0 owned 1
+pid: 1 lid: 11 gid: 19 shared: 1 owned 0
+pid: 1 lid: 12 gid: 14 shared: 0 owned 1
+pid: 1 lid: 13 gid: 16 shared: 1 owned 1
+pid: 1 lid: 14 gid: 15 shared: 1 owned 1
+
+
+List Map
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 2 shared: 1 owned 1
+pid: 1 lid: 3 gid: 3 shared: 1 owned 1
+pid: 1 lid: 4 gid: 7 shared: 1 owned 1
+pid: 1 lid: 5 gid: 8 shared: 1 owned 1
+pid: 1 lid: 6 gid: 9 shared: 1 owned 1
+pid: 1 lid: 7 gid: 10 shared: 0 owned 1
+pid: 1 lid: 8 gid: 11 shared: 0 owned 1
+pid: 1 lid: 9 gid: 12 shared: 0 owned 1
+pid: 1 lid: 10 gid: 13 shared: 1 owned 0
+pid: 1 lid: 11 gid: 14 shared: 1 owned 0
+pid: 1 lid: 12 gid: 15 shared: 1 owned 0
+pid: 1 lid: 13 gid: 16 shared: 1 owned 0
+pid: 1 lid: 14 gid: 17 shared: 1 owned 0
+pid: 1 lid: 15 gid: 18 shared: 1 owned 0
+pid: 1 lid: 16 gid: 31 shared: 0 owned 1
+pid: 1 lid: 17 gid: 32 shared: 0 owned 1
+pid: 1 lid: 18 gid: 33 shared: 0 owned 1
+pid: 1 lid: 19 gid: 34 shared: 0 owned 1
+pid: 1 lid: 20 gid: 35 shared: 0 owned 1
+pid: 1 lid: 21 gid: 36 shared: 0 owned 1
+pid: 1 lid: 22 gid: 52 shared: 1 owned 0
+pid: 1 lid: 23 gid: 53 shared: 1 owned 0
+pid: 1 lid: 24 gid: 54 shared: 1 owned 0
+pid: 1 lid: 25 gid: 49 shared: 1 owned 1
+pid: 1 lid: 26 gid: 50 shared: 1 owned 1
+pid: 1 lid: 27 gid: 51 shared: 1 owned 1
+pid: 1 lid: 28 gid: 37 shared: 0 owned 1
+pid: 1 lid: 29 gid: 38 shared: 0 owned 1
+pid: 1 lid: 30 gid: 39 shared: 0 owned 1
+pid: 1 lid: 31 gid: 55 shared: 1 owned 0
+pid: 1 lid: 32 gid: 56 shared: 1 owned 0
+pid: 1 lid: 33 gid: 57 shared: 1 owned 0
+pid: 1 lid: 34 gid: 40 shared: 0 owned 1
+pid: 1 lid: 35 gid: 41 shared: 0 owned 1
+pid: 1 lid: 36 gid: 42 shared: 0 owned 1
+pid: 1 lid: 37 gid: 46 shared: 1 owned 1
+pid: 1 lid: 38 gid: 47 shared: 1 owned 1
+pid: 1 lid: 39 gid: 48 shared: 1 owned 1
+pid: 1 lid: 40 gid: 43 shared: 1 owned 1
+pid: 1 lid: 41 gid: 44 shared: 1 owned 1
+pid: 1 lid: 42 gid: 45 shared: 1 owned 1
+

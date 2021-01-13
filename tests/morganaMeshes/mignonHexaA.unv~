@@ -1,0 +1,517 @@
+    -1
+   151
+Untitled
+Untitled
+Femap with NX Nastran
+ 31-Jan-12  14:24:55        10        20         0
+     Never     Never
+Femap with NX Nastran
+ 31-Jan-12  14:24:55   10   21   10    0    0
+    -1
+    -1
+   180
+00 2000
+01 2001
+02 2002
+03 2003
+04 2004
+05 2005
+06 2006
+07 2007
+08 2008
+09 2009
+10 2010
+11 2011
+12 2012
+13 2013
+14 2014
+15 2015
+16 2016
+17 2017
+18 2018
+19 2019
+20 2020
+21 2021
+22 2022
+23 2023
+24 2024
+25 2025
+26 2026
+27 2027
+28 2028
+29 2029
+30 2030
+31 2031
+32 2032
+33 2033
+34 2034
+35 2035
+36 2036
+37 2037
+38 2038
+39 2039
+40 2040
+41 2041
+42 2042
+43 2043
+44 2044
+45 2045
+46 2046
+47 2047
+48 2048
+49 2049
+50 2050
+51 2051
+52 2052
+53 2053
+54 2054
+55 2055
+56 2056
+57 2057
+58 2058
+59 2059
+60 2060
+61 2061
+62 2062
+63 2063
+64 2064
+65 2065
+66 2066
+67 2067
+68 2068
+69 2069
+70 1970
+71 1971
+72 1972
+73 1973
+74 1974
+75 1975
+76 1976
+77 1977
+78 1978
+79 1979
+80 1980
+81 1981
+82 1982
+83 1983
+84 1984
+85 1985
+86 1986
+87 1987
+88 1988
+89 1989
+90 1990
+91 1991
+92 1992
+93 1993
+94 1994
+95 1995
+96 1996
+97 1997
+98 1998
+99 1999
+    -1
+    -1
+   164
+         7Inch (pound f)               2
+   3.93700787401574810E+1   2.24808943099710470E-1   1.80000000000000000E+0
+   4.59670000000000020E+2
+    -1
+    -1
+  1710
+================================================================================
+MATERIAL
+================================================================================
+         1  concrete (1)
+         0  LINE(S) OF TEXT
+         0  MATERIAL CLASS(ES)
+         0  MATERIAL ATTRIBUTE(S)
+         0  MATERIAL COMPONENT(S)
+         0  MATERIAL SPECIFICATION(S)
+--------------------------------------------------------------------------------
+         0  MATERIAL VARIABLE(S)
+--------------------------------------------------------------------------------
+        27  MATERIAL PROPERT(IES)
+--------------------------------------------------------------------------------
+MODULUS OF ELASTICITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+  2.10000000000000000E+10
+--------------------------------------------------------------------------------
+SHEAR MODULUS
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+POISSONS RATIO
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+CONSTANT
+   2.00000000000000010E-1
+--------------------------------------------------------------------------------
+COEFFICIENT OF THERMAL EXPANSION
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+COEFFICIENT OF THERMAL EXPANSION        1/RANKINE                               
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+THERMAL CONDUCTIVITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+CONDUCTIVITY                            LBF IN/IN/F/SEC                         
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+SPECIFIC HEAT
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+SPECIFIC HEAT                           LBF IN/(LBF SEC^2/IN)/F                 
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+HEAT GENERATION RATE
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+HEAT FLUX PER UNIT VOLUME               LBF IN/IN^3/SEC                         
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+MASS DENSITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+MASS DENSITY                            LBF SEC^2/IN^4                          
+CONSTANT
+   2.40000000000000000E+3
+--------------------------------------------------------------------------------
+STRUCTURAL ELEMENT DAMPING COEFFICIENT
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+THERMAL EXPANSION REFERENCE TEMPERATURE
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+TEMPERATURE                             FAHRENHEIT                              
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+ALLOWABLE STRESS IN TENSION X-DIR
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+ALLOWABLE STRESS IN COMPRESSION X-DIR 
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+ALLOWABLE STRESS IN TENSION Y-DIR
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+ALLOWABLE STRESS IN COMPRESSION Y-DIR 
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+ALLOWABLE IN-PLANE SHEAR STRESS
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+CONSTANT
+   0.00000000000000000E+0
+--------------------------------------------------------------------------------
+YIELD STRESS
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+PRESSURE                                POUND FORCE/INCH^2                      
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+CONVECTIVE FILM COEFFICIENT
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+CONVECTION COEFFICIENT                  LBF IN/IN^2/F/SEC                       
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+THERMAL CAPACITY PER UNIT AREA
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+THERMAL CAPACITY PER UNIT AREA          LBF IN/IN^2/F                           
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+SURFACE HEAT FLUX RATE
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+HEAT FLUX PER UNIT AREA                 LBF IN/IN^2/SEC                         
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+VISCOSITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+VISCOSITY                               LBF SEC^2/IN^2/SEC                      
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+COEFFICIENT OF FRICTION
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+AREA FACTOR
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+EMISSIVITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+ABSORPTIVITY
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+HEAT FLUX RATE
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+HEAT FLUX PER UNIT LENGTH               LBF IN/IN/SEC                           
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+INTERACTION TERM FOR TSAI-WU
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+SWELLING COEFFICIENT
+         1  VERSION NUMBER
+         0  LINE(S) OF TEXT
+DIMENSIONS AND UNITS:
+DIMENSIONLESS                           UNITLESS                                
+NULL_PROPERTY
+--------------------------------------------------------------------------------
+DEFAULT MATERIAL PROPERT(IES):
+MODULUS OF ELASTICITY                   VERSION :          1
+SHEAR MODULUS                           VERSION :          1
+POISSONS RATIO                          VERSION :          1
+COEFFICIENT OF THERMAL EXPANSION        VERSION :          1
+THERMAL CONDUCTIVITY                    VERSION :          1
+SPECIFIC HEAT                           VERSION :          1
+HEAT GENERATION RATE                    VERSION :          1
+MASS DENSITY                            VERSION :          1
+STRUCTURAL ELEMENT DAMPING COEFFICIENT  VERSION :          1
+THERMAL EXPANSION REFERENCE TEMPERATURE VERSION :          1
+ALLOWABLE STRESS IN TENSION X-DIR       VERSION :          1
+ALLOWABLE STRESS IN COMPRESSION X-DIR   VERSION :          1
+ALLOWABLE STRESS IN TENSION Y-DIR       VERSION :          1
+ALLOWABLE STRESS IN COMPRESSION Y-DIR   VERSION :          1
+ALLOWABLE IN-PLANE SHEAR STRESS         VERSION :          1
+YIELD STRESS                            VERSION :          1
+CONVECTIVE FILM COEFFICIENT             VERSION :          1
+THERMAL CAPACITY PER UNIT AREA          VERSION :          1
+SURFACE HEAT FLUX RATE                  VERSION :          1
+VISCOSITY                               VERSION :          1
+COEFFICIENT OF FRICTION                 VERSION :          1
+AREA FACTOR                             VERSION :          1
+EMISSIVITY                              VERSION :          1
+ABSORPTIVITY                            VERSION :          1
+HEAT FLUX RATE                          VERSION :          1
+INTERACTION TERM FOR TSAI-WU            VERSION :          1
+SWELLING COEFFICIENT                    VERSION :          1
+--------------------------------------------------------------------------------
+         1  REFERENCE ENTITIES
+         1  MATERIAL TYPES
+FEM                                     ISOTROPIC MATERIALS
+================================================================================
+    -1
+    -1
+  2420
+       100
+Untitled
+         1         0         8
+CS1
+   1.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+  -0.00000000000000000E+0   1.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0  -0.00000000000000000E+0   1.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         3         0        15
+Femap with NX Nastran Global Rectangular (3)
+   1.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+  -0.00000000000000000E+0   1.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0  -0.00000000000000000E+0   1.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         4         1        15
+Femap with NX Nastran Global Cylindrical (4)
+   1.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+  -0.00000000000000000E+0   1.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0  -0.00000000000000000E+0   1.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         5         2        15
+Femap with NX Nastran Global Spherical (5)
+   1.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+  -0.00000000000000000E+0   1.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0  -0.00000000000000000E+0   1.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+    -1
+    -1
+  2411
+         1         3         3         7
+                       0.                       0.                       0.
+         2         3         3         7
+                      0.8                       0.                       0.
+         3         3         3         7
+                      0.8                       1.                       0.
+         4         3         3         7
+                       0.                       1.                       0.
+         5         3         3         7
+                       0.                       0.                      0.5
+         6         3         3         7
+                      0.8                       0.                      0.5
+         7         3         3         7
+                      0.8                       1.                      0.5
+         8         3         3         7
+                       0.                       1.                      0.5
+         9         3         3         7
+                      1.6                       0.                       0.
+        10         3         3         7
+                      1.6                       1.                       0.
+        11         3         3         7
+                      1.6                       0.                      0.5
+        12         3         3         7
+                      1.6                       1.                      0.5
+    -1
+    -1
+  2431
+    -1
+    -1
+  2437
+         1       110         0
+aaa (1)
+    -1
+    -1
+   776
+    -1
+    -1
+  2412
+         1       115         1         1        15         8
+         1         2         3         4         5         6         7         8
+         2       115         1         1        15         8
+         2         9        10         3         6        11        12         7
+    -1
+    -1
+   748
+         1       115
+ 1.0000000E+0 0.0000000E+0 0.0000000E+0 0.0000000E+0 1.0000000E+0 0.0000000E+0
+         2       115
+ 1.0000000E+0 0.0000000E+0 0.0000000E+0 0.0000000E+0 1.0000000E+0 0.0000000E+0
+    -1
+    -1
+   757
+         1
+                    Vincoli (         1)
+         1         4 1 1 1 0 0 0
+         2         4 0 1 1 0 0 0
+         3         4 0 0 1 0 0 0
+         4         4 1 0 1 0 0 0
+         5         4 1 1 0 0 0 0
+         6         4 0 1 0 0 0 0
+         8         4 1 0 0 0 0 0
+         9         4 0 1 1 0 0 0
+        10         4 0 0 1 0 0 0
+        11         4 0 1 0 0 0 0
+    -1
+    -1
+   791
+         1         1
+Vincoli (1)
+         1         4 1 1 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         2         4 0 1 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         3         4 0 0 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         4         4 1 0 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         5         4 1 1 0 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         6         4 0 1 0 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         8         4 1 0 0 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+         9         4 0 1 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+        10         4 0 0 1 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+        11         4 0 1 0 0 0 0 0 7 0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+   0.00000000000000000E+0   0.00000000000000000E+0   0.00000000000000000E+0
+         0         0         0         0         0         0
+    -1
+    -1
+  2467
+    -1

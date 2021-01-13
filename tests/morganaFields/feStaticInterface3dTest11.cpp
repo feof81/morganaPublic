@@ -1,0 +1,113 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit3d.hpp"
+
+#include "feQr3d.hpp"
+#include "feRt0LT3d.hpp"
+#include "dofMapStatic3d.hpp"
+#include "elCardFeeder3d.hpp"
+#include "feStaticInterface3d.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+
+  assert(world.size() == 2);
+  
+  typedef pMapItemShare       PMAPTYPE;
+  typedef point3d             DOFTYPE;
+  typedef feQr3d<2,PMAPTYPE>  FETYPE;
+  
+  typedef typename FETYPE::GEOSHAPE  GEOSHAPE;
+  typedef typename FETYPE::FECARD    FECARD;
+  typedef typename FETYPE::ELCARD    ELCARD;
+  typedef typename FETYPE::DOFCARD   DOFCARD;
+  typedef typename meshInit3d<GEOSHAPE,PMAPTYPE,PMAPTYPE>::MESH3D MESH3D;
+  
+  string meshFile  = "../tests/morganaMeshes/mignonHexaB.unv";
+  string colorFile = "../tests/morganaMeshes/mignonHexaB_color.unv";
+  
+  meshInit3d<GEOSHAPE,PMAPTYPE,PMAPTYPE> init(world);
+  init.femap_to_stdA(meshFile, colorFile, false);
+  
+  
+  //Map test  
+  dofMapStatic3d_options mapOptions;
+  mapOptions.addGeoId(2);
+  
+  dofMapStatic3d<FETYPE,DOFTYPE,dms3d_vectMajor,dms3d_geoIdMode> dofMapper;
+  elCardFeeder3d<GEOSHAPE,PMAPTYPE>                              cardsFeeder(init.getGrid3d(),init.getConnectGrid3d());
+  feStaticInterface3d<FETYPE,DOFTYPE>                            interface;
+  
+  dofMapper.setCommunicator(world);
+  dofMapper.setGeometry(init.getGrid3d(), init.getConnectGrid3d());
+  dofMapper.setOptions(mapOptions);
+  dofMapper.startup();
+  
+  RCP<MESH3D>     grid3d = init.getGrid3d();
+  pMap<PMAPTYPE>  dofMap = dofMapper.getDofMap();
+  
+  FECARD  FeCard;
+  ELCARD  ElCard;
+  DOFCARD DofCard;
+  
+  UInt lid, gid;
+  bool flag = true;
+  
+  for(UInt i=1; i <= grid3d->getNumElements(); ++i)
+  {
+    ElCard = cardsFeeder.getCardLocal(i);
+    DofCard.setLocalElId(i);
+    
+    if(dofMapper.isActive(DofCard))
+    {
+      for(UInt j=1; j <= FETYPE::numBasis; ++j)
+      {
+	interface.setCards(FeCard,ElCard);
+	DofCard = interface.getDofCard(j);
+	DofCard.setLocalElId(i);
+	
+	lid = dofMapper.mapDofL(DofCard);
+	gid = dofMapper.mapDofG(DofCard);
+	
+	if(world.rank() == 0)
+	{ cout << "Lid " << lid << " gid " << gid << endl; }
+	
+	flag = flag & (lid == dofMap(lid).getLid());
+	flag = flag & (gid == dofMap(lid).getGid());
+      }
+    }
+  }
+  
+  cout << "Test: " << flag << endl;
+}

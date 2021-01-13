@@ -1,0 +1,531 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef FEDYNAMICFIELD1DGLOBALMANIP_HH_
+#define FEDYNAMICFIELD1DGLOBALMANIP_HH_
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "feDynamicField1d.hpp"
+
+using namespace std;
+
+
+//_________________________________________________________________________________________________
+// SERVO-SPECIALIZATION
+//-------------------------------------------------------------------------------------------------
+
+/*! Dynamic Field 1d Global Manipulator - empty general class  */
+template<typename PMAPTYPE, typename FETYPE, typename DOFTYPE, dmd1d_order ORDER = dmd1d_vectMajor, dmd1d_mode MODE = dmd1d_standard>
+class fdf1dGlobalManip;
+
+
+
+/*! Dynamic Field 3d Global Manipulator - \c pMapItem specialization */
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+class fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>
+{
+    /*! @name Typedefs */ //@{
+  public:
+    typedef pMapItem                                    PMAPTYPE;
+    typedef dofMapDynamic1d_options                     OPTIONS;
+    typedef feDynamicField1d<FETYPE,DOFTYPE,ORDER,MODE> FIELD;
+    typedef typename FIELD::MESH1D                      MESH1D;
+    typedef typename FIELD::CONNECT1D                   CONNECT1D;
+    typedef typename FIELD::DOFVECT                     DOFVECT;
+    typedef typename FETYPE::ELCARD                     ELCARD;
+    typedef typename FETYPE::FECARD                     FECARD;
+    typedef pVect<FECARD,PMAPTYPE>                      FECARDS;
+    //@}
+  
+    /*! @name Internal data and links */ //@{
+  public:
+    bool commDevLoaded;
+    Teuchos::RCP<communicator> commDev;
+    //@}
+    
+    /*! @name Constructors and set functions */ //@{
+  public:
+    fdf1dGlobalManip();
+    fdf1dGlobalManip(const Teuchos::RCP<communicator> & CommDev);
+    fdf1dGlobalManip(communicator & CommDev);
+    void setCommunicator(const Teuchos::RCP<communicator> & CommDev);
+    void setCommunicator(communicator & CommDev);
+    //@}
+    
+    /*! @name Operator functions */ //@{
+  public:
+    void changeGrid(const Teuchos::RCP<MESH1D> & newGrid, const Teuchos::RCP<CONNECT1D> & newConnect, const Teuchos::RCP<OPTIONS> & options, const Teuchos::RCP<FIELD> & Field) const;
+    void changeGrid(MESH1D & newGrid, CONNECT1D & newConnect, OPTIONS & options, FIELD & Field) const;
+    //@}
+};
+
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip()
+{
+  commDevLoaded = false;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip(const Teuchos::RCP<communicator> & CommDev)
+{
+  commDevLoaded = true;
+  commDev = CommDev;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip(communicator & CommDev)
+{
+  commDevLoaded = true;
+  commDev = Teuchos::rcpFromRef(CommDev);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+setCommunicator(const Teuchos::RCP<communicator> & CommDev)
+{
+  commDevLoaded = true;
+  commDev = CommDev;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+setCommunicator(communicator & CommDev)
+{
+  commDevLoaded = true;
+  commDev = Teuchos::rcpFromRef(CommDev);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+changeGrid(const Teuchos::RCP<MESH1D> & newGrid, const Teuchos::RCP<CONNECT1D> & newConnect, const Teuchos::RCP<OPTIONS> & options, const Teuchos::RCP<FIELD> & Field) const
+{
+  assert(commDevLoaded);
+  
+  //Create the new field
+  FIELD newField1d;
+  newField1d.setCommunicator(commDev);
+  newField1d.setGeometry(newGrid,newConnect);
+  newField1d.setOptions(options);
+  
+  //Remap the feCards
+  pMap<PMAPTYPE> newElMap = newGrid->getElements().getRowMap();
+  FECARDS         feCards = Field->getFeCards();
+  
+  pVectGlobalManip<FECARD,PMAPTYPE> feCardsManip(commDev);
+  feCardsManip.changeMap(feCards,newElMap);
+  
+  newField1d.setFeCards(feCards);
+  
+  //Startup
+  newField1d.startup();
+  
+  //New map - old vector
+  pMap<PMAPTYPE> newDofMap  = newField1d.getDofVect().getMapRef();
+  DOFVECT        oldDofVect = Field->getDofVect();
+  
+  //Cheking
+  pVectGlobalManip<DOFTYPE,PMAPTYPE> dofVectManip(commDev);
+  pMapGlobalManip<PMAPTYPE>          dofMapManip(commDev);
+  
+  assert(dofVectManip.sizeG(oldDofVect) == dofMapManip.sizeG(newDofMap));
+  
+  //New dofVector
+  dofVectManip.changeMap(oldDofVect,newDofMap);
+  
+  //Loading the new dofVector
+  newField1d.setDofVect(oldDofVect);
+  *Field = newField1d;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItem,FETYPE,DOFTYPE,ORDER,MODE>::
+changeGrid(MESH1D & newGrid, CONNECT1D & newConnect, OPTIONS & options, FIELD & Field) const
+{
+  assert(commDevLoaded);
+  
+  //Create the new field
+  FIELD newField1d;
+  newField1d.setCommunicator(commDev);
+  newField1d.setGeometry(newGrid,newConnect);
+  newField1d.setOptions(options);
+  
+  //Remap the feCards
+  pMap<PMAPTYPE> newElMap = newGrid.getElements().getRowMap();
+  FECARDS         feCards = Field.getFeCards();
+  
+  pVectGlobalManip<FECARD,PMAPTYPE> feCardsManip(commDev);
+  
+  assert(feCardsManip.check(feCards));
+  feCardsManip.changeMap(feCards,newElMap); 
+  
+  newField1d.setFeCards(feCards);  
+  
+  //Startup
+  newField1d.startup();
+  
+  //New map - old vector
+  pMap<PMAPTYPE> newDofMap  = newField1d.getDofVect().getMapRef();
+  DOFVECT        oldDofVect = Field.getDofVect();
+  
+  //Cheking
+  pVectGlobalManip<DOFTYPE,PMAPTYPE> dofVectManip(commDev);
+  pMapGlobalManip<PMAPTYPE>          dofMapManip(commDev);
+  
+  assert(dofVectManip.sizeG(oldDofVect) == dofMapManip.sizeG(newDofMap)); 
+  
+  //New dofVector
+  dofVectManip.changeMap(oldDofVect,newDofMap);  
+
+  //Loading the new dofVector
+  newField1d.setDofVect(oldDofVect);
+  Field = newField1d;
+}
+
+
+
+
+/*! Dynamic Field 3d Global Manipulator - \c pMapItemShare specialization */
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+class fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>
+{
+    /*! @name Typedefs */ //@{
+  public:
+    typedef pMapItemShare                               PMAPTYPE;
+    typedef feDynamicField1d<FETYPE,DOFTYPE,ORDER,MODE> FIELD;
+    typedef pMap<pMapItemSendRecv>                      SENDRECV;
+    typedef dofMapDynamic1d_options                     OPTIONS;
+    typedef typename FIELD::MESH1D                      MESH1D;
+    typedef typename FIELD::CONNECT1D                   CONNECT1D;
+    typedef typename FIELD::DOFVECT                     DOFVECT;
+    typedef typename FETYPE::ELCARD                     ELCARD;
+    typedef typename FETYPE::FECARD                     FECARD;
+    typedef pVect<FECARD,PMAPTYPE>                      FECARDS;
+    //@}
+  
+    /*! @name Internal data and links */ //@{
+  public:
+    bool commDevLoaded;
+    Teuchos::RCP<communicator> commDev;
+    //@}
+    
+    /*! @name Constructors and set functions */ //@{
+  public:
+    fdf1dGlobalManip();
+    fdf1dGlobalManip(const Teuchos::RCP<communicator> & CommDev);
+    fdf1dGlobalManip(communicator & CommDev);
+    void setCommunicator(const Teuchos::RCP<communicator> & CommDev);
+    void setCommunicator(communicator & CommDev);
+    //@}
+    
+    /*! @name Operator functions */ //@{
+  public:
+    void changeGrid(const Teuchos::RCP<MESH1D> & newGrid, const Teuchos::RCP<CONNECT1D> & newConnect, const Teuchos::RCP<OPTIONS> & options, const Teuchos::RCP<FIELD> & Field) const;
+    void changeGrid(MESH1D & newGrid, CONNECT1D & newConnect, OPTIONS & options, FIELD & Field) const;
+    void createSendRecvMap(const Teuchos::RCP<FIELD> & Field, Teuchos::RCP<SENDRECV> & mapSend, Teuchos::RCP<SENDRECV> & mapRecv) const;
+    void createSendRecvMap(const FIELD & Field, SENDRECV & mapSend, SENDRECV & mapRecv) const;
+    void updateData(const Teuchos::RCP<FIELD> & Field, const Teuchos::RCP<SENDRECV> & mapSend) const;
+    void updateData(FIELD & Field, SENDRECV & mapSend) const;
+    void updateData(const Teuchos::RCP<FIELD> & Field, const Teuchos::RCP<SENDRECV> & mapSend, const Teuchos::RCP<SENDRECV> & mapRecv) const;
+    void updateData(FIELD & Field, SENDRECV & mapSend, SENDRECV & mapRecv) const;
+    //@}
+};
+
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip()
+{
+  commDevLoaded = false;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip(const Teuchos::RCP<communicator> & CommDev)
+{
+  commDevLoaded = true;
+  commDev = CommDev;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+fdf1dGlobalManip(communicator & CommDev)
+{
+  commDevLoaded = true;
+  commDev = Teuchos::rcpFromRef(CommDev);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+setCommunicator(const Teuchos::RCP<communicator> & CommDev)
+{
+  commDevLoaded = true;
+  commDev = CommDev;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+setCommunicator(communicator & CommDev)
+{
+  commDevLoaded = true;
+  commDev = Teuchos::rcpFromRef(CommDev);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+changeGrid(const Teuchos::RCP<MESH1D> & newGrid, const Teuchos::RCP<CONNECT1D> & newConnect, const Teuchos::RCP<OPTIONS> & options, const Teuchos::RCP<FIELD> & Field) const
+{
+  assert(commDevLoaded);
+  assert(newGrid->getElements().colIsLocal());
+  
+  //Create the new field
+  FIELD newField1d;
+  newField1d.setCommunicator(commDev);
+  newField1d.setGeometry(newGrid,newConnect);
+  newField1d.setOptions(options);
+  
+  //Remap the feCards
+  pMap<PMAPTYPE> newElMap = newGrid->getElements().getRowMap();
+  FECARDS         feCards = Field->getFeCards();
+  
+  pVectGlobalManip<FECARD,PMAPTYPE> feCardsManip(commDev);
+  feCardsManip.changeMap(feCards,newElMap);
+  
+  newField1d.setFeCards(feCards);
+  
+  //Startup
+  newField1d.startup();
+  
+  //New map - old vector
+  pMap<PMAPTYPE> newDofMap  = newField1d.getDofVect().getMapRef();
+  DOFVECT        oldDofVect = Field->getDofVect();
+  
+  //Cheking
+  pVectGlobalManip<DOFTYPE,PMAPTYPE> dofVectManip(commDev);
+  pMapGlobalManip<PMAPTYPE>          dofMapManip(commDev);
+  
+  assert(dofVectManip.sizeG(oldDofVect) == dofMapManip.sizeG(newDofMap));
+  
+  //New dofVector
+  dofVectManip.changeMap(oldDofVect,newDofMap);
+  
+  //Loading the new dofVector
+  newField1d.setDofVect(oldDofVect);
+  *Field = newField1d;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+changeGrid(MESH1D & newGrid, CONNECT1D & newConnect, OPTIONS & options, FIELD & Field) const
+{
+  assert(commDevLoaded);
+  assert(newGrid.getElements().colIsLocal());
+  
+  //Create the new field
+  FIELD newField1d;
+  newField1d.setCommunicator(commDev);
+  newField1d.setGeometry(newGrid,newConnect);
+  newField1d.setOptions(options);
+  
+  //Remap the feCards
+  pMap<PMAPTYPE> newElMap = newGrid.getElements().getRowMap();
+  FECARDS         feCards = Field.getFeCards();
+  
+  pVectGlobalManip<FECARD,PMAPTYPE> feCardsManip(commDev);
+  
+  assert(feCardsManip.check(feCards));
+  feCardsManip.changeMap(feCards,newElMap); 
+  
+  newField1d.setFeCards(feCards);  
+  
+  //Startup
+  newField1d.startup();
+  
+  //New map - old vector
+  pMap<PMAPTYPE> newDofMap  = newField1d.getDofVect().getMapRef();
+  DOFVECT        oldDofVect = Field.getDofVect();
+  
+  //Cheking
+  pVectGlobalManip<DOFTYPE,PMAPTYPE> dofVectManip(commDev);
+  pMapGlobalManip<PMAPTYPE>          dofMapManip(commDev);
+  
+  assert(dofVectManip.sizeG(oldDofVect) == dofMapManip.sizeG(newDofMap)); 
+  
+  //New dofVector
+  dofVectManip.changeMap(oldDofVect,newDofMap);  
+
+  //Loading the new dofVector
+  newField1d.setDofVect(oldDofVect);
+  Field = newField1d;
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+createSendRecvMap(const Teuchos::RCP<FIELD> & Field, Teuchos::RCP<SENDRECV> & mapSend, Teuchos::RCP<SENDRECV> & mapRecv) const
+{
+  assert(commDevLoaded);
+  
+  pMapGlobalManip<PMAPTYPE> mapManipulator(commDev);
+  mapManipulator.createSendRecvMap(Field.getDofVect().getMapRcp(), mapSend, mapRecv);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+createSendRecvMap(const FIELD & Field, SENDRECV & mapSend, SENDRECV & mapRecv) const
+{
+  assert(commDevLoaded);
+  
+  pMapGlobalManip<PMAPTYPE> mapManipulator(commDev);
+  mapManipulator.createSendRecvMap(Field.getDofVect().getMapRef(), mapSend, mapRecv);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+updateData(const Teuchos::RCP<FIELD> & Field, const Teuchos::RCP<SENDRECV> & mapSend) const
+{
+  //Checks
+  assert(commDevLoaded);
+    
+  //Update the data
+  pVect<DOFTYPE,pMapItemShare> dofsVect = Field->getDofVect();
+  
+  pVectGlobalManip<DOFTYPE,pMapItemShare> manipulator(commDev);
+  manipulator.updateData(dofsVect,*mapSend);
+  
+  //Reload the dofs
+  Field.setDofVect(dofsVect);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+updateData(FIELD & Field, SENDRECV & mapSend) const
+{
+  //Checks
+  assert(commDevLoaded);
+  
+  //Update the data
+  pVect<DOFTYPE,pMapItemShare> dofsVect = Field.getDofVect();
+  
+  pVectGlobalManip<DOFTYPE,pMapItemShare> manipulator(commDev);
+  manipulator.updateData(dofsVect,mapSend);
+  
+  //Reload the dofs
+  Field.setDofVect(dofsVect);
+}
+ 
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+updateData(const Teuchos::RCP<FIELD> & Field, const Teuchos::RCP<SENDRECV> & mapSend, const Teuchos::RCP<SENDRECV> & mapRecv) const
+{
+  //Checks
+  assert(commDevLoaded);
+  pMapGlobalManip<pMapItemSendRecv> cheker(commDev);
+  cheker.check(mapSend,mapRecv);
+  
+  //Update the data
+  pVect<DOFTYPE,pMapItemShare> dofsVect = Field->getDofVect();
+  
+  pVectGlobalManip<DOFTYPE,pMapItemShare> manipulator(commDev);
+  manipulator.updateData(dofsVect,*mapSend,*mapRecv);
+  
+  //Reload the dofs
+  Field.setDofVect(dofsVect);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+void
+fdf1dGlobalManip<pMapItemShare,FETYPE,DOFTYPE,ORDER,MODE>::
+updateData(FIELD & Field, SENDRECV & mapSend, SENDRECV & mapRecv) const
+{
+  //Checks
+  assert(commDevLoaded);
+  pMapGlobalManip<pMapItemSendRecv> cheker(commDev);
+  cheker.check(mapSend,mapRecv);
+  
+  //Update the data
+  pVect<DOFTYPE,pMapItemShare> dofsVect = Field.getDofVect();
+  
+  pVectGlobalManip<DOFTYPE,pMapItemShare> manipulator(commDev);
+  manipulator.updateData(dofsVect,mapSend,mapRecv);
+  
+  //Reload the dofs
+  Field.setDofVect(dofsVect);
+}
+
+
+
+//_________________________________________________________________________________________________
+// SUMMARY CLASS
+//-------------------------------------------------------------------------------------------------
+
+/*! Interface class for the manipulation of Dynamic Field 1d */
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER = dmd1d_vectMajor, dmd1d_mode MODE = dmd1d_standard>
+class feDynamicField1dGlobalManip : public fdf1dGlobalManip<typename FETYPE::FETYPE_PMAPTYPE,FETYPE,DOFTYPE,ORDER,MODE>
+{
+     /*! @name Typedefs */ //@{
+  public:
+    typedef typename FETYPE::FETYPE_PMAPTYPE PMAPTYPE;
+    typedef feDynamicField1d<FETYPE,DOFTYPE,ORDER,MODE> FIELD;
+    typedef typename FETYPE::GEOSHAPE  GEOSHAPE;
+    //@}
+    
+    /*! @name Constructors */ //@{
+  public:
+    feDynamicField1dGlobalManip();
+    feDynamicField1dGlobalManip(const Teuchos::RCP<communicator> & CommDev);
+    feDynamicField1dGlobalManip(communicator & CommDev);
+    //@}
+};
+
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+feDynamicField1dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicField1dGlobalManip() : fdf1dGlobalManip<typename FETYPE::FETYPE_PMAPTYPE,FETYPE,DOFTYPE,ORDER,MODE>()
+{
+  assert(staticAssert<GEOSHAPE::nDim == 1>::returnValue);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+feDynamicField1dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicField1dGlobalManip(const Teuchos::RCP<communicator> & CommDev) : fdf1dGlobalManip<typename FETYPE::FETYPE_PMAPTYPE,FETYPE,DOFTYPE,ORDER,MODE>(CommDev)
+{
+  assert(staticAssert<GEOSHAPE::nDim == 1>::returnValue);
+}
+
+template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
+feDynamicField1dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicField1dGlobalManip(communicator & CommDev) : fdf1dGlobalManip<typename FETYPE::FETYPE_PMAPTYPE,FETYPE,DOFTYPE,ORDER,MODE>(CommDev)
+{
+  assert(staticAssert<GEOSHAPE::nDim == 1>::returnValue);
+}
+
+#endif

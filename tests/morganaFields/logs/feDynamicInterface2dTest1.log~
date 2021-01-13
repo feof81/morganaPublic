@@ -1,0 +1,30 @@
+LOADING FROM: ./tests/morganaMeshes/mignonQuad2dB.unv
+Read 2 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 10
+Elements 2d - global : 4
+
+Num basis
+6
+Indices
+49
+53
+57
+61
+65
+69
+
+Eval
+0 0 1
+
+GradX
+0 0 -5.55112e-16
+
+GradY
+0 0 -2.77556e-17
+
+GradZ
+0 0 0
+

@@ -1,0 +1,259 @@
+NumBasis : 20
+DofCards
+GeoType : 1
+Level   : 1
+LocId   : 1
+
+GeoType : 1
+Level   : 1
+LocId   : 2
+
+GeoType : 1
+Level   : 1
+LocId   : 3
+
+GeoType : 1
+Level   : 1
+LocId   : 4
+
+GeoType : 2
+Level   : 1
+LocId   : 1
+
+GeoType : 2
+Level   : 1
+LocId   : 2
+
+GeoType : 2
+Level   : 1
+LocId   : 3
+
+GeoType : 2
+Level   : 1
+LocId   : 4
+
+GeoType : 2
+Level   : 1
+LocId   : 5
+
+GeoType : 2
+Level   : 1
+LocId   : 6
+
+GeoType : 1
+Level   : 2
+LocId   : 1
+
+GeoType : 1
+Level   : 2
+LocId   : 2
+
+GeoType : 1
+Level   : 2
+LocId   : 3
+
+GeoType : 1
+Level   : 2
+LocId   : 4
+
+GeoType : 2
+Level   : 2
+LocId   : 1
+
+GeoType : 2
+Level   : 2
+LocId   : 2
+
+GeoType : 2
+Level   : 2
+LocId   : 3
+
+GeoType : 2
+Level   : 2
+LocId   : 4
+
+GeoType : 2
+Level   : 2
+LocId   : 5
+
+GeoType : 2
+Level   : 2
+LocId   : 6
+
+
+Local eval  : 
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0.5
+0
+0
+0
+0
+0
+0
+
+Local gradX : 
+1
+-1
+0
+0
+0
+0
+0
+-4
+4
+0
+0.5
+-0.5
+0
+0
+0
+0
+0
+-2
+2
+0
+
+Local gradY : 
+1
+0
+-1
+0
+0
+0
+0
+-4
+0
+4
+0.5
+0
+-0.5
+0
+0
+0
+0
+-2
+0
+2
+
+Local gradZ : 
+1
+0
+0
+3
+0
+0
+0
+-4
+0
+0
+0.5
+0
+0
+2.5
+0
+0
+0
+-2
+0
+0
+
+Global eval  : 
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0.5
+0
+0
+0
+0
+0
+0
+
+Global gradX : 
+1
+0
+-1
+0
+0
+0
+0
+-4
+0
+4
+0.5
+0
+-0.5
+0
+0
+0
+0
+-2
+0
+2
+
+Global gradY : 
+-1
+1
+-0
+0
+0
+0
+0
+4
+-4
+0
+-0.5
+0.5
+-0
+0
+0
+0
+0
+2
+-2
+0
+
+Global gradZ : 
+1
+0
+0
+3
+0
+0
+0
+-4
+0
+0
+0.5
+0
+0
+2.5
+0
+0
+0
+-2
+0
+0
+

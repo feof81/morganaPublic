@@ -1,0 +1,24 @@
+LOADING FROM: ./tests/morganaMeshes/mignonQuad2dB.unv
+Read 2 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 10
+Elements 2d - global : 4
+
+Dof Map Data
+numVertices   : 6 6
+numEdges      : 7 7
+numElements   : 2 2
+
+numVertexDofs : 6 6
+numEdgesDofs  : 0 0
+numVolumeDofs : 0 0
+
+numTotalDofs  : 6 6
+sizeList      : 18 18
+
+dofL  : 5
+dofG  : 5
+listL : 13
+listG : 13

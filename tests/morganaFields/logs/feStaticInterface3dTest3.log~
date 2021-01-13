@@ -1,0 +1,39 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Original Indices: 
+4
+1
+16
+13
+
+Original Eval: 
+0.7 0 0
+
+0.1 0 0
+
+0.1 0 0
+
+0.1 0 0
+
+
+Clone Indices: 
+4
+1
+16
+13
+
+Clone Eval: 
+0.7 0 0
+
+0.1 0 0
+
+0.1 0 0
+
+0.1 0 0
+
+

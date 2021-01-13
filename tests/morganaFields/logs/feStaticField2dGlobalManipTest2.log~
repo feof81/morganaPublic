@@ -1,0 +1,34 @@
+LOADING FROM: ./tests/morganaMeshes/mignonQuad2dB.unv
+Read 2 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 10
+Elements 2d - global : 4
+
+Dofs
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 3 shared: 0 owned 1
+ data: 2 0 0
+
+4
+ map:  pid: 0 lid: 4 gid: 4 shared: 0 owned 1
+ data: 0 1 0
+
+5
+ map:  pid: 0 lid: 5 gid: 5 shared: 0 owned 1
+ data: 1 1 0
+
+6
+ map:  pid: 0 lid: 6 gid: 6 shared: 0 owned 1
+ data: 2 1 0
+
+

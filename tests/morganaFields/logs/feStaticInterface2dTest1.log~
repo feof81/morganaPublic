@@ -1,0 +1,50 @@
+LOADING FROM: ./tests/morganaMeshes/mignon2dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 1d - global : 6
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+El Card --------------------
+Nodes--------------------------------
+0 0 0
+
+1 0 0
+
+1 1 0
+
+
+
+
+GlobalEval
+0 0 0
+
+1 1 0
+
+-0 -1 -0
+
+
+GlobalGradX
+1 0 0
+
+1 0 0
+
+-1 0 0
+
+
+GlobalGradY
+0 1 0
+
+0 1 0
+
+0 -1 0
+
+
+GlobalGradZ
+0 0 0
+
+0 0 0
+
+0 0 0
+
+

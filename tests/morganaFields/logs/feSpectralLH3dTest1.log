@@ -1,0 +1,36 @@
+Dof Cards ------------------
+GeoType : 4
+Level   : 1
+LocId   : 1
+
+GeoType : 4
+Level   : 2
+LocId   : 1
+
+GeoType : 4
+Level   : 3
+LocId   : 1
+
+GeoType : 4
+Level   : 4
+LocId   : 1
+
+GeoType : 4
+Level   : 5
+LocId   : 1
+
+GeoType : 4
+Level   : 6
+LocId   : 1
+
+GeoType : 4
+Level   : 7
+LocId   : 1
+
+GeoType : 4
+Level   : 8
+LocId   : 1
+
+
+local  : 1 0 0 0
+global : 1 0 0 0

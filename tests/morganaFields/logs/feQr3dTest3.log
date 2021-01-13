@@ -1,0 +1,369 @@
+Dof Cards ------------------
+1
+GeoType : 1
+Level   : 1
+LocId   : 1
+
+2
+GeoType : 1
+Level   : 1
+LocId   : 2
+
+3
+GeoType : 1
+Level   : 1
+LocId   : 3
+
+4
+GeoType : 1
+Level   : 1
+LocId   : 4
+
+5
+GeoType : 2
+Level   : 1
+LocId   : 1
+
+6
+GeoType : 2
+Level   : 1
+LocId   : 2
+
+7
+GeoType : 2
+Level   : 1
+LocId   : 3
+
+8
+GeoType : 2
+Level   : 1
+LocId   : 4
+
+9
+GeoType : 3
+Level   : 1
+LocId   : 1
+
+10
+GeoType : 2
+Level   : 1
+LocId   : 5
+
+11
+GeoType : 2
+Level   : 1
+LocId   : 6
+
+12
+GeoType : 2
+Level   : 1
+LocId   : 7
+
+13
+GeoType : 2
+Level   : 1
+LocId   : 8
+
+14
+GeoType : 3
+Level   : 1
+LocId   : 2
+
+15
+GeoType : 3
+Level   : 1
+LocId   : 3
+
+16
+GeoType : 3
+Level   : 1
+LocId   : 4
+
+17
+GeoType : 3
+Level   : 1
+LocId   : 5
+
+18
+GeoType : 4
+Level   : 1
+LocId   : 1
+
+19
+GeoType : 1
+Level   : 1
+LocId   : 5
+
+20
+GeoType : 1
+Level   : 1
+LocId   : 6
+
+21
+GeoType : 1
+Level   : 1
+LocId   : 7
+
+22
+GeoType : 1
+Level   : 1
+LocId   : 8
+
+23
+GeoType : 2
+Level   : 1
+LocId   : 9
+
+24
+GeoType : 2
+Level   : 1
+LocId   : 10
+
+25
+GeoType : 2
+Level   : 1
+LocId   : 11
+
+26
+GeoType : 2
+Level   : 1
+LocId   : 12
+
+27
+GeoType : 3
+Level   : 1
+LocId   : 6
+
+LocEval
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+
+LocGradX
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+1
+0
+0
+-4
+0
+0
+
+LocGradY
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+3
+0
+0
+-4
+0
+0
+0
+
+LocGradZ
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+-4
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+0
+0
+0
+
+
+GlobalEval
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+0
+0
+0
+0
+0
+0
+
+GlobalGradX
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+-0
+0
+0
+0
+0
+0
+0
+0
+0
+-3
+-1
+0
+0
+4
+0
+0
+
+GlobalGradY
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+-0
+0
+0
+0
+0
+0
+0
+0
+-1
+-3
+0
+0
+4
+0
+0
+0
+
+GlobalGradZ
+0
+0
+1
+0
+0
+0
+0
+0
+0
+0
+0
+-4
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+0
+0
+0
+

@@ -1,0 +1,513 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef FEDYNAMICINTERFACE2D_HPP
+#define FEDYNAMICINTERFACE2D_HPP
+
+#include "traitsMultiply.h"
+#include "dofMapDynamic2d.hpp"
+
+
+/*! Interface class for the three dimensional finite static element fields */
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER = dmd2d_vectMajor, dmd2d_mode MODE = dmd2d_standard>
+class feDynamicInterface2d : public FETYPE, public dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>
+{
+    /*! @name Typedefs */ //@{
+  public:
+    typedef typename  FETYPE::FETYPE_PMAPTYPE PMAPTYPE;
+    typedef typename  FETYPE::GEOSHAPE        GEOSHAPE;
+    typedef typename  FETYPE::FECARD          FECARD;
+    typedef typename  FETYPE::ELCARD          ELCARD;
+    typedef typename  FETYPE::BASETYPE        BASETYPE;
+    typedef typename  FETYPE::DOFCARD         DOFCARD;
+    
+    typedef mesh2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>    MESH2D;
+    typedef connect2d<GEOSHAPE,PMAPTYPE,PMAPTYPE> CONNECT2D;
+    
+    typedef typename traitsMultiply<BASETYPE,DOFTYPE>::DIRECTTYPE  OUTTYPE;
+    typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>             DOFMAPPER;
+    //@}
+    
+    /*! @name Internal data */ //@{
+  public:
+    elCardFeeder2d<GEOSHAPE,PMAPTYPE> feeder;
+    //@}
+    
+    /*! @name Constructors and info */ //@{
+  public:
+    feDynamicInterface2d();
+    feDynamicInterface2d(const Teuchos::RCP<communicator> & CommDev, const Teuchos::RCP<MESH2D> & Grid2d, const Teuchos::RCP<CONNECT2D> & ConnedGrid2d);
+    feDynamicInterface2d(communicator & CommDev, MESH2D & Grid2d, CONNECT2D & ConnedGrid2d);
+    feDynamicInterface2d(const feDynamicInterface2d & Interface);
+    feDynamicInterface2d operator=(const feDynamicInterface2d & Interface);
+    void clone(const DOFMAPPER & DofMapper);
+    void setGeometry(const Teuchos::RCP<MESH2D> & Grid2d, const Teuchos::RCP<CONNECT2D> & ConnedGrid2d);
+    void setGeometry(MESH2D & Grid2d, CONNECT2D & ConnedGrid2d);
+    //@}
+    
+    /*! @name Info */ //@{
+  public:
+    bool feTest() const;
+    //@}
+    
+    /*! @name Evaluation functions */ //@{
+  public:
+    void eval(const UInt & I, const UInt & J, const FECARD & FECard, const ELCARD & ELCard, const point3d & Y, sVect<OUTTYPE> & val);
+    void grad(const UInt & I, const UInt & J, const FECARD & FECard, const ELCARD & ELCard, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ);
+    //@}
+    
+    /*! @name Fe interface */ //@{
+  public:
+    const FECARD & getFeCardL(const UInt & elL);
+    const FECARD & getFeCardG(const UInt & elG);
+    UInt  feNumBasisL(const UInt & elL);
+    UInt  feNumBasisG(const UInt & elG);
+    void  feIndicesLL(const UInt & elL, const UInt & I, const UInt & J, sVect<UInt> & indices);
+    void  feIndicesGL(const UInt & elG, const UInt & I, const UInt & J, sVect<UInt> & indices);
+    void  feIndicesLG(const UInt & elL, const UInt & I, const UInt & J, sVect<UInt> & indices);
+    void  feIndicesGG(const UInt & elG, const UInt & I, const UInt & J, sVect<UInt> & indices);
+    void  feEvalL(const UInt & elL, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & val);
+    void  feEvalG(const UInt & elG, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & val);
+    void  feGradL(const UInt & elL, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ);
+    void  feGradG(const UInt & elG, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ);
+    //@}
+};
+
+
+//_________________________________________________________________________________________________
+// CONSTRUCTORS
+//-------------------------------------------------------------------------------------------------
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicInterface2d() : dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>()
+{
+  assert(staticAssert<GEOSHAPE::nDim == 2>::returnValue);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicInterface2d(const Teuchos::RCP<communicator> & CommDev, const Teuchos::RCP<MESH2D> & Grid2d, const Teuchos::RCP<CONNECT2D> & ConnedGrid2d) :
+dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>(CommDev,Grid2d,ConnedGrid2d)
+{
+  assert(staticAssert<GEOSHAPE::nDim == 2>::returnValue);
+  feeder.setGeometry(Grid2d,ConnedGrid2d);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicInterface2d(communicator & CommDev, MESH2D & Grid2d, CONNECT2D & ConnedGrid2d) :
+dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>(CommDev,Grid2d,ConnedGrid2d)
+{
+  assert(staticAssert<GEOSHAPE::nDim == 2>::returnValue);
+  feeder.setGeometry(Grid2d,ConnedGrid2d);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feDynamicInterface2d(const feDynamicInterface2d & Interface) : dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>(Interface)
+{
+  assert(staticAssert<GEOSHAPE::nDim == 3>::returnValue);
+  feeder.setGeometry(Interface.grid3d, Interface.connedGrid3d);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+operator=(const feDynamicInterface2d & Interface)
+{
+  feeder.setGeometry(Interface.grid2d, Interface.connectGrid2d);
+  DOFMAPPER::operator=(Interface);
+  
+  return(*this);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+clone(const DOFMAPPER & DofMapper)
+{
+  feeder.setGeometry(DofMapper.grid2d, DofMapper.connectGrid2d);
+  DOFMAPPER::operator=(DofMapper);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void 
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+setGeometry(const Teuchos::RCP<MESH2D> & Grid2d, const Teuchos::RCP<CONNECT2D> & ConnedGrid2d)
+{
+  feeder.setGeometry(Grid2d,ConnedGrid2d);
+  DOFMAPPER::setGeometry(Grid2d,ConnedGrid2d);
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+setGeometry(MESH2D & Grid2d, CONNECT2D & ConnedGrid2d)
+{
+  feeder.setGeometry(Grid2d,ConnedGrid2d);
+  DOFMAPPER::setGeometry(Grid2d,ConnedGrid2d);
+}
+
+
+
+//_________________________________________________________________________________________________
+// INFO
+//-------------------------------------------------------------------------------------------------
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+bool
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feTest() const
+{
+  return(true);
+}
+
+
+
+//_________________________________________________________________________________________________
+// EVALUATIONS
+//-------------------------------------------------------------------------------------------------
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+eval(const UInt & I, const UInt & J, const FECARD & FECard, const ELCARD & ELCard, const point3d & Y, sVect<OUTTYPE> & val)
+{
+  sVect<BASETYPE> basis(FETYPE::getNumBasis());
+  FETYPE::setCards(FECard,ELCard);
+  FETYPE::globalEval(Y,basis);
+  
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    val(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basis(i),dof);
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+grad(const UInt & I, const UInt & J, const FECARD & FECard, const ELCARD & ELCard, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ)
+{
+  sVect<BASETYPE> basisX(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisY(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisZ(FETYPE::getNumBasis());
+  
+  FETYPE::setCards(FECard,ELCard);
+  FETYPE::globalGrad(Y,basisX,basisY,basisZ);
+
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    gradX(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisX(i),dof);
+    gradY(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisY(i),dof);
+    gradZ(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisZ(i),dof);
+  }
+}
+
+
+
+
+//_________________________________________________________________________________________________
+// FE INTERFACE
+//-------------------------------------------------------------------------------------------------
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+const typename feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::FECARD &
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+getFeCardL(const UInt & elL)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  
+  return(DOFMAPPER::feCards.getDataL(elL));
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+const typename feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::FECARD &
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+getFeCardG(const UInt & elG)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(DOFMAPPER::feCards.isG(elG));
+  
+  return(DOFMAPPER::feCards.getDataG(elG));
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+UInt
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feNumBasisL(const UInt & elL)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  return(FETYPE::getNumBasis());
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+UInt
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feNumBasisG(const UInt & elG)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(DOFMAPPER::feCards.isG(elG));
+  
+  //Get the local element
+  UInt elL = DOFMAPPER::grid2d->getElements().getRowMapG(elG).getLid();
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  return(FETYPE::getNumBasis());
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feIndicesLL(const UInt & elL, const UInt & I, const UInt & J, sVect<UInt> & indices)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(indices.size() == feNumBasisL(elL));
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  //Filling the index vector
+  sVect<DOFCARD> dofCards = FETYPE::getDofCards();
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    dofCards(i).setLocalElId(elL);
+    indices(i) = DOFMAPPER::mapListL(I,J,dofCards(i));
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feIndicesGL(const UInt & elG, const UInt & I, const UInt & J, sVect<UInt> & indices)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(indices.size() == feNumBasisG(elG));
+  assert(DOFMAPPER::feCards.isG(elG));
+  
+  //Get the local element
+  UInt elL = DOFMAPPER::grid2d->getElements().getRowMapG(elG).getLid();
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  //Filling the index vector
+  sVect<DOFCARD> dofCards = FETYPE::getDofCards();
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    dofCards(i).setLocalElId(elL);
+    indices(i) = DOFMAPPER::mapListL(I,J,dofCards(i));
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feIndicesLG(const UInt & elL, const UInt & I, const UInt & J, sVect<UInt> & indices)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(indices.size() == feNumBasisL(elL));
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  //Filling the index vector
+  sVect<DOFCARD> dofCards = FETYPE::getDofCards();
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    dofCards(i).setLocalElId(elL);
+    indices(i) = DOFMAPPER::mapListG(I,J,dofCards(i));
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feIndicesGG(const UInt & elG, const UInt & I, const UInt & J, sVect<UInt> & indices)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(indices.size() == feNumBasisG(elG));
+  assert(DOFMAPPER::feCards.isG(elG));
+  
+  //Get the local element
+  UInt elL = DOFMAPPER::grid2d->getElements().getRowMapG(elG).getLid();
+  
+  //Initilize the feInterface
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  
+  //Filling the index vector
+  sVect<DOFCARD> dofCards = FETYPE::getDofCards();
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    dofCards(i).setLocalElId(elL);
+    indices(i) = DOFMAPPER::mapListG(I,J,dofCards(i));
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feEvalL(const UInt & elL, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & val)
+{
+  
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  assert(val.size() == feNumBasisL(elL));
+  
+  //Evaluation
+  sVect<BASETYPE> basis(FETYPE::getNumBasis());
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  FETYPE::globalEval(Y,basis);
+  
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    val(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basis(i),dof);
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feEvalG(const UInt & elG, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & val)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(val.size() == feNumBasisG(elG));
+  assert(DOFMAPPER::feCards.isG(elG));
+  
+  //Alloc
+  UInt elL = DOFMAPPER::grid3d->getElements().getRowMapG(elG).getLid();
+
+  //Evaluation  
+  sVect<BASETYPE> basis(FETYPE::getNumBasis());
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  FETYPE::globalEval(Y,basis);
+  
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    val(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basis(i),dof);
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feGradL(const UInt & elL, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(elL >= 1);
+  assert(elL <= DOFMAPPER::feCards.size());
+  assert(gradX.size() == feNumBasisL(elL));
+  assert(gradY.size() == gradX.size());
+  assert(gradZ.size() == gradX.size());
+  
+  //Evaluation
+  sVect<BASETYPE> basisX(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisY(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisZ(FETYPE::getNumBasis());
+  
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  FETYPE::globalGrad(Y,basisX,basisY,basisZ);
+
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    gradX(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisX(i),dof);
+    gradY(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisY(i),dof);
+    gradZ(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisZ(i),dof);
+  }
+}
+
+template<typename FETYPE, typename DOFTYPE,  dmd2d_order ORDER, dmd2d_mode MODE>
+void
+feDynamicInterface2d<FETYPE,DOFTYPE,ORDER,MODE>::
+feGradG(const UInt & elG, const UInt & I, const UInt & J, const point3d & Y, sVect<OUTTYPE> & gradX, sVect<OUTTYPE> & gradY, sVect<OUTTYPE> & gradZ)
+{
+  typedef dofMapDynamic2d<FETYPE,DOFTYPE,ORDER,MODE>  DOFMAPPER;
+  
+  //Assert
+  assert(DOFMAPPER::feCards.isG(elG));
+  assert(gradX.size() == feNumBasisG(elG));
+  assert(gradY.size() == gradX.size());
+  assert(gradZ.size() == gradX.size());
+  
+  //Alloc
+  UInt elL = DOFMAPPER::grid2d->getElements().getRowMapG(elG).getLid();
+  
+  //Evaluation
+  sVect<BASETYPE> basisX(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisY(FETYPE::getNumBasis());
+  sVect<BASETYPE> basisZ(FETYPE::getNumBasis());
+  
+  FETYPE::setCards(DOFMAPPER::feCards.getDataL(elL), feeder.getCardLocal(elL));
+  FETYPE::globalGrad(Y,basisX,basisY,basisZ);
+
+  DOFTYPE dof = traitsBasic<DOFTYPE>::getUnityIJ(I,J);
+  
+  for(UInt i=1; i <= FETYPE::getNumBasis(); ++i)
+  {
+    gradX(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisX(i),dof);
+    gradY(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisY(i),dof);
+    gradZ(i) = traitsMultiply<BASETYPE,DOFTYPE>::multiply(basisZ(i),dof);
+  }
+}
+
+
+
+#endif

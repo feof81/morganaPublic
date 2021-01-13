@@ -1,0 +1,262 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef FEFVFLUX2D_HPP
+#define FEFVFLUX2D_HPP
+
+
+#include "morganaTypes.hpp"
+#include "geoMapInterface.hpp"
+
+#include "morganaFields.hpp"
+#include "elCard2d.hpp"
+#include "feStaticDofCard2d.h"
+#include "feStaticEvalIterators.hpp"
+
+
+//_________________________________________________________________________________________________
+// FE CARD
+//-------------------------------------------------------------------------------------------------
+class feFvFlux2d_card
+{
+  public:
+    feFvFlux2d_card() { };
+};
+
+
+
+//_________________________________________________________________________________________________
+//  FE-FLUX
+//-------------------------------------------------------------------------------------------------
+
+/*! Flux finite element for Finite Volume applications */
+template<typename PMAPTYPE>
+class feFvFlux2d
+{
+    /*! @name Typedefs */ //@{
+  public:
+    typedef PMAPTYPE                    FETYPE_PMAPTYPE;
+    typedef Real                        BASETYPE;
+    typedef linearTriangle              GEOSHAPE;
+    typedef feFvFlux2d_card             FECARD;
+    typedef elCard2d<GEOSHAPE,PMAPTYPE> ELCARD;
+    typedef feStaticDofCard2d           DOFCARD;
+    //@}
+    
+    /*! @name Static flags */ //@{
+  public:
+    static const FEClass     feClass     = feStatic;
+    static const FEGridType  feGridType  = primal;
+    static const FEBaseType  feBaseType  = scalar;
+    static const FELabel     feLabel     = FE_FVFLUX_2d;
+    static const FEBaseLabel feBaseLabel = BL_FVFLUX_2d;
+    //@}
+    
+    /*! @name Static numbers */ //@{
+  public:
+    static const UInt numPoly  = 3;
+    static const UInt numBasis = 3;
+    static const UInt dim      = 2;
+    static const UInt dofPerVertex = 0;
+    static const UInt dofPerEdge   = 1;
+    static const UInt dofPerFace   = 0;
+    static const UInt dofPerVolume = 0;
+    static const bool isNodal = true;
+    //@}
+    
+    /*! @name Links and flags */ //@{
+  public:
+    bool elCardLoaded;
+    bool feCardLoaded;
+    FECARD FeCard;
+    ELCARD ElCard;
+    //@}
+    
+    /*! @name Constructors and setting functions */ //@{
+  public:
+    feFvFlux2d();
+    feFvFlux2d(const FECARD & FECard, const ELCARD & ELCard);
+    void setCards(const FECARD & FECard, const ELCARD & ELCard);
+    //@}
+    
+    /*! @name Info functions */ //@{
+  public:
+    static DOFCARD getDofCard(const UInt & i);
+    static point3d getRefNode(const UInt & i);
+    void localEval(const point3d & Y, sVect<BASETYPE> & val) const;
+    void localGrad(const point3d & Y, sVect<BASETYPE> & gradX, sVect<BASETYPE> & gradY, sVect<BASETYPE> & gradZ) const;
+    void globalEval(const point3d & Y, sVect<BASETYPE> & val) const;
+    void globalGrad(const point3d & Y, sVect<BASETYPE> & gradX, sVect<BASETYPE> & gradY, sVect<BASETYPE> & gradZ) const;
+    //@}
+};
+
+
+template<typename PMAPTYPE>
+feFvFlux2d<PMAPTYPE>::
+feFvFlux2d()
+{
+  elCardLoaded = false;
+  feCardLoaded = false;
+}
+
+template<typename PMAPTYPE>
+feFvFlux2d<PMAPTYPE>::
+feFvFlux2d(const FECARD & FECard, const ELCARD & ELCard)
+{
+  elCardLoaded = true;
+  feCardLoaded = true;
+  
+  FeCard = FECard;
+  ElCard = ELCard;
+}
+
+template<typename PMAPTYPE>
+void
+feFvFlux2d<PMAPTYPE>::
+setCards(const FECARD & FECard, const ELCARD & ELCard)
+{
+  elCardLoaded = true;
+  feCardLoaded = true;
+  
+  ElCard = ELCard;
+  FeCard = FECard;
+}
+
+template<typename PMAPTYPE>
+typename feFvFlux2d<PMAPTYPE>::DOFCARD
+feFvFlux2d<PMAPTYPE>::
+getDofCard(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 3);
+  
+  static DOFCARD list[3] =
+  {
+    DOFCARD(EDGE,1,1),
+    DOFCARD(EDGE,1,2),
+    DOFCARD(EDGE,1,3) };
+  
+  return( list[i-1] );
+}
+
+template<typename PMAPTYPE>
+point3d
+feFvFlux2d<PMAPTYPE>::
+getRefNode(const UInt & i)
+{
+  assert(i >= 1);
+  assert(i <= 3);
+  
+  static point3d list[3] =
+  {
+    point3d(0.5, 0.0, 0.0),
+    point3d(0.5, 0.5, 0.0),
+    point3d(0.0, 0.5, 0.0)
+  };
+  
+  return( list[i-1] );
+}
+
+template<typename PMAPTYPE>
+void
+feFvFlux2d<PMAPTYPE>::
+localEval(const point3d & Y, sVect<BASETYPE> & val) const
+{
+  assert(elCardLoaded);
+  assert(feCardLoaded);
+  assert(val.size() == numPoly);
+  
+  /*static const Real relGeoToll = 1.0e-3;
+  
+  val(1) = Real( (Y.getZ() <= relGeoToll)         && (Y.getZ() >= (-relGeoToll)) &&
+                 (Y.getY() <= relGeoToll)         && (Y.getY() >= (-relGeoToll)) &&
+                 (Y.getX() <= (1.0 + relGeoToll)) && (Y.getX() >= (-relGeoToll)) );
+                 
+  val(2) = Real( (Y.getZ() <= relGeoToll)                      && (Y.getZ() >= (-relGeoToll)) &&
+                 (Y.getY() <= (1.0 + relGeoToll))              && (Y.getY() >= (-relGeoToll)) &&
+                 ((Y.getX() + Y.getY()) <= (1.0 + relGeoToll)) && ((Y.getX() + Y.getY()) >= (1.0 - relGeoToll)) );
+  
+  val(3) = Real( (Y.getZ() <= relGeoToll)         && (Y.getZ() >= (-relGeoToll)) &&
+                 (Y.getX() <= relGeoToll)         && (Y.getX() >= (-relGeoToll)) &&
+                 (Y.getY() <= (1.0 + relGeoToll)) && (Y.getY() >= (-relGeoToll)) );*/
+  
+  
+  
+  Real dist[3];
+   
+  static const point3d N(1.0/sqrt(2.0), 1.0/sqrt(2.0), 0.0);
+  static const point3d X(1.0,0.0,0.0);
+    
+  dist[0] = abs( Y.getY() );
+  dist[1] = abs( point3d::dot(Y-X, N) );
+  dist[2] = abs( Y.getX() );
+
+  Real minDist = std::min(std::min(dist[0],dist[1]), dist[2]);
+   
+  dist[0] = Real(dist[0] == minDist);
+  dist[1] = Real(dist[1] == minDist);
+  dist[2] = Real(dist[2] == minDist);
+   
+  Real tot = (dist[0] + dist[1] + dist[2]);
+   
+  val(1) = dist[0] / tot;
+  val(2) = dist[1] / tot;
+  val(3) = dist[2] / tot;
+}
+
+template<typename PMAPTYPE>
+void
+feFvFlux2d<PMAPTYPE>::
+localGrad(const point3d & Y, sVect<BASETYPE> & gradX, sVect<BASETYPE> & gradY, sVect<BASETYPE> & gradZ) const
+{
+  assert(elCardLoaded);
+  assert(feCardLoaded);
+  assert(gradX.size() == numPoly);
+  assert(gradY.size() == numPoly);
+  assert(gradZ.size() == numPoly);
+  
+  gradX(1) = 0.0; gradY(1) = 0.0; gradZ(1) = 0.0;
+  gradX(2) = 0.0; gradY(2) = 0.0; gradZ(2) = 0.0;
+  gradX(3) = 0.0; gradY(3) = 0.0; gradZ(3) = 0.0;
+}
+
+template<typename PMAPTYPE>
+void
+feFvFlux2d<PMAPTYPE>::
+globalEval(const point3d & Y, sVect<BASETYPE> & val) const
+{
+  assert(elCardLoaded);
+  assert(feCardLoaded);
+  assert(val.size() == numPoly);
+  
+  localEval(Y,val);
+}
+
+template<typename PMAPTYPE>
+void
+feFvFlux2d<PMAPTYPE>::
+globalGrad(const point3d & Y, sVect<BASETYPE> & gradX, sVect<BASETYPE> & gradY, sVect<BASETYPE> & gradZ) const
+{
+  assert(elCardLoaded);
+  assert(feCardLoaded);
+  assert(gradX.size() == numPoly);
+  assert(gradY.size() == numPoly);
+  assert(gradZ.size() == numPoly);
+  
+  gradX(1) = 0.0; gradY(1) = 0.0; gradZ(1) = 0.0;
+  gradX(2) = 0.0; gradY(2) = 0.0; gradZ(2) = 0.0;
+  gradX(3) = 0.0; gradY(3) = 0.0; gradZ(3) = 0.0;
+}
+
+#endif

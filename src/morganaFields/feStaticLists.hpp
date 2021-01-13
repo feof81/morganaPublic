@@ -1,0 +1,277 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef FESTATICLISTS_HPP
+#define FESTATICLISTS_HPP
+
+#include "morganaTypes.hpp"
+#include "polyCards.h"
+#include "morganaFields.hpp"
+
+
+//Forward declarations
+template<FELabel T, UInt I> struct feStaticList;
+template<FELabel T, UInt I> struct feStaticListX;
+template<FELabel T, UInt I> struct feStaticListY;
+template<FELabel T, UInt I> struct feStaticListZ;
+
+
+
+//___________________________________________________________________________________________________________________________________________________
+// 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D 1D
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+// P0 - 1D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_P0_1d ,1> {typedef P0_1d_A BASE; };
+
+
+// P1 - 1D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P1_1d ,1> {typedef P1_1d_A BASE; };
+template<>  struct feStaticList< FE_P1_1d ,2> {typedef P1_1d_B BASE; };
+
+
+// P2 - 1D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P2_1d ,1>  {typedef P2_1d_A BASE; };
+template<>  struct feStaticList< FE_P2_1d ,2>  {typedef P2_1d_B BASE; };
+template<>  struct feStaticList< FE_P2_1d ,3>  {typedef P2_1d_C BASE; };
+
+
+
+//___________________________________________________________________________________________________________________________________________________
+// 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D 2D
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+// P0 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_P0_2d ,1> {typedef P0_2d_A BASE; };
+
+
+// P1 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P1_2d ,1> {typedef P1_2d_A BASE; };
+template<>  struct feStaticList< FE_P1_2d ,2> {typedef P1_2d_B BASE; };
+template<>  struct feStaticList< FE_P1_2d ,3> {typedef P1_2d_C BASE; };
+
+
+// P2 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P2_2d ,1>  {typedef P2_2d_A BASE; };
+template<>  struct feStaticList< FE_P2_2d ,2>  {typedef P2_2d_B BASE; };
+template<>  struct feStaticList< FE_P2_2d ,3>  {typedef P2_2d_C BASE; };
+template<>  struct feStaticList< FE_P2_2d ,4>  {typedef P2_2d_D BASE; };
+template<>  struct feStaticList< FE_P2_2d ,5>  {typedef P2_2d_E BASE; };
+template<>  struct feStaticList< FE_P2_2d ,6>  {typedef P2_2d_F BASE; };
+
+
+// Q0 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q0_2d ,1> {typedef Q0_2d_A BASE; };
+
+
+// Q1 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q1_2d ,1> {typedef Q1_2d_A BASE; };
+template<>  struct feStaticList<FE_Q1_2d ,2> {typedef Q1_2d_B BASE; };
+template<>  struct feStaticList<FE_Q1_2d ,3> {typedef Q1_2d_C BASE; };
+template<>  struct feStaticList<FE_Q1_2d ,4> {typedef Q1_2d_D BASE; };
+
+
+// Q2 - 2D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q2_2d ,1> {typedef Q2_2d_A BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,2> {typedef Q2_2d_B BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,3> {typedef Q2_2d_C BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,4> {typedef Q2_2d_D BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,5> {typedef Q2_2d_E BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,6> {typedef Q2_2d_F BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,7> {typedef Q2_2d_G BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,8> {typedef Q2_2d_H BASE; };
+template<>  struct feStaticList<FE_Q2_2d ,9> {typedef Q2_2d_I BASE; };
+
+
+// D0______________________________________________________________________________________________
+template<>  struct feStaticList<FE_D0LT_2d ,1>  {typedef D0_2d_A BASE; };
+template<>  struct feStaticList<FE_D0LT_2d ,2>  {typedef D0_2d_B BASE; };
+template<>  struct feStaticList<FE_D0LT_2d ,3>  {typedef D0_2d_C BASE; };
+
+
+//RT0 - 2D_________________________________________________________________________________________
+template<>  struct feStaticListX<FE_RT0LT_2d ,1>  {typedef RT0_2d_Ax BASE; };
+template<>  struct feStaticListX<FE_RT0LT_2d ,2>  {typedef RT0_2d_Bx BASE; };
+template<>  struct feStaticListX<FE_RT0LT_2d ,3>  {typedef RT0_2d_Cx BASE; };
+
+template<>  struct feStaticListY<FE_RT0LT_2d ,1>  {typedef RT0_2d_Ay BASE; };
+template<>  struct feStaticListY<FE_RT0LT_2d ,2>  {typedef RT0_2d_By BASE; };
+template<>  struct feStaticListY<FE_RT0LT_2d ,3>  {typedef RT0_2d_Cy BASE; };
+
+template<>  struct feStaticListZ<FE_RT0LT_2d ,1>  {typedef RT0_2d_Az BASE; };
+template<>  struct feStaticListZ<FE_RT0LT_2d ,2>  {typedef RT0_2d_Bz BASE; };
+template<>  struct feStaticListZ<FE_RT0LT_2d ,3>  {typedef RT0_2d_Cz BASE; };
+
+
+//RT0 LOC - 2D_____________________________________________________________________________________
+template<>  struct feStaticListX<FE_RT0LOC_2d ,1>  {typedef RT0_2d_Ax BASE; };
+template<>  struct feStaticListX<FE_RT0LOC_2d ,2>  {typedef RT0_2d_Bx BASE; };
+template<>  struct feStaticListX<FE_RT0LOC_2d ,3>  {typedef RT0_2d_Cx BASE; };
+
+template<>  struct feStaticListY<FE_RT0LOC_2d ,1>  {typedef RT0_2d_Ay BASE; };
+template<>  struct feStaticListY<FE_RT0LOC_2d ,2>  {typedef RT0_2d_By BASE; };
+template<>  struct feStaticListY<FE_RT0LOC_2d ,3>  {typedef RT0_2d_Cy BASE; };
+
+template<>  struct feStaticListZ<FE_RT0LOC_2d ,1>  {typedef RT0_2d_Az BASE; };
+template<>  struct feStaticListZ<FE_RT0LOC_2d ,2>  {typedef RT0_2d_Bz BASE; };
+template<>  struct feStaticListZ<FE_RT0LOC_2d ,3>  {typedef RT0_2d_Cz BASE; };
+
+
+
+//___________________________________________________________________________________________________________________________________________________
+// 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D 3D
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+// P0 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_P0_3d ,1> {typedef P0_3d_A BASE; };
+
+
+// P1 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P1_3d ,1> {typedef P1_3d_A BASE; };
+template<>  struct feStaticList< FE_P1_3d ,2> {typedef P1_3d_B BASE; };
+template<>  struct feStaticList< FE_P1_3d ,3> {typedef P1_3d_C BASE; };
+template<>  struct feStaticList< FE_P1_3d ,4> {typedef P1_3d_D BASE; };
+
+
+// P2 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList< FE_P2_3d ,1>  {typedef P2_3d_A BASE; };
+template<>  struct feStaticList< FE_P2_3d ,2>  {typedef P2_3d_B BASE; };
+template<>  struct feStaticList< FE_P2_3d ,3>  {typedef P2_3d_C BASE; };
+template<>  struct feStaticList< FE_P2_3d ,4>  {typedef P2_3d_D BASE; };
+template<>  struct feStaticList< FE_P2_3d ,5>  {typedef P2_3d_E BASE; };
+template<>  struct feStaticList< FE_P2_3d ,6>  {typedef P2_3d_F BASE; };
+template<>  struct feStaticList< FE_P2_3d ,7>  {typedef P2_3d_G BASE; };
+template<>  struct feStaticList< FE_P2_3d ,8>  {typedef P2_3d_H BASE; };
+template<>  struct feStaticList< FE_P2_3d ,9>  {typedef P2_3d_I BASE; };
+template<>  struct feStaticList< FE_P2_3d ,10> {typedef P2_3d_L BASE; };
+
+
+// Q0 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q0_3d ,1> {typedef Q0_3d_A BASE; };
+
+
+// Q1 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q1_3d ,1>  {typedef Q1_3d_A BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,2>  {typedef Q1_3d_B BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,3>  {typedef Q1_3d_C BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,4>  {typedef Q1_3d_D BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,5>  {typedef Q1_3d_E BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,6>  {typedef Q1_3d_F BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,7>  {typedef Q1_3d_G BASE; };
+template<>  struct feStaticList<FE_Q1_3d ,8>  {typedef Q1_3d_H BASE; };
+
+
+// Q2 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_Q2_3d ,1>  {typedef Q2_3d_AA BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,2>  {typedef Q2_3d_AB BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,3>  {typedef Q2_3d_AC BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,4>  {typedef Q2_3d_AD BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,5>  {typedef Q2_3d_AE BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,6>  {typedef Q2_3d_AF BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,7>  {typedef Q2_3d_AG BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,8>  {typedef Q2_3d_AH BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,9>  {typedef Q2_3d_AI BASE; };
+
+template<>  struct feStaticList<FE_Q2_3d ,10> {typedef Q2_3d_BA BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,11> {typedef Q2_3d_BB BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,12> {typedef Q2_3d_BC BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,13> {typedef Q2_3d_BD BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,14> {typedef Q2_3d_BE BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,15> {typedef Q2_3d_BF BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,16> {typedef Q2_3d_BG BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,17> {typedef Q2_3d_BH BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,18> {typedef Q2_3d_BI BASE; };
+
+template<>  struct feStaticList<FE_Q2_3d ,19> {typedef Q2_3d_CA BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,20> {typedef Q2_3d_CB BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,21> {typedef Q2_3d_CC BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,22> {typedef Q2_3d_CD BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,23> {typedef Q2_3d_CE BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,24> {typedef Q2_3d_CF BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,25> {typedef Q2_3d_CG BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,26> {typedef Q2_3d_CH BASE; };
+template<>  struct feStaticList<FE_Q2_3d ,27> {typedef Q2_3d_CI BASE; };
+
+
+// D0______________________________________________________________________________________________
+template<>  struct feStaticList<FE_D0LT_3d ,1>  {typedef D0_3d_A BASE; };
+template<>  struct feStaticList<FE_D0LT_3d ,2>  {typedef D0_3d_B BASE; };
+template<>  struct feStaticList<FE_D0LT_3d ,3>  {typedef D0_3d_C BASE; };
+template<>  struct feStaticList<FE_D0LT_3d ,4>  {typedef D0_3d_D BASE; };
+
+
+// P1-BUBBLE - 3D__________________________________________________________________________________
+template<>  struct feStaticList<FE_P1B1_3d ,1>  {typedef P1BP1_3d_A BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,2>  {typedef P1BP1_3d_B BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,3>  {typedef P1BP1_3d_C BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,4>  {typedef P1BP1_3d_D BASE; };
+
+template<>  struct feStaticList<FE_P1B1_3d ,5>  {typedef P1BP1_3d_E BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,6>  {typedef P1BP1_3d_F BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,7>  {typedef P1BP1_3d_G BASE; };
+template<>  struct feStaticList<FE_P1B1_3d ,8>  {typedef P1BP1_3d_H BASE; };
+
+
+//RT0 - 3D_________________________________________________________________________________________
+template<>  struct feStaticListX<FE_RT0LT_3d ,1>  {typedef RT0_3d_Ax BASE; };
+template<>  struct feStaticListX<FE_RT0LT_3d ,2>  {typedef RT0_3d_Bx BASE; };
+template<>  struct feStaticListX<FE_RT0LT_3d ,3>  {typedef RT0_3d_Cx BASE; };
+template<>  struct feStaticListX<FE_RT0LT_3d ,4>  {typedef RT0_3d_Dx BASE; };
+
+template<>  struct feStaticListY<FE_RT0LT_3d ,1>  {typedef RT0_3d_Ay BASE; };
+template<>  struct feStaticListY<FE_RT0LT_3d ,2>  {typedef RT0_3d_By BASE; };
+template<>  struct feStaticListY<FE_RT0LT_3d ,3>  {typedef RT0_3d_Cy BASE; };
+template<>  struct feStaticListY<FE_RT0LT_3d ,4>  {typedef RT0_3d_Dy BASE; };
+
+template<>  struct feStaticListZ<FE_RT0LT_3d ,1>  {typedef RT0_3d_Az BASE; };
+template<>  struct feStaticListZ<FE_RT0LT_3d ,2>  {typedef RT0_3d_Bz BASE; };
+template<>  struct feStaticListZ<FE_RT0LT_3d ,3>  {typedef RT0_3d_Cz BASE; };
+template<>  struct feStaticListZ<FE_RT0LT_3d ,4>  {typedef RT0_3d_Dz BASE; };
+
+
+//RT0 LOC - 3D_____________________________________________________________________________________
+template<>  struct feStaticListX<FE_RT0LOC_3d ,1>  {typedef RT0_3d_Ax BASE; };
+template<>  struct feStaticListX<FE_RT0LOC_3d ,2>  {typedef RT0_3d_Bx BASE; };
+template<>  struct feStaticListX<FE_RT0LOC_3d ,3>  {typedef RT0_3d_Cx BASE; };
+template<>  struct feStaticListX<FE_RT0LOC_3d ,4>  {typedef RT0_3d_Dx BASE; };
+
+template<>  struct feStaticListY<FE_RT0LOC_3d ,1>  {typedef RT0_3d_Ay BASE; };
+template<>  struct feStaticListY<FE_RT0LOC_3d ,2>  {typedef RT0_3d_By BASE; };
+template<>  struct feStaticListY<FE_RT0LOC_3d ,3>  {typedef RT0_3d_Cy BASE; };
+template<>  struct feStaticListY<FE_RT0LOC_3d ,4>  {typedef RT0_3d_Dy BASE; };
+
+template<>  struct feStaticListZ<FE_RT0LOC_3d ,1>  {typedef RT0_3d_Az BASE; };
+template<>  struct feStaticListZ<FE_RT0LOC_3d ,2>  {typedef RT0_3d_Bz BASE; };
+template<>  struct feStaticListZ<FE_RT0LOC_3d ,3>  {typedef RT0_3d_Cz BASE; };
+template<>  struct feStaticListZ<FE_RT0LOC_3d ,4>  {typedef RT0_3d_Dz BASE; };
+
+
+//CR1 - 3D_________________________________________________________________________________________
+template<>  struct feStaticList<FE_CR1_3d ,1> {typedef CR1_3d_A BASE; };
+template<>  struct feStaticList<FE_CR1_3d ,2> {typedef CR1_3d_B BASE; };
+template<>  struct feStaticList<FE_CR1_3d ,3> {typedef CR1_3d_C BASE; };
+template<>  struct feStaticList<FE_CR1_3d ,4> {typedef CR1_3d_D BASE; };
+
+
+// DGN0 - 3D______________________________________________________________________________________
+template<>  struct feStaticList<FE_DGN0_3d ,1> {typedef P0_3d_A BASE; };
+
+
+// DGN1 - 3D______________________________________________________________________________________
+template<>  struct feStaticList<FE_DGN1_3d ,1> {typedef P1_3d_A BASE; };
+template<>  struct feStaticList<FE_DGN1_3d ,2> {typedef P1_3d_B BASE; };
+template<>  struct feStaticList<FE_DGN1_3d ,3> {typedef P1_3d_C BASE; };
+template<>  struct feStaticList<FE_DGN1_3d ,4> {typedef P1_3d_D BASE; };
+
+#endif

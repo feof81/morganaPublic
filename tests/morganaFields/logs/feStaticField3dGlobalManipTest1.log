@@ -1,0 +1,74 @@
+LOADING FROM: ../tests/morganaMeshes/mignonHexaB.unv
+Read 14 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 20
+Elements 3d - global : 4
+
+Dofs
+1
+ map:  pid: 0 lid: 1 gid: 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 3
+ data: 2 0 0
+
+4
+ map:  pid: 0 lid: 4 gid: 6
+ data: 0 1 0
+
+5
+ map:  pid: 0 lid: 5 gid: 7
+ data: 1 1 0
+
+6
+ map:  pid: 0 lid: 6 gid: 8
+ data: 2 1 0
+
+7
+ map:  pid: 0 lid: 7 gid: 11
+ data: 0 0 1
+
+8
+ map:  pid: 0 lid: 8 gid: 12
+ data: 1 0 1
+
+9
+ map:  pid: 0 lid: 9 gid: 13
+ data: 2 0 1
+
+10
+ map:  pid: 0 lid: 10 gid: 16
+ data: 0 1 1
+
+11
+ map:  pid: 0 lid: 11 gid: 17
+ data: 1 1 1
+
+12
+ map:  pid: 0 lid: 12 gid: 18
+ data: 2 1 1
+
+13
+ map:  pid: 0 lid: 13 gid: 4
+ data: 3 0 0
+
+14
+ map:  pid: 0 lid: 14 gid: 9
+ data: 3 1 0
+
+15
+ map:  pid: 0 lid: 15 gid: 14
+ data: 3 0 1
+
+16
+ map:  pid: 0 lid: 16 gid: 19
+ data: 3 1 1
+
+

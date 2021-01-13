@@ -1,0 +1,74 @@
+LOADING FROM: ../tests/morganaMeshes/mignon2dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 1d - global : 6
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+ROW
+1
+ map:  pid: 1 lid: 1 gid: 5 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 4 
+
+
+2
+ map:  pid: 1 lid: 2 gid: 6 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 4 3 
+
+
+3
+ map:  pid: 1 lid: 3 gid: 9 shared: 1 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 3 1 
+
+
+4
+ map:  pid: 1 lid: 4 gid: 7 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 1 2 
+
+
+5
+ map:  pid: 1 lid: 5 gid: 8 shared: 0 owned 1
+ data: 
+GeoId          : 0
+Num Connected  : 2
+Connected Id's : 2 4 
+
+
+COL
+pid: 1 lid: 1 gid: 2 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 0 owned 1
+pid: 1 lid: 3 gid: 5 shared: 1 owned 0
+pid: 1 lid: 4 gid: 6 shared: 0 owned 1
+
+
+1
+ map:  pid: 1 lid: 1 gid: 3 shared: 0 owned 1
+ data: loaded : 1
+Edges  : 
+1
+1
+0
+
+
+2
+ map:  pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+ data: loaded : 1
+Edges  : 
+1
+1
+0
+
+
+

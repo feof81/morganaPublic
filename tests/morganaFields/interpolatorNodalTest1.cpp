@@ -54,39 +54,38 @@ int main(int argc, char *argv[])
   
   UInt pid = world.rank();
   
+  
   //Mesh Init--------------------------------------------------------------------------------------
   typedef pMapItemShare      PMAPTYPE;
   typedef point3d            DOFTYPE;
   typedef fePr3d<1,PMAPTYPE> SOURCE_FETYPE;
-  typedef fePr3d<1,PMAPTYPE> TARGET_FETYPE;
+  typedef fePr2d<1,PMAPTYPE> TARGET_FETYPE;
   typedef typename SOURCE_FETYPE::GEOSHAPE SOURCE_GEOSHAPE;
   typedef typename TARGET_FETYPE::GEOSHAPE TARGET_GEOSHAPE;
   
-  string sourceMeshFile = "./geometries/cadInterface/sphereCylinder05_hole.msh";
-  string targetMeshFile = "./geometries/cadInterface/sphereCylinder05.msh";
+  string sourceMeshFile = "./geometries/cubes3d/testCubeA.msh";
+  string targetMeshFile = "./geometries/rectangles2d/rectangleAbis.msh";
   
   meshInit3d<SOURCE_GEOSHAPE,PMAPTYPE,PMAPTYPE> sourceInit(world);
-  sourceInit.gmMesh_to_stdB(sourceMeshFile);
+  sourceInit.gmMesh_to_stdB(sourceMeshFile, false);
   
-  meshInit3d<TARGET_GEOSHAPE,PMAPTYPE,PMAPTYPE> targetInit(world);
-  targetInit.gmMesh_to_stdB(targetMeshFile);
+  meshInit2d<TARGET_GEOSHAPE,PMAPTYPE,PMAPTYPE> targetInit(world);
+  targetInit.gmMesh_to_stdB(targetMeshFile, false);
+  
   
   //Download data----------------------------------------------------------------------------------
   typedef meshInit3d<SOURCE_GEOSHAPE,PMAPTYPE,PMAPTYPE>::MESH3D     MESH3D;
   typedef meshInit3d<SOURCE_GEOSHAPE,PMAPTYPE,PMAPTYPE>::CONNECT3D  CONNECT3D;
   
-  typedef meshInit3d<SOURCE_GEOSHAPE,PMAPTYPE,PMAPTYPE>::MESH2D     MESH2D;
-  typedef meshInit3d<SOURCE_GEOSHAPE,PMAPTYPE,PMAPTYPE>::CONNECT2D  CONNECT2D;
+  typedef meshInit2d<TARGET_GEOSHAPE,PMAPTYPE,PMAPTYPE>::MESH2D     MESH2D;
+  typedef meshInit2d<TARGET_GEOSHAPE,PMAPTYPE,PMAPTYPE>::CONNECT2D  CONNECT2D;
   
-  RCP<MESH2D>       sourceGrid2d = sourceInit.getGrid2d();
-  RCP<MESH3D>       sourceGrid3d = sourceInit.getGrid3d();
-  RCP<CONNECT2D> sourceConnect2d = sourceInit.getConnectGrid2d();
-  RCP<CONNECT3D> sourceConnect3d = sourceInit.getConnectGrid3d();
+  RCP<MESH3D>           grid3d = sourceInit.getGrid3d();
+  RCP<CONNECT3D> connectGrid3d = sourceInit.getConnectGrid3d();
   
-  RCP<MESH2D>       targetGrid2d = targetInit.getGrid2d();
-  RCP<MESH3D>       targetGrid3d = targetInit.getGrid3d();
-  RCP<CONNECT2D> targetConnect2d = targetInit.getConnectGrid2d();
-  RCP<CONNECT3D> targetConnect3d = targetInit.getConnectGrid3d();
+  RCP<MESH2D>           grid2d = targetInit.getGrid2d();
+  RCP<CONNECT2D> connectGrid2d = targetInit.getConnectGrid2d();
+  
   
   //Set the source field---------------------------------------------------------------------------
   typedef feStaticField3d<SOURCE_FETYPE,DOFTYPE,dms3d_vectMajor,dms3d_allMode> SOURCE_FIELD;
@@ -95,9 +94,10 @@ int main(int argc, char *argv[])
   
   SOURCE_FIELD sourceField;
   sourceField.setCommunicator(world);
-  sourceField.setGeometry(sourceGrid3d,sourceConnect3d);
+  sourceField.setGeometry(grid3d,connectGrid3d);
   sourceField.setOptions(sourceOptions);
   sourceField.startup();
+  
   
   //Source field sourceInitialization--------------------------------------------------------------------
   feStaticField3dGlobalManip<SOURCE_FETYPE,DOFTYPE,dms3d_vectMajor,dms3d_allMode> manipulator(world);
@@ -109,47 +109,32 @@ int main(int argc, char *argv[])
   
   manipulator.initilize(functions,sourceField);
   
-  //Target field-----------------------------------------------------------------------------------
-  typedef feStaticField3d<TARGET_FETYPE,DOFTYPE,dms3d_vectMajor,dms3d_allMode> TARGET_FIELD;
   
-  dofMapStatic3d_options targetOptions;
+  //Target field-----------------------------------------------------------------------------------
+  typedef feStaticField2d<TARGET_FETYPE,DOFTYPE,dms2d_vectMajor,dms2d_allMode> TARGET_FIELD;
+  
+  dofMapStatic2d_options targetOptions;
   
   TARGET_FIELD targetField;
   targetField.setCommunicator(world);
-  targetField.setGeometry(targetGrid3d,targetConnect3d);
+  targetField.setGeometry(grid2d,connectGrid2d);
   targetField.setOptions(targetOptions);
   targetField.startup();
   
+  
   //Interpolator-----------------------------------------------------------------------------------
-  time_t start, end;
-  
   interpolatorNodal<SOURCE_FIELD,TARGET_FIELD> interpolator(world);
-  interpolator.setMesh(sourceGrid2d,
-                       sourceGrid3d,
-                       sourceConnect2d,
-                       sourceConnect3d);
-  
-  if(world.rank() == 0) {cout << "Local Init" << " "; time(&start); cout << endl;}
+  interpolator.setMesh(grid2d,grid3d,connectGrid2d,connectGrid3d);
   interpolator.localInit(2.0);
-  if(world.rank() == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-  
-  if(world.rank() == 0) {cout << "Global Init" << " "; time(&start); cout << endl;}
   interpolator.globalInit();
-  if(world.rank() == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-  
-  if(world.rank() == 0) {cout << "Find Dofs" << " "; time(&start); cout << endl;}
   interpolator.findDofs(targetField);
-  if(world.rank() == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-
-  if(world.rank() == 0) {cout << "Exchange Data" << " "; time(&start); cout << endl;}
   interpolator.exchangeData(sourceField,targetField);
-  if(world.rank() == 0) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
     
   //Source field printing
   feStaticFieldPrinter3d<SOURCE_FIELD> sourcePrinter(world);
   sourcePrinter.printHDF5_nodes("sourceField",pid,sourceField);
   
   //Target field printing
-  feStaticFieldPrinter3d<TARGET_FIELD> targetPrinter(world);
+  feStaticFieldPrinter2d<TARGET_FIELD> targetPrinter(world);
   targetPrinter.printHDF5_nodes("targetField",pid,targetField);
 }

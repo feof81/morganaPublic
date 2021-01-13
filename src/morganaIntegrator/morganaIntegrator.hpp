@@ -1,0 +1,26 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#ifndef MORGANAINTEGRATOR_HPP
+#define MORGANAINTEGRATOR_HPP
+
+enum intTypes  {STANDARD = 1, MINIELEMENT = 2, P0DUAL = 3, HYBRID = 4 };
+enum intClass  {intDefault,
+               OEL3d_STD, OEL3d_STC, OEL3d_SKT, OEL3d_OSC, OLA3d_STD, OLA3d_STC, OLA3d_OSC, OHY3d_STD, OHY3d_STC, OHY3d_OSC, OBB3d_STD, OBB3d_STC, OBB3d_OSC,
+               OEL2d_STD, OEL2d_STC, OEL2d_SKT, OEL2d_OSC, OLA2d_STD,                       OHY2d_STD,                       OBB2d_STD, OBB2d_STC,
+       
+               FEL3d_STD, FEL3d_STC, FEL3d_OSC, FBF3d_STD, FBF3d_STC, FBF3d_OSC, FLA3d_STD, FLA3d_STC, FLA3d_OSC, FHY3d_STD, FHY3d_STC, FHY3d_OSC,
+               FEL2d_STD, FBF2d_STD, FLA2d_STD, FLA2d_OSC,
+               OEL1d_STD };
+
+#endif

@@ -1,0 +1,21 @@
+LOADING FROM: ./tests/morganaMeshes/mignon2dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 1d - global : 6
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+Dof Map Data
+numVertices   : 4 4
+numElements   : 3 3
+
+numVertexDofs : 4 4
+numVolumeDofs : 0 0
+
+numTotalDofs  : 4 4
+sizeList      : 12 12
+
+dofL  : 1
+dofG  : 1
+listL : 1
+listG : 1

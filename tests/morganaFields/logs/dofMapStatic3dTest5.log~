@@ -1,0 +1,28 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Dof Map 
+pid: 1 lid: 1 gid: 3 shared: 0 owned 1
+pid: 1 lid: 2 gid: 4 shared: 0 owned 1
+pid: 1 lid: 3 gid: 7 shared: 0 owned 1
+pid: 1 lid: 4 gid: 8 shared: 0 owned 1
+
+
+List Map
+pid: 1 lid: 1 gid: 7 shared: 0 owned 1
+pid: 1 lid: 2 gid: 8 shared: 0 owned 1
+pid: 1 lid: 3 gid: 9 shared: 0 owned 1
+pid: 1 lid: 4 gid: 10 shared: 0 owned 1
+pid: 1 lid: 5 gid: 11 shared: 0 owned 1
+pid: 1 lid: 6 gid: 12 shared: 0 owned 1
+pid: 1 lid: 7 gid: 19 shared: 0 owned 1
+pid: 1 lid: 8 gid: 20 shared: 0 owned 1
+pid: 1 lid: 9 gid: 21 shared: 0 owned 1
+pid: 1 lid: 10 gid: 22 shared: 0 owned 1
+pid: 1 lid: 11 gid: 23 shared: 0 owned 1
+pid: 1 lid: 12 gid: 24 shared: 0 owned 1
+

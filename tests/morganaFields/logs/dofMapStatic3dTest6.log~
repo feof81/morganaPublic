@@ -1,0 +1,88 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Dof Map 
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 1 owned 1
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+pid: 1 lid: 5 gid: 6 shared: 1 owned 0
+pid: 1 lid: 6 gid: 7 shared: 1 owned 0
+pid: 1 lid: 7 gid: 13 shared: 0 owned 1
+pid: 1 lid: 8 gid: 14 shared: 0 owned 1
+pid: 1 lid: 9 gid: 23 shared: 1 owned 0
+pid: 1 lid: 10 gid: 21 shared: 1 owned 1
+pid: 1 lid: 11 gid: 15 shared: 0 owned 1
+pid: 1 lid: 12 gid: 24 shared: 1 owned 0
+pid: 1 lid: 13 gid: 16 shared: 0 owned 1
+pid: 1 lid: 14 gid: 20 shared: 1 owned 1
+pid: 1 lid: 15 gid: 18 shared: 1 owned 1
+pid: 1 lid: 16 gid: 17 shared: 0 owned 1
+pid: 1 lid: 17 gid: 22 shared: 1 owned 0
+pid: 1 lid: 18 gid: 25 shared: 1 owned 0
+pid: 1 lid: 19 gid: 19 shared: 1 owned 1
+
+
+List Map
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 2 shared: 1 owned 1
+pid: 1 lid: 3 gid: 3 shared: 1 owned 1
+pid: 1 lid: 4 gid: 7 shared: 1 owned 1
+pid: 1 lid: 5 gid: 8 shared: 1 owned 1
+pid: 1 lid: 6 gid: 9 shared: 1 owned 1
+pid: 1 lid: 7 gid: 10 shared: 0 owned 1
+pid: 1 lid: 8 gid: 11 shared: 0 owned 1
+pid: 1 lid: 9 gid: 12 shared: 0 owned 1
+pid: 1 lid: 10 gid: 13 shared: 1 owned 0
+pid: 1 lid: 11 gid: 14 shared: 1 owned 0
+pid: 1 lid: 12 gid: 15 shared: 1 owned 0
+pid: 1 lid: 13 gid: 16 shared: 1 owned 0
+pid: 1 lid: 14 gid: 17 shared: 1 owned 0
+pid: 1 lid: 15 gid: 18 shared: 1 owned 0
+pid: 1 lid: 16 gid: 19 shared: 1 owned 0
+pid: 1 lid: 17 gid: 20 shared: 1 owned 0
+pid: 1 lid: 18 gid: 21 shared: 1 owned 0
+pid: 1 lid: 19 gid: 37 shared: 0 owned 1
+pid: 1 lid: 20 gid: 38 shared: 0 owned 1
+pid: 1 lid: 21 gid: 39 shared: 0 owned 1
+pid: 1 lid: 22 gid: 40 shared: 0 owned 1
+pid: 1 lid: 23 gid: 41 shared: 0 owned 1
+pid: 1 lid: 24 gid: 42 shared: 0 owned 1
+pid: 1 lid: 25 gid: 67 shared: 1 owned 0
+pid: 1 lid: 26 gid: 68 shared: 1 owned 0
+pid: 1 lid: 27 gid: 69 shared: 1 owned 0
+pid: 1 lid: 28 gid: 61 shared: 1 owned 1
+pid: 1 lid: 29 gid: 62 shared: 1 owned 1
+pid: 1 lid: 30 gid: 63 shared: 1 owned 1
+pid: 1 lid: 31 gid: 43 shared: 0 owned 1
+pid: 1 lid: 32 gid: 44 shared: 0 owned 1
+pid: 1 lid: 33 gid: 45 shared: 0 owned 1
+pid: 1 lid: 34 gid: 70 shared: 1 owned 0
+pid: 1 lid: 35 gid: 71 shared: 1 owned 0
+pid: 1 lid: 36 gid: 72 shared: 1 owned 0
+pid: 1 lid: 37 gid: 46 shared: 0 owned 1
+pid: 1 lid: 38 gid: 47 shared: 0 owned 1
+pid: 1 lid: 39 gid: 48 shared: 0 owned 1
+pid: 1 lid: 40 gid: 58 shared: 1 owned 1
+pid: 1 lid: 41 gid: 59 shared: 1 owned 1
+pid: 1 lid: 42 gid: 60 shared: 1 owned 1
+pid: 1 lid: 43 gid: 52 shared: 1 owned 1
+pid: 1 lid: 44 gid: 53 shared: 1 owned 1
+pid: 1 lid: 45 gid: 54 shared: 1 owned 1
+pid: 1 lid: 46 gid: 49 shared: 0 owned 1
+pid: 1 lid: 47 gid: 50 shared: 0 owned 1
+pid: 1 lid: 48 gid: 51 shared: 0 owned 1
+pid: 1 lid: 49 gid: 64 shared: 1 owned 0
+pid: 1 lid: 50 gid: 65 shared: 1 owned 0
+pid: 1 lid: 51 gid: 66 shared: 1 owned 0
+pid: 1 lid: 52 gid: 73 shared: 1 owned 0
+pid: 1 lid: 53 gid: 74 shared: 1 owned 0
+pid: 1 lid: 54 gid: 75 shared: 1 owned 0
+pid: 1 lid: 55 gid: 55 shared: 1 owned 1
+pid: 1 lid: 56 gid: 56 shared: 1 owned 1
+pid: 1 lid: 57 gid: 57 shared: 1 owned 1
+

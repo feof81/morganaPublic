@@ -1,0 +1,140 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef ELCARDFEEDER1D_HPP
+#define ELCARDFEEDER1D_HPP
+
+#include "Teuchos_RCP.hpp"
+
+#include "mesh1d.hpp"
+#include "connect1d.hpp"
+#include "elCard1d.hpp"
+
+
+/*! Transform the grid information into \c elCard1d */
+template<typename GEOSHAPE, typename PMAPTYPE>
+class elCardFeeder1d
+{
+  /*! @name Typedefs */ //@{
+  public:   
+    typedef sVect<point3d>       NODES;
+    typedef sVect<PMAPTYPE>      NODES_MAP;
+
+    typedef mesh1d<GEOSHAPE,PMAPTYPE,PMAPTYPE>    MESH1D;
+    typedef connect1d<GEOSHAPE,PMAPTYPE,PMAPTYPE> CONNECT1D;
+    //@}
+    
+    /*! @name Interal links */ //@{
+  public:
+    bool geometryLoaded;
+    Teuchos::RCP<MESH1D>     grid1d;
+    Teuchos::RCP<CONNECT1D>  connectGrid1d;
+    //@}
+    
+    /*! @name Constructors and set functions */ //@{
+  public:
+    elCardFeeder1d();
+    elCardFeeder1d(const Teuchos::RCP<MESH1D> & Mesh1d, const Teuchos::RCP<CONNECT1D> & ConnectGrid1d);
+    elCardFeeder1d(MESH1D & Mesh1d, CONNECT1D & ConnectGrid1d);
+    void setGeometry(const Teuchos::RCP<MESH1D> & Mesh1d, const Teuchos::RCP<CONNECT1D> & ConnectGrid1d);
+    void setGeometry(MESH1D & Mesh1d, CONNECT1D & ConnectGrid1d);
+    elCard1d<GEOSHAPE,PMAPTYPE> getCardLocal(const UInt & lid) const;
+    elCard1d<GEOSHAPE,PMAPTYPE> getCardGlobal(const UInt & gid) const;
+    //@}
+};
+
+
+//_________________________________________________________________________________________________
+// IMPLEMENTATION
+//-------------------------------------------------------------------------------------------------
+template<typename GEOSHAPE, typename PMAPTYPE>
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+elCardFeeder1d()
+{
+  assert(staticAssert<GEOSHAPE::nDim == 1>::returnValue);
+  geometryLoaded = false;
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+elCardFeeder1d(const Teuchos::RCP<MESH1D> & Mesh1d, const Teuchos::RCP<CONNECT1D> & ConnectGrid1d)
+{
+  geometryLoaded = true;
+  grid1d         = Mesh1d;
+  connectGrid1d  = ConnectGrid1d;
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+elCardFeeder1d(MESH1D & Mesh1d, CONNECT1D & ConnectGrid1d)
+{
+  geometryLoaded = true;
+  grid1d         = Teuchos::rcp(new MESH1D(Mesh1d));
+  connectGrid1d  = Teuchos::rcp(new CONNECT1D(ConnectGrid1d));
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+void
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+setGeometry(const Teuchos::RCP<MESH1D> & Mesh1d, const Teuchos::RCP<CONNECT1D> & ConnectGrid1d)
+{
+  geometryLoaded = true;
+  grid1d         = Mesh1d;
+  connectGrid1d  = ConnectGrid1d;
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+void
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+setGeometry(MESH1D & Mesh1d, CONNECT1D & ConnectGrid1d)
+{
+  geometryLoaded = true;
+  grid1d         = Teuchos::rcp(new MESH1D(Mesh1d));
+  connectGrid1d  = Teuchos::rcp(new CONNECT1D(ConnectGrid1d));
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+elCard1d<GEOSHAPE,PMAPTYPE>
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+getCardLocal(const UInt & lid) const
+{
+  //Asserts
+  assert(geometryLoaded);
+  assert(grid1d->getElements().colIsLocal());
+  
+  //Allocate
+  UInt nid;  
+  elCard1d<GEOSHAPE,PMAPTYPE> outCard;
+  
+  //Nodes
+  for(UInt i=1; i <= grid1d->getElementL(lid).size(); ++i)
+  {
+    nid = grid1d->getElementL(lid).getCid(i);    
+    outCard.setNode(i,grid1d->getNodeL(nid));
+  }
+  
+  return(outCard);
+}
+
+template<typename GEOSHAPE, typename PMAPTYPE>
+elCard1d<GEOSHAPE,PMAPTYPE>
+elCardFeeder1d<GEOSHAPE,PMAPTYPE>::
+getCardGlobal(const UInt & gid) const
+{
+  assert(geometryLoaded);
+  UInt lid  = grid1d->getElements().getMapG(gid).getLid();
+  return(getCardLocal(lid));
+}
+
+#endif

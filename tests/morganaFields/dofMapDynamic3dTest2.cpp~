@@ -1,0 +1,169 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit3d.hpp"
+
+#include "feXFEM_LT3d.hpp"
+#include "dofMapDynamic3d.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  
+  typedef linearTetra    GEOSHAPE;
+  typedef pMapItemShare  PMAPTYPE;
+  
+  string meshFile = "./tests/morganaMeshes/mignon3dC.msh";
+  //string meshFile = "./geometries/cubes3d/testCubeD.msh";
+  
+  meshInit3d<GEOSHAPE,PMAPTYPE,PMAPTYPE> init(world);
+  init.gmMesh_to_stdB(meshFile, false);
+  
+  
+  //Initialize the mapper
+  typedef point3d                 DOFTYPE;
+  typedef feXFEM_LT3d<0,PMAPTYPE> FETYPE;
+  
+  dofMapDynamic3d_options mapOptions;
+  
+  dofMapDynamic3d<FETYPE,DOFTYPE,dmd3d_vectMajor,dmd3d_standard> dofMap;
+  
+  dofMap.setCommunicator(world);
+  dofMap.setGeometry(init.getGrid3d(), init.getConnectGrid3d());
+  dofMap.setOptions(mapOptions);
+  
+  
+  //Load the feCards
+  typedef typename FETYPE::FECARD FECARD;
+  FECARD FeCard;
+  
+  FeCard.setActive(true);
+  FeCard.setXtoll(0.1);
+  
+  FeCard.resizeEnrichedDof(1);
+  FeCard.getEnrichedDof(1)  = 1;
+  
+  
+  if(world.rank() == 0)
+  {
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(1,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(2,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(3,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(4,FeCard);
+  }
+  else
+  {
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(1,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(2,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(3,FeCard);
+    
+    FeCard.getPhi(1)  = 0.0;
+    FeCard.getPhi(2)  = 0.0;
+    FeCard.getPhi(3)  = 1.0;
+    FeCard.getPhi(4)  = 0.0;
+    dofMap.setFeCardL(4,FeCard);
+  }
+  
+  
+  //Startup
+  dofMap.startup();  
+  
+  //The map
+  feDynamicDofCard3d card;
+  card.setGeoType(VOLUME);
+  card.setLevel(2);
+  card.setLocalId(1);
+  card.setLocalElId(2);
+  
+  UInt I = 1, J = 1;
+  
+  
+  world.barrier();
+  if(world.rank() == 0)
+  {
+    cout << "Dof Map Data" << endl;
+    cout << dofMap << endl;
+    
+    cout << "dofL  : " << dofMap.mapDofL(card) << endl;
+    cout << "dofG  : " << dofMap.mapDofG(card) << endl;
+    cout << "listL : " << dofMap.mapListL(I,J,card) << endl;
+    cout << "listG : " << dofMap.mapListG(I,J,card) << endl;
+  }
+  sleep(1);
+  
+  world.barrier();
+  if(world.rank() == 1)
+  {
+    cout << "Dof Map Data" << endl;
+    cout << dofMap << endl;
+    
+    cout << "dofL  : " << dofMap.mapDofL(card) << endl;
+    cout << "dofG  : " << dofMap.mapDofG(card) << endl;
+    cout << "listL : " << dofMap.mapListL(I,J,card) << endl;
+    cout << "listG : " << dofMap.mapListG(I,J,card) << endl;
+  }
+  sleep(1);
+}

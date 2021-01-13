@@ -1,0 +1,26 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Num basis : 3
+Dofcards  : 
+GeoType : 3
+Level   : 1
+LocId   : 1
+
+GeoType : 3
+Level   : 1
+LocId   : 3
+
+GeoType : 3
+Level   : 1
+LocId   : 4
+
+Val       : 
+0
+0
+1
+

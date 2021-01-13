@@ -1,0 +1,9 @@
+LOADING FROM: ../tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+pid 1 eval 0.3 0.3 0
+pid 0 eval 0.3 0.3 0

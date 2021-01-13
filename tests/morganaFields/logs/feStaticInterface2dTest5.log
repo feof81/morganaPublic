@@ -1,0 +1,44 @@
+LOADING FROM: ../tests/morganaMeshes/mignon2dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 1d - global : 6
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+Indices
+13
+17
+16
+
+Eval
+0 0 0.333333
+
+0 0 0.333333
+
+0 0 0.333333
+
+
+GradX
+0 0 0
+
+0 0 1
+
+-0 -0 -1
+
+
+GradY
+-0 -0 -1
+
+0 0 0
+
+0 0 1
+
+
+GradZ
+0 0 0
+
+0 0 0
+
+0 0 0
+
+

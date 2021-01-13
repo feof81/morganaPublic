@@ -1,0 +1,25 @@
+LOADING FROM: ./tests/morganaMeshes/mignon2dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 1d - global : 6
+Elements 2d - global : 4
+Now loading
+Mesh loaded successfully
+Dofs
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: 0 0 0
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 1 owned 0
+ data: 1 0 0
+
+3
+ map:  pid: 0 lid: 3 gid: 4 shared: 0 owned 1
+ data: 0 1 0
+
+4
+ map:  pid: 0 lid: 4 gid: 5 shared: 1 owned 1
+ data: 1 1 0
+
+

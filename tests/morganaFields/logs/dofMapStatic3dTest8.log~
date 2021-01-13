@@ -1,0 +1,51 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Dof Map 
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 1 owned 1
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+pid: 1 lid: 5 gid: 6 shared: 1 owned 0
+pid: 1 lid: 6 gid: 11 shared: 0 owned 1
+pid: 1 lid: 7 gid: 12 shared: 0 owned 1
+pid: 1 lid: 8 gid: 18 shared: 1 owned 0
+pid: 1 lid: 9 gid: 17 shared: 1 owned 1
+pid: 1 lid: 10 gid: 13 shared: 0 owned 1
+pid: 1 lid: 11 gid: 19 shared: 1 owned 0
+pid: 1 lid: 12 gid: 14 shared: 0 owned 1
+pid: 1 lid: 13 gid: 16 shared: 1 owned 1
+pid: 1 lid: 14 gid: 15 shared: 1 owned 1
+
+
+Dof Map Copy 
+pid: 1 lid: 1 gid: 1 shared: 1 owned 1
+pid: 1 lid: 2 gid: 3 shared: 1 owned 1
+pid: 1 lid: 3 gid: 4 shared: 0 owned 1
+pid: 1 lid: 4 gid: 5 shared: 1 owned 0
+pid: 1 lid: 5 gid: 6 shared: 1 owned 0
+pid: 1 lid: 6 gid: 11 shared: 0 owned 1
+pid: 1 lid: 7 gid: 12 shared: 0 owned 1
+pid: 1 lid: 8 gid: 18 shared: 1 owned 0
+pid: 1 lid: 9 gid: 17 shared: 1 owned 1
+pid: 1 lid: 10 gid: 13 shared: 0 owned 1
+pid: 1 lid: 11 gid: 19 shared: 1 owned 0
+pid: 1 lid: 12 gid: 14 shared: 0 owned 1
+pid: 1 lid: 13 gid: 16 shared: 1 owned 1
+pid: 1 lid: 14 gid: 15 shared: 1 owned 1
+
+
+Original 
+dofL  : 4
+dofG  : 5
+listL : 10
+listG : 13
+Copy 
+dofL  : 4
+dofG  : 5
+listL : 10
+listG : 13

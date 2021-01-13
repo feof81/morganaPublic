@@ -1,0 +1,168 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit3d.hpp"
+#include "search3dA.hpp"
+
+#include "feOscPr3d.hpp"
+#include "feOscPr3d_extern.hpp"
+#include "feStaticField3d.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{  
+  environment  env(argc,argv);
+  communicator world;
+  
+  UInt pid = world.rank();
+  assert(world.size() == 2);
+  
+  Real K = 2.5;
+  
+  typedef linearTriangle GEOSHAPE2D;
+  typedef linearTetra    GEOSHAPE3D;
+  typedef pMapItemShare  PMAPTYPE;
+  
+  string meshFile = "./tests/morganaMeshes/mignon3dC.msh";
+  
+  meshInit3d<GEOSHAPE3D,PMAPTYPE,PMAPTYPE> init(world);
+  init.gmMesh_to_stdB(meshFile, false);
+  
+  //Download data
+  typedef Real                   DOFTYPE;
+  typedef feOscPr3d<0,1,PMAPTYPE> FETYPE;
+  
+  typedef meshInit3d<GEOSHAPE3D,PMAPTYPE,PMAPTYPE>::MESH2D     MESH2D;
+  typedef meshInit3d<GEOSHAPE3D,PMAPTYPE,PMAPTYPE>::MESH3D     MESH3D;
+  typedef meshInit3d<GEOSHAPE3D,PMAPTYPE,PMAPTYPE>::CONNECT2D  CONNECT2D;
+  typedef meshInit3d<GEOSHAPE3D,PMAPTYPE,PMAPTYPE>::CONNECT3D  CONNECT3D;
+  
+  RCP<MESH2D>           grid2d = init.getGrid2d();
+  RCP<MESH3D>           grid3d = init.getGrid3d();
+  RCP<CONNECT2D> connectGrid2d = init.getConnectGrid2d();
+  RCP<CONNECT3D> connectGrid3d = init.getConnectGrid3d();
+  
+  //Build the feCards
+  typedef feOscPr3d_extern<0,1,PMAPTYPE>::FECARDS FECARDS;
+  
+  feOscPr3d_extern<0,1,PMAPTYPE> feExtern;
+  feExtern.setGeometry(grid3d,connectGrid3d);
+  feExtern.setCommDev(world);
+  FECARDS feCards = feExtern.buildFeCards(K);
+    
+  //Set the field
+  dofMapStatic3d_options mapOptions;
+  
+  feStaticField3d<FETYPE,DOFTYPE,dms3d_vectMajor,dms3d_allMode> field3d;
+  field3d.setCommunicator(world);
+  field3d.setGeometry(grid3d,connectGrid3d);
+  field3d.setOptions(mapOptions);
+  field3d.setFeCards(feCards);
+  field3d.startup();
+  
+  for(UInt i=1; i <= field3d.size(); ++i)
+  { field3d.setDofL(i,1.0); }
+  
+  //Testing
+  UInt el = 1;
+  point3d Y(0.21, 0.23, 0.27);
+  
+  point3d K1(  K,   0.0,  0.0);
+  point3d K2( -K,   0.0,  0.0);
+  point3d K3( 0.0,   K,   0.0);
+  point3d K4( 0.0,  -K,   0.0);
+  point3d K5( 0.0,  0.0,   K);
+  point3d K6( 0.0,  0.0,  -K);
+
+  sVect<point3d> nodes = grid3d->getElementNodesL(el);
+  point3d X  = nodes(1) * (1.0 - Y(1) - Y(2) - Y(3)) + nodes(2) * Y(1) + nodes(3) * Y(2) + nodes(4) * Y(3);
+  point3d X0 = (nodes(1) + nodes(2) + nodes(3) + nodes(4)) / 4.0;
+  
+  komplex Vnum;
+  field3d.evalL(el,Y,Vnum);
+  
+  komplex Vexc;
+  Real theta;
+  
+  theta = point3d::dot(K1,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  theta = point3d::dot(K2,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  theta = point3d::dot(K3,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  theta = point3d::dot(K4,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  theta = point3d::dot(K5,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  theta = point3d::dot(K6,X-X0); Vexc += komplex(cos(theta),sin(theta));
+  
+  cout << "Val Num: " << Vnum;
+  cout << "Val Exc: " << Vexc << endl;
+  
+  komplex gradNumX, gradNumY, gradNumZ;
+  field3d.gradL(el,Y,gradNumX,gradNumY,gradNumZ);
+  
+  komplex gradExcX, gradExcY, gradExcZ;
+  
+  theta = point3d::dot(K1,X-X0);
+  gradExcX += komplex(-K1(1) * sin(theta), K1(1) * cos(theta));
+  gradExcY += komplex(-K1(2) * sin(theta), K1(2) * cos(theta));
+  gradExcZ += komplex(-K1(3) * sin(theta), K1(3) * cos(theta));
+  
+  theta = point3d::dot(K2,X-X0);
+  gradExcX += komplex(-K2(1) * sin(theta), K2(1) * cos(theta));
+  gradExcY += komplex(-K2(2) * sin(theta), K2(2) * cos(theta));
+  gradExcZ += komplex(-K2(3) * sin(theta), K2(3) * cos(theta));
+  
+  theta = point3d::dot(K3,X-X0);
+  gradExcX += komplex(-K3(1) * sin(theta), K3(1) * cos(theta));
+  gradExcY += komplex(-K3(2) * sin(theta), K3(2) * cos(theta));
+  gradExcZ += komplex(-K3(3) * sin(theta), K3(3) * cos(theta));
+  
+  theta = point3d::dot(K4,X-X0);
+  gradExcX += komplex(-K4(1) * sin(theta), K4(1) * cos(theta));
+  gradExcY += komplex(-K4(2) * sin(theta), K4(2) * cos(theta));
+  gradExcZ += komplex(-K4(3) * sin(theta), K4(3) * cos(theta));
+  
+  theta = point3d::dot(K5,X-X0);
+  gradExcX += komplex(-K5(1) * sin(theta), K5(1) * cos(theta));
+  gradExcY += komplex(-K5(2) * sin(theta), K5(2) * cos(theta));
+  gradExcZ += komplex(-K5(3) * sin(theta), K5(3) * cos(theta));
+  
+  theta = point3d::dot(K6,X-X0);
+  gradExcX += komplex(-K6(1) * sin(theta), K6(1) * cos(theta));
+  gradExcY += komplex(-K6(2) * sin(theta), K6(2) * cos(theta));
+  gradExcZ += komplex(-K6(3) * sin(theta), K6(3) * cos(theta));
+  
+  cout << "GradX Num: " << gradNumX;
+  cout << "GradX Exc: " << gradExcX << endl;
+  
+  cout << "GradY Num: " << gradNumY;
+  cout << "GradY Exc: " << gradExcY << endl;
+  
+  cout << "GradZ Num: " << gradNumZ;
+  cout << "GradZ Exc: " << gradExcZ << endl;
+}
+

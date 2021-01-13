@@ -1,0 +1,142 @@
+LOADING FROM: ../tests/morganaMeshes/mignonHexaB.unv
+Read 14 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 20
+Elements 3d - global : 4
+
+1
+ map:  pid: 1 lid: 1 gid: 1 shared: 0 owned 1
+ data: 1
+2
+ map:  pid: 1 lid: 2 gid: 2 shared: 0 owned 1
+ data: 2
+3
+ map:  pid: 1 lid: 3 gid: 3 shared: 0 owned 1
+ data: 3
+4
+ map:  pid: 1 lid: 4 gid: 4 shared: 0 owned 1
+ data: 4
+5
+ map:  pid: 1 lid: 5 gid: 5 shared: 0 owned 1
+ data: 1
+6
+ map:  pid: 1 lid: 6 gid: 6 shared: 0 owned 1
+ data: 2
+7
+ map:  pid: 1 lid: 7 gid: 7 shared: 0 owned 1
+ data: 3
+8
+ map:  pid: 1 lid: 8 gid: 8 shared: 0 owned 1
+ data: 4
+9
+ map:  pid: 1 lid: 9 gid: 9 shared: 0 owned 1
+ data: 1
+10
+ map:  pid: 1 lid: 10 gid: 10 shared: 0 owned 1
+ data: 2
+11
+ map:  pid: 1 lid: 11 gid: 11 shared: 0 owned 1
+ data: 3
+12
+ map:  pid: 1 lid: 12 gid: 12 shared: 0 owned 1
+ data: 4
+13
+ map:  pid: 1 lid: 13 gid: 13 shared: 0 owned 1
+ data: 1
+14
+ map:  pid: 1 lid: 14 gid: 14 shared: 0 owned 1
+ data: 2
+15
+ map:  pid: 1 lid: 15 gid: 15 shared: 0 owned 1
+ data: 3
+16
+ map:  pid: 1 lid: 16 gid: 16 shared: 0 owned 1
+ data: 4
+17
+ map:  pid: 1 lid: 17 gid: 17 shared: 0 owned 1
+ data: 1
+18
+ map:  pid: 1 lid: 18 gid: 18 shared: 0 owned 1
+ data: 2
+19
+ map:  pid: 1 lid: 19 gid: 19 shared: 0 owned 1
+ data: 3
+20
+ map:  pid: 1 lid: 20 gid: 20 shared: 0 owned 1
+ data: 4
+21
+ map:  pid: 1 lid: 21 gid: 21 shared: 0 owned 1
+ data: 1
+22
+ map:  pid: 1 lid: 22 gid: 22 shared: 0 owned 1
+ data: 2
+23
+ map:  pid: 1 lid: 23 gid: 23 shared: 0 owned 1
+ data: 3
+24
+ map:  pid: 1 lid: 24 gid: 24 shared: 0 owned 1
+ data: 4
+25
+ map:  pid: 1 lid: 25 gid: 25 shared: 0 owned 1
+ data: 1
+26
+ map:  pid: 1 lid: 26 gid: 26 shared: 0 owned 1
+ data: 2
+27
+ map:  pid: 1 lid: 27 gid: 27 shared: 0 owned 1
+ data: 3
+28
+ map:  pid: 1 lid: 28 gid: 28 shared: 0 owned 1
+ data: 4
+29
+ map:  pid: 1 lid: 29 gid: 29 shared: 0 owned 1
+ data: 1
+30
+ map:  pid: 1 lid: 30 gid: 30 shared: 0 owned 1
+ data: 2
+31
+ map:  pid: 1 lid: 31 gid: 31 shared: 0 owned 1
+ data: 3
+32
+ map:  pid: 1 lid: 32 gid: 32 shared: 0 owned 1
+ data: 4
+33
+ map:  pid: 1 lid: 33 gid: 33 shared: 0 owned 1
+ data: 2
+34
+ map:  pid: 1 lid: 34 gid: 34 shared: 0 owned 1
+ data: 3
+35
+ map:  pid: 1 lid: 35 gid: 35 shared: 0 owned 1
+ data: 4
+36
+ map:  pid: 1 lid: 36 gid: 36 shared: 0 owned 1
+ data: 2
+37
+ map:  pid: 1 lid: 37 gid: 37 shared: 0 owned 1
+ data: 3
+38
+ map:  pid: 1 lid: 38 gid: 38 shared: 0 owned 1
+ data: 4
+39
+ map:  pid: 1 lid: 39 gid: 39 shared: 0 owned 1
+ data: 2
+40
+ map:  pid: 1 lid: 40 gid: 40 shared: 0 owned 1
+ data: 3
+41
+ map:  pid: 1 lid: 41 gid: 41 shared: 0 owned 1
+ data: 4
+42
+ map:  pid: 1 lid: 42 gid: 42 shared: 0 owned 1
+ data: 2
+43
+ map:  pid: 1 lid: 43 gid: 43 shared: 0 owned 1
+ data: 3
+44
+ map:  pid: 1 lid: 44 gid: 44 shared: 0 owned 1
+ data: 4
+
+Val : 4

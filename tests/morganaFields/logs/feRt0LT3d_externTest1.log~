@@ -1,0 +1,28 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dB.msh
+Estimating mesh size
+Nodes       - global : 6
+Elements 2d - global : 8
+Elements 3d - global : 4
+Now loading
+Mesh loaded successfully
+1
+ map:  pid: 0 lid: 1 gid: 1 shared: 0 owned 1
+ data: loaded : 1
+Faces  : 
+1
+1
+1
+1
+
+
+2
+ map:  pid: 0 lid: 2 gid: 2 shared: 0 owned 1
+ data: loaded : 1
+Faces  : 
+1
+0
+1
+1
+
+
+

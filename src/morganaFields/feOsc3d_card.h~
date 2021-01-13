@@ -1,0 +1,110 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+#ifndef FEOSC3D_CARD_H
+#define FEOSC3D_CARD_H
+
+#include "glBase.h"
+#include "polyDynamic.h"
+#include "elCard3d.hpp"
+#include "feDynamicDofCard3d.h"
+#include "morganaFields.h"
+
+#include <boost/serialization/access.hpp>
+#include <boost/mpi.hpp>
+
+/*! Finite element card for all the 3d oscillating enrichments */
+class feOsc3d_card
+{
+    /*! @name Parallel support */ //@{
+  public:
+    friend class boost::serialization::access;
+    
+    template<class ARK>
+    void serialize(ARK & ar, const unsigned int version);
+    //@}
+  
+  /*! @name Internal data */ //@{
+  public:
+    static const FECardLabel cardLabel = CR_OS_3d;
+    sVect<point3d> Yj, Hj;
+    //@}
+    
+    /*! @name Constructor and functions */ //@{
+  public:
+    feOsc3d_card();
+    feOsc3d_card(const UInt & N);
+    feOsc3d_card(const feOsc3d_card & C);
+    feOsc3d_card operator=(const feOsc3d_card & C);
+    bool operator!=(const feOsc3d_card & C) const;
+    //@}
+    
+    /*! @name Set functions */ //@{
+  public:
+    void set(const sVect<point3d> & YJ, const sVect<point3d> & HJ);
+    void set(const point3d & Y, const point3d & H, const UInt & i);
+    void resize(const UInt & N);
+    void conjugate();
+    //@}
+    
+    /*! @name Get const reference */ //@{
+  public:
+    const sVect<point3d> & getY() const;
+    const sVect<point3d> & getH() const;
+    const point3d & getY(const UInt & i) const;
+    const point3d & getH(const UInt & i) const;
+    UInt size() const;
+    //@}
+    
+    /*! @name Get reference */ //@{
+  public:
+    sVect<point3d> & getY();
+    sVect<point3d> & getH();
+    point3d & getY(const UInt & i);
+    point3d & getH(const UInt & i);
+    //@}
+    
+    /*! @name Printout */ //@{
+  public:
+    friend ostream & operator<<(ostream & f, const feOsc3d_card & V);
+    //@}
+};
+
+
+//_________________________________________________________________________________________________
+// PARALLEL SUPPORT
+//-------------------------------------------------------------------------------------------------
+template<class ARK>
+void
+feOsc3d_card::
+serialize(ARK & ar, const unsigned int version)
+{
+  assert(version == version);
+  assert(Yj.size() == Hj.size());
+  
+  int N = this->size();
+  
+  ar & N;
+  
+  if(N != this->size())
+  { this->resize(N); }
+  
+  for(UInt i=1; i <= N; ++i)
+  {
+    ar & this->getY(i);
+    ar & this->getH(i);
+  }
+}
+
+#endif

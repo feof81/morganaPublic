@@ -1,0 +1,12 @@
+LOADING FROM: ../tests/morganaMeshes/mignonHexaB.unv
+Read 14 data blocks
+Segmentation procedure 
+
+Mesh loaded successfully
+Nodes       - global : 20
+Elements 3d - global : 4
+
+elG 2 Y 0.5 0.7 0.3
+
+pid 0
+ eval 2 gradX -4.996e-16 gradY -5.82867e-17 gradZ -1.75415e-16

@@ -1,0 +1,34 @@
+LOADING FROM: ./tests/morganaMeshes/mignon3dC.msh
+Estimating mesh size
+Nodes       - global : 7
+Elements 2d - global : 8
+Elements 3d - global : 8
+Now loading
+Mesh loaded successfully
+Dof Map Data
+numVerticesL   : 6
+5
+
+numEdgesL      : 
+numFacesL      : 
+numElementsL   : 
+
+numVerticesG   : 7
+6
+
+numEdgesG      : 
+numFacesG      : 
+numElementsG   : 
+
+numVertexDofs : 11 13
+numEdgesDofs  : 0 0
+numFacesDofs  : 0 0
+numVolumeDofs : 0 0
+
+numTotalDofs  : 11 13
+sizeList      : 33 39
+
+dofL  : 10
+dofG  : 12
+listL : 28
+listG : 34
