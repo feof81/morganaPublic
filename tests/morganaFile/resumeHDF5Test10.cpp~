@@ -1,0 +1,50 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "resumeHDF5.hpp"
+
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  
+  sVect<UInt> vect, rVect;
+  resumeHDF5 resumer(world);
+   
+  if(world.rank() == 0)
+  {
+    vect.push_back(4);
+    vect.push_back(5);
+    vect.push_back(6);
+  }
+  
+  if(world.rank() == 1)
+  {
+    vect.push_back(1);
+    vect.push_back(2);
+  }
+  
+  EpetraExt::DistArray<Real> distArray = resumer.convertToDistArray(vect);
+  resumer.convertFromDistArray<UInt>(distArray,rVect);
+  
+  if(world.rank() == 0)
+  { cout << rVect << endl; }
+}

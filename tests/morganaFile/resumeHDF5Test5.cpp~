@@ -1,0 +1,70 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "resumeHDF5.hpp"
+
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 3);
+  
+  typedef pMapItemShare              MAPITEM;
+  typedef point3d                       DATA;
+  typedef pMap<pMapItemShare>           PMAP;
+  typedef pVect<point3d,pMapItemShare> PVECT;
+  
+  PMAP  map;
+  PVECT vect, rvect;
+  sVect<DATA> data;
+  resumeHDF5 resumer(world);
+   
+  if(world.rank() == 0)
+  {
+    map.push_back(pMapItemShare(1,5,0,false,true)); data.push_back(point3d(5.5, 0.0, 0.0));
+    map.push_back(pMapItemShare(2,4,0,false,true)); data.push_back(point3d(0.0, 4.5, 0.0));
+    map.push_back(pMapItemShare(3,3,0,true,false)); data.push_back(point3d(0.0, 0.0, 3.5));
+  }
+  
+  if(world.rank() == 1)
+  {
+    map.push_back(pMapItemShare(1,3,1,true,true));  data.push_back(point3d(0.0, 0.0, 3.5));
+    map.push_back(pMapItemShare(2,2,1,true,false)); data.push_back(point3d(2.5, 0.0, 0.0));
+  }
+  
+  if(world.rank() == 2)
+  {
+    map.push_back(pMapItemShare(1,2,2,true,true));  data.push_back(point3d(2.5, 0.0, 0.0));
+    map.push_back(pMapItemShare(2,1,2,false,true)); data.push_back(point3d(0.0, 1.5, 0.0));
+  }
+  
+  map.bufferLids();
+  vect.setData(map,data);
+  vect.updateFinder(); 
+  
+  resumer.printToFile("pVect",vect);
+  resumer.loadFromFile("pVect",rvect);
+  
+  if(world.rank() == 2)
+  { 
+    cout <<  vect << endl;
+    cout << rvect << endl;
+  }
+}

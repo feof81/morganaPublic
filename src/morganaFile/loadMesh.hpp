@@ -932,15 +932,15 @@ gmMeshParallel(const string & meshfile,
       
       if(i == upperBound)
       {
-	if(pidLoc == 0)
-	{ nodes = nodesTemp; }
-	else
-	{ vectorComm.send(0,pidLoc,nodesTemp,reqs); }
-	
-	k = 1;
-	pidLoc++;
-	upperBound = segmentationUpper(pidLoc,commDev->size(),n_nodes);
-	nodesTemp.clear();
+        if(pidLoc == 0)
+        { nodes = nodesTemp; }
+        else
+        { vectorComm.send(0,pidLoc,nodesTemp); }
+
+        k = 1;
+        pidLoc++;
+        upperBound = segmentationUpper(pidLoc,commDev->size(),n_nodes);
+        nodesTemp.clear();
       }
     }
     
@@ -976,111 +976,113 @@ gmMeshParallel(const string & meshfile,
     
       switch (type)
       {
-	case 15 : break; //Is a corner
+        case 15 : break; //Is a corner
 
         //Is a 1d element
-	case 1 :
-	  assegnavalore(2,dummy); // Numero di flags
-	  assert((dummy == 3) || (dummy == 2));
-	  
-	  if(dummy == 3)
-	  {
-	    assert(numRowEl == 8);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,dummy); // Elimina il terzo flag
-	    assegnavalore(6,id1);   // Primo id
-	    assegnavalore(7,id2);   // Secondo id
-	  }
-	  
-	  if(dummy == 2)
-	  {
-	    assert(numRowEl == 7);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,id1);   // Primo id
-	    assegnavalore(6,id2);   // Secondo id
-	  }
-	  
-	  element1d(1) = id1;
+        case 1 :
+          assegnavalore(2,dummy); // Numero di flags
+          assert((dummy == 3) || (dummy == 2));
+    
+          if(dummy == 3)
+          {
+            assert(numRowEl == 8);
+            assegnavalore(3,dummy); // Elimina il primo flag
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,dummy); // Elimina il terzo flag
+            assegnavalore(6,id1);   // Primo id
+            assegnavalore(7,id2);   // Secondo id
+          }
+    
+          if(dummy == 2)
+          {
+            assert(numRowEl == 7);
+            assegnavalore(3,dummy); // Elimina il primo flag
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,id1);   // Primo id
+            assegnavalore(6,id2);   // Secondo id
+          }
+    
+          element1d(1) = id1;
           element1d(2) = id2;
           element1d.setGeoId(sub);
-	  
-	  elMapItem.setLid(elIdLoc1d);
-	  elMapItem.setGid(elIdGlob1d);
-	  mapItemFixer(elMapItem);
-	  
-	  elementsTemp1d.push_back(element1d,elMapItem);
-	  elIdLoc1d++;
-	  elIdGlob1d++;
-	  
-	  if(elIdGlob1d > upperBound1d)
-	  {
-	    if(pid1d == 0)
-	    { Belements = elementsTemp1d; }
-	    else
-	    { elComm1d.send(0,pid1d,elementsTemp1d,reqs); }
-	    
-	    elIdLoc1d = 1;
-	    pid1d++;
-	    upperBound1d = segmentationUpper(pid1d,commDev->size(),nElements1d);
-	    elementsTemp1d.clear();
-	  }
-	  break;
-	  
-	//Is a 2d element
-	case 2 :
-	  assegnavalore(2,dummy); // Numero di flags
-	  assert((dummy == 3) || (dummy == 2));
-	  
-	  if(dummy == 3)
-	  {
-	    assert(numRowEl == 9);
-	    assegnavalore(3,dummy); // Elimina il primo flag 
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,dummy); // Elimina il terzo flag
-	    assegnavalore(6,id1);   // Primo id
-	    assegnavalore(7,id2);   // Secondo id
-	    assegnavalore(8,id3);   // Terzo id
-	  }
-	  
-	  if(dummy == 2)
-	  {
-	    assert(numRowEl == 8);
-	    assegnavalore(3,dummy); // Elimina il primo flag 
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,id1);   // Primo id
-	    assegnavalore(6,id2);   // Secondo id
-	    assegnavalore(7,id3);   // Terzo id
-	  }
-	  
-	
-	  element2d(1) = id1;
+
+          elMapItem.setLid(elIdLoc1d);
+          elMapItem.setGid(elIdGlob1d);
+          mapItemFixer(elMapItem);
+
+          elementsTemp1d.push_back(element1d,elMapItem);
+          elIdLoc1d++;
+          elIdGlob1d++;
+    
+          if(elIdGlob1d > upperBound1d)
+          {
+            if(pid1d == 0)
+            { Belements = elementsTemp1d; }
+            else
+            { elComm1d.send(0,pid1d,elementsTemp1d); }
+    
+            elIdLoc1d = 1;
+            pid1d++;
+            upperBound1d = segmentationUpper(pid1d,commDev->size(),nElements1d);
+            elementsTemp1d.clear();
+          }
+          
+          break;
+    
+        //Is a 2d element
+        case 2 :
+          assegnavalore(2,dummy); // Numero di flags
+          assert((dummy == 3) || (dummy == 2));
+
+          if(dummy == 3)
+          {
+            assert(numRowEl == 9);
+            assegnavalore(3,dummy); // Elimina il primo flag 
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,dummy); // Elimina il terzo flag
+            assegnavalore(6,id1);   // Primo id
+            assegnavalore(7,id2);   // Secondo id
+            assegnavalore(8,id3);   // Terzo id
+          }
+    
+          if(dummy == 2)
+          {
+            assert(numRowEl == 8);
+            assegnavalore(3,dummy); // Elimina il primo flag 
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,id1);   // Primo id
+            assegnavalore(6,id2);   // Secondo id
+            assegnavalore(7,id3);   // Terzo id
+          }
+    
+
+          element2d(1) = id1;
           element2d(2) = id2;
           element2d(3) = id3;
           element2d.setGeoId(sub);
-	  
-	  elMapItem.setLid(elIdLoc2d);
-	  elMapItem.setGid(elIdGlob2d);
-	  mapItemFixer(elMapItem);
-	  
-	  elementsTemp2d.push_back(element2d,elMapItem);
-	  elIdLoc2d++;
-	  elIdGlob2d++;
-	  
-	  if(elIdGlob2d > upperBound2d)
-	  {
-	    if(pid2d == 0)
-	    { elements = elementsTemp2d; }
-	    else
-	    { elComm2d.send(0,pid2d,elementsTemp2d,reqs); }
-	    
-	    elIdLoc2d = 1;
-	    pid2d++;
-	    upperBound2d = segmentationUpper(pid2d,commDev->size(),nElements2d);
-	    elementsTemp2d.clear();
-	  }
-	  break;
+    
+          elMapItem.setLid(elIdLoc2d);
+          elMapItem.setGid(elIdGlob2d);
+          mapItemFixer(elMapItem);
+
+          elementsTemp2d.push_back(element2d,elMapItem);
+          elIdLoc2d++;
+          elIdGlob2d++;
+    
+          if(elIdGlob2d > upperBound2d)
+          {
+            if(pid2d == 0)
+            { elements = elementsTemp2d; }
+            else
+            { elComm2d.send(0,pid2d,elementsTemp2d); }
+    
+            elIdLoc2d = 1;
+            pid2d++;
+            upperBound2d = segmentationUpper(pid2d,commDev->size(),nElements2d);
+            elementsTemp2d.clear();
+          }
+          
+        break;
       } //End switch
     } //End loop elements
     
@@ -1097,7 +1099,6 @@ gmMeshParallel(const string & meshfile,
     elComm1d.recv(0,commDev->rank(),Belements);
     elComm2d.recv(0,commDev->rank(),elements);
   }
-  
   
   //Sincronization-----------------------------------------
   commDev->barrier(); 

@@ -1,0 +1,71 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit2d.hpp"
+#include "search2d.hpp"
+
+#include "feQr2d.hpp"
+#include "feStaticField2d.hpp"
+#include "feStaticField2dGlobalManip.hpp"
+
+#include "feStaticFieldPrinter2d.hpp"
+#include "printMesh2dHDF5.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+
+
+int main(int argc, char *argv[])
+{
+ environment  env(argc,argv);
+  communicator world;
+  
+  UInt pid = world.rank();
+  
+  //Mesh Init
+  typedef pMapItemShare      PMAPTYPE;
+  typedef point3d            DOFTYPE;
+  typedef feQr2d<0,PMAPTYPE> FETYPE;
+  typedef typename FETYPE::GEOSHAPE GEOSHAPE;
+  
+  string meshFile  = "./tests/morganaMeshes/mignonQuad2dB.unv";
+  string colorFile = "./tests/morganaMeshes/mignonQuad2dB_color.unv";
+  
+  meshInit2d<GEOSHAPE,PMAPTYPE,PMAPTYPE> init(world);
+  init.femap_to_stdA(meshFile, colorFile);
+  
+  
+  //Download data
+  typedef meshInit2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>::MESH2D     MESH2D;
+  typedef meshInit2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>::CONNECT2D  CONNECT2D;
+  
+  RCP<MESH2D>           grid2d = init.getGrid2d();
+  RCP<CONNECT2D> connectGrid2d = init.getConnectGrid2d();
+  
+  //Printer
+  printMesh2dHDF5<GEOSHAPE,PMAPTYPE> printer(world);
+  printer.print("testGrid",0,grid2d);
+}
