@@ -1,0 +1,41 @@
+ "Tpetra::Map":
+  Template parameters:
+   LocalOrdinal: int
+   GlobalOrdinal: long long
+   Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+  Global number of entries: 9
+  Minimum global index: 0
+  Maximum global index: 8
+  Index base: 0
+  Number of processes: 2
+  Uniform: false
+  Contiguous: false
+  Distributed: true
+  Process 0 of 2:
+   My number of entries: 5
+   My minimum global index: 2
+   My maximum global index: 8
+   My global indices: [2, 3, 4, 7, 8]
+  Process 1 of 2:
+   My number of entries: 4
+   My minimum global index: 0
+   My maximum global index: 6
+   My global indices: [0, 1, 5, 6]
+ "Tpetra::MultiVector":
+  Template parameters:
+   Scalar: double
+   LocalOrdinal: int
+   GlobalOrdinal: long long
+   Node: Serial/Wrapper
+  Global number of rows: 9
+  Number of columns: 1
+  Process 0 of 2:
+   Local number of rows: 5
+   Column stride: 5
+   Values: 
+   [3; 2; 1; 6; 5]
+  Process 1 of 2:
+   Local number of rows: 4
+   Column stride: 4
+   Values: 
+   [5; 4; 3; 8]

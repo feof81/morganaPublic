@@ -105,12 +105,12 @@ class epetraMatrixManip
                               const Epetra_CrsMatrix & B,
                               const Epetra_CrsMatrix & C) const;
     
-    /*! Returns B * diag(A)^{-1} * C^T */
+    /*! Returns A * diag(B)^{-1} * C^T */
     RCP shurDiag(const RCP_CONST & A,
                  const RCP_CONST & B,
                  const RCP_CONST & C) const;
     
-    /*! Returns B * inv(A) * C^T */
+    /*! Returns A * inv(B) * C^T */
     Epetra_CrsMatrix shur(const Epetra_CrsMatrix & A,
                           const Epetra_CrsMatrix & invB,
                           const Epetra_CrsMatrix & C) const;

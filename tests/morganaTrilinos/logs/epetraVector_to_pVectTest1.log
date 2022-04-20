@@ -1,0 +1,7 @@
+1
+ map:  pid: 1 lid: 1 gid: 1
+ data: 0
+2
+ map:  pid: 1 lid: 2 gid: 2
+ data: 1
+

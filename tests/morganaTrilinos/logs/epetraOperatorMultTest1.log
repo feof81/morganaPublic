@@ -1,0 +1,5 @@
+Y : Epetra::MultiVector     MyPID           GID               Value  
+         0             0                     -10
+
+Y : Epetra::MultiVector         1             1                      -3
+

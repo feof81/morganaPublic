@@ -1,0 +1,68 @@
+Epetra::CrsMatrix
+Number of Global Rows        = 9
+Number of Global Cols        = 10
+Number of Global Diagonals   = 5
+Number of Global Nonzeros    = 45
+Global Maximum Num Entries   = 5
+
+Number of My Rows        = 5
+Number of My Cols        = 5
+Number of My Diagonals   = 3
+Number of My Nonzeros    = 25
+My Maximum Num Entries   = 5
+
+   Processor    Row Index    Col Index           Value     
+       0             2             0                       0    
+       0             2             1                       1    
+       0             2             2                       2    
+Epetra::CrsMatrix
+Number of My Rows        = 4
+Number of My Cols        = 5
+Number of My Diagonals   = 2
+Number of My Nonzeros    = 20
+My Maximum Num Entries   = 5
+
+       0             2             3                       3    
+       0             2             4                       2    
+       0             3             0                       3    
+       0             3             1                       2    
+       0             3             2                       1    
+       0             3             3                       2    
+       0             3             4                       1    
+       0             4             0                       2    
+       0             4             1                       3    
+       0             4             2                       4    
+       0             4             3                       1    
+       0             4             4                       0    
+       0             7             0                       1    
+       0             7             1                       2    
+       0             7             2                       3    
+       0             7             3                       1    
+       0             7             4                       6    
+       0             8             0                       4    
+       0             8             1                       5    
+       0             8             2                       6    
+       0             8             3                       5    
+       0             8             4                       4    
+       1             0             0                       1    
+       1             0             1                       2    
+       1             0             2                       1    
+       1             0             3                       5    
+       1             0             4                       4    
+       1             1             0                       2    
+       1             1             1                       1    
+       1             1             2                       2    
+       1             1             3                       4    
+       1             1             4                       3    
+       1             5             0                       9    
+       1             5             1                       8    
+       1             5             2                       1    
+       1             5             3                       3    
+       1             5             4                       4    
+       1             6             0                       2    
+       1             6             1                       4    
+       1             6             2                       6    
+       1             6             3                       4    
+       1             6             4                       2    
+
+

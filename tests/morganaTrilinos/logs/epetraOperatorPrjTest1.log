@@ -1,0 +1,20 @@
+0
+0
+Belos::BlockGmresSolMgr::solve():  Warning! Requested Krylov subspace dimension is larger than operator dimension!
+ The maximum number of blocks allowed for the Krylov subspace will be adjusted to 2
+Passed.......OR Combination -> 
+  OK...........Number of Iterations = 1 < 1600
+  Converged....(2-Norm Res Vec) / (2-Norm Prec Res0)
+               residual [ 0 ] = 1.08866e-17 < 1e-06
+
+
+
+
+
+Epetra::MultiVector     MyPID    GID         Value               
+0             0             -0.176471           
+0             1             0                   
+Epetra::MultiVector         1             2                0.705882
+         1             3                       0
+
+

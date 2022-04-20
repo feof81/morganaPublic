@@ -1,0 +1,28 @@
+Epetra::CrsMatrix
+Number of Global Rows        = 4
+Number of Global Cols        = 2
+Number of Global Diagonals   = 1
+Number of Global Nonzeros    = 4
+Global Maximum Num Entries   = 2
+ ** Matrix is Upper Triangular **
+
+Number of My Rows        = 2
+Number of My Cols        = 2
+Number of My Diagonals   = 1
+Number of My Nonzeros    = 2
+My Maximum Num Entries   = 2
+
+Epetra::CrsMatrix
+Number of My Rows        = 2
+Number of My Cols        = 2
+Number of My Diagonals   = 0
+Number of My Nonzeros    = 2
+My Maximum Num Entries   = 1
+
+   Processor    Row Index    Col Index           Value     
+       1             2             1                       1    
+       1             3             0                      -1    
+
+       0             0             0                       1    
+       0             0             1                      -1    
+

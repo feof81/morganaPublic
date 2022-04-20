@@ -1,0 +1,128 @@
+ Tpetra::CrsMatrix (Kokkos refactor):
+  Template parameters:
+   Scalar: double
+   LocalOrdinal: int
+   GlobalOrdinal: long long
+   Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+  isFillComplete: true
+  Global dimensions: [9, 10]
+  Global number of entries: 45
+  
+  Global max number of entries in a row: 5
+  
+  Row Map:
+  
+   "Tpetra::Map":
+    Template parameters:
+     LocalOrdinal: int
+     GlobalOrdinal: long long
+     Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+    Global number of entries: 9
+    Minimum global index: 0
+    Maximum global index: 8
+    Index base: 0
+    Number of processes: 2
+    Uniform: false
+    Contiguous: false
+    Distributed: true
+    Process 0 of 2:
+     My number of entries: 5
+     My minimum global index: 2
+     My maximum global index: 8
+     My global indices: [2, 3, 4, 7, 8]
+    Process 1 of 2:
+     My number of entries: 4
+     My minimum global index: 0
+     My maximum global index: 6
+     My global indices: [0, 1, 5, 6]
+  Column Map: 
+   "Tpetra::Map":
+    Template parameters:
+     LocalOrdinal: int
+     GlobalOrdinal: long long
+     Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+    Global number of entries: 10
+    Minimum global index: 0
+    Maximum global index: 4
+    Index base: 0
+    Number of processes: 2
+    Uniform: false
+    Contiguous: false
+    Distributed: true
+    Process 0 of 2:
+     My number of entries: 5
+     My minimum global index: 0
+     My maximum global index: 4
+     My global indices: [0, 1, 2, 3, 4]
+    Process 1 of 2:
+     My number of entries: 5
+     My minimum global index: 0
+     My maximum global index: 4
+     My global indices: [0, 1, 2, 3, 4]
+  Domain Map: 
+   "Tpetra::Map":
+    Template parameters:
+     LocalOrdinal: int
+     GlobalOrdinal: long long
+     Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+    Global number of entries: 10
+    Minimum global index: 0
+    Maximum global index: 4
+    Index base: 0
+    Number of processes: 2
+    Uniform: false
+    Contiguous: false
+    Distributed: true
+    Process 0 of 2:
+     My number of entries: 5
+     My minimum global index: 0
+     My maximum global index: 4
+     My global indices: [0, 1, 2, 3, 4]
+    Process 1 of 2:
+     My number of entries: 5
+     My minimum global index: 0
+     My maximum global index: 4
+     My global indices: [0, 1, 2, 3, 4]
+  Range Map: 
+   "Tpetra::Map":
+    Template parameters:
+     LocalOrdinal: int
+     GlobalOrdinal: long long
+     Node: Kokkos::Compat::KokkosDeviceWrapperNode<Kokkos::Serial, Kokkos::HostSpace>
+    Global number of entries: 9
+    Minimum global index: 0
+    Maximum global index: 8
+    Index base: 0
+    Number of processes: 2
+    Uniform: false
+    Contiguous: false
+    Distributed: true
+    Process 0 of 2:
+     My number of entries: 5
+     My minimum global index: 2
+     My maximum global index: 8
+     My global indices: [2, 3, 4, 7, 8]
+    Process 1 of 2:
+     My number of entries: 4
+     My minimum global index: 0
+     My maximum global index: 6
+     My global indices: [0, 1, 5, 6]
+  Process rank: 0
+   Number of allocated entries: 25
+   Number of entries: 25
+   Max number of entries per row: 5
+  Process rank: 1
+   Number of allocated entries: 20
+   Number of entries: 20
+   Max number of entries per row: 5
+      Proc Rank   Global Row  Num Entries(Index,Value)
+              0            2            5 (0, 0)  (1, 1)  (2, 2)  (3, 3)  (4, 2) 
+              0            3            5 (0, 3)  (1, 2)  (2, 1)  (3, 2)  (4, 1) 
+              0            4            5 (0, 2)  (1, 3)  (2, 4)  (3, 1)  (4, 0) 
+              0            7            5 (0, 1)  (1, 2)  (2, 3)  (3, 1)  (4, 6) 
+              0            8            5 (0, 4)  (1, 5)  (2, 6)  (3, 5)  (4, 4) 
+      Proc Rank   Global Row  Num Entries(Index,Value)
+              1            0            5 (0, 1)  (1, 2)  (2, 1)  (3, 5)  (4, 4) 
+              1            1            5 (0, 2)  (1, 1)  (2, 2)  (3, 4)  (4, 3) 
+              1            5            5 (0, 9)  (1, 8)  (2, 1)  (3, 3)  (4, 4) 
+              1            6            5 (0, 2)  (1, 4)  (2, 6)  (3, 4)  (4, 2) 

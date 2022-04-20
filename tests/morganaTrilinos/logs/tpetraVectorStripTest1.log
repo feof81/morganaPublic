@@ -1,0 +1,21 @@
+The merged vector
+Part of the vector
+ "Tpetra::MultiVector":
+  Template parameters:
+   Scalar: double
+   LocalOrdinal: int
+   GlobalOrdinal: long long
+   Node: Serial/Wrapper
+  Global number of rows: 5
+  Number of columns: 1
+Part of the vector
+  Process 0 of 2:
+   Local number of rows: 3
+   Column stride: 3
+   Values: 
+   [3; 2; 1]
+  Process 1 of 2:
+   Local number of rows: 2
+   Column stride: 2
+   Values: 
+   [5; 4]

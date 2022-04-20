@@ -1,0 +1,278 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+#include <boost/iterator/iterator_concepts.hpp>
+
+#include "Teuchos_RCP.hpp"
+#include "Teuchos_ScalarTraits.hpp"
+
+#include "Tpetra_ConfigDefs.hpp"
+#include "Tpetra_DefaultPlatform.hpp"
+#include "Tpetra_Map_decl.hpp"
+#include "Tpetra_CrsMatrix_decl.hpp"
+
+#include "typesInterface.h"
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+#include "pVect.hpp"
+#include "pVectManip.hpp"
+#include "pVectComm.hpp"
+#include "pVectGlobalManip.hpp"
+
+#include "tpetraBlockMatrixAssemble.h"
+
+
+
+//! Run with two processors
+int main(int argc, char *argv[])
+{
+  //Startup--------------------------------------------------------------------
+  environment  env(argc,argv);
+  communicator world;
+  
+  assert(world.size() == 2);
+  Teuchos::RCP<const Teuchos::Comm<int> > teuchosComm = rcp(new Teuchos::MpiComm<int> (world));
+  
+  
+  //Typedefs-------------------------------------------------------------------
+  typedef tpetraBlockMatrixAssemble::MAP               MAP;
+  typedef tpetraBlockMatrixAssemble::RCP_MAP       RCP_MAP;
+  typedef tpetraBlockMatrixAssemble::MATRIX         MATRIX;
+  typedef tpetraBlockMatrixAssemble::RCP_MATRIX RCP_MATRIX;
+  
+  //Maps-----------------------------------------------------------------------
+  int numRowA, numRowB;
+  int numColA, numColB;
+  
+  if(world.rank() == 0) { numRowA = 3; numRowB = 2; }
+  else                  { numRowA = 2; numRowB = 2; }
+  
+  if(world.rank() == 0) { numColA = 3; numColB = 2; }
+  else                  { numColA = 3; numColB = 2; }
+  
+  std::vector<int> elementsRowA(numRowA);
+  std::vector<int> elementsRowB(numRowB);
+  std::vector<int> elementsColA(numColA);
+  std::vector<int> elementsColB(numColB);
+  
+  if(world.rank() == 0)
+  {
+    elementsRowA[0] = 2;
+    elementsRowA[1] = 3;
+    elementsRowA[2] = 4;
+    
+    elementsRowB[0] = 2;
+    elementsRowB[1] = 3;
+    
+    elementsColA[0] = 0;
+    elementsColA[1] = 1;
+    elementsColA[2] = 2;
+    
+    elementsColB[0] = 0;
+    elementsColB[1] = 1;
+  }
+  else
+  {
+    elementsRowA[0] = 0;
+    elementsRowA[1] = 1;
+    
+    elementsRowB[0] = 0;
+    elementsRowB[1] = 1;
+    
+    elementsColA[0] = 0;
+    elementsColA[1] = 1;
+    elementsColA[2] = 2;
+    
+    elementsColB[0] = 0;
+    elementsColB[1] = 1;
+  }
+  
+  Teuchos::ArrayView<int> teuchosRowA(elementsRowA);
+  Teuchos::ArrayView<int> teuchosRowB(elementsRowB);
+  Teuchos::ArrayView<int> teuchosColA(elementsColA);
+  Teuchos::ArrayView<int> teuchosColB(elementsColB);
+  
+  RCP_MAP rowMapA(new MAP(-1,teuchosRowA,0,teuchosComm));
+  RCP_MAP rowMapB(new MAP(-1,teuchosRowB,0,teuchosComm));
+  RCP_MAP colMapA(new MAP(-1,teuchosColA,0,teuchosComm));
+  RCP_MAP colMapB(new MAP(-1,teuchosColB,0,teuchosComm));
+  
+  
+  //Matrix matrixAA------------------------------------------------------------
+  RCP_MATRIX matrixAA = Teuchos::rcp(new MATRIX(rowMapA,1));
+  
+  int length = 3;
+  double valuesAA[length];
+  int   indicesAA[length];
+  int numEntriesAA, rowAA;
+  
+  numEntriesAA = 3;
+  indicesAA[0] = 0; indicesAA[1] = 1; indicesAA[2] = 2;
+  
+  if(world.rank() == 0)
+  {
+    rowAA = 2;
+    valuesAA[0] = 0; valuesAA[1] = 1; valuesAA[2] = 2;
+    matrixAA->insertGlobalValues(rowAA, numEntriesAA, valuesAA, indicesAA);
+    
+    rowAA = 3;
+    valuesAA[0] = 3; valuesAA[1] = 2; valuesAA[2] = 1;
+    matrixAA->insertGlobalValues(rowAA, numEntriesAA, valuesAA, indicesAA);
+    
+    rowAA = 4;
+    valuesAA[0] = 2; valuesAA[1] = 3; valuesAA[2] = 4;
+    matrixAA->insertGlobalValues(rowAA, numEntriesAA, valuesAA, indicesAA);
+  }
+  else
+  {
+    rowAA = 0;
+    valuesAA[0] = 1; valuesAA[1] = 2; valuesAA[2] = 1;
+    matrixAA->insertGlobalValues(rowAA, numEntriesAA, valuesAA, indicesAA);
+    
+    rowAA = 1;
+    valuesAA[0] = 2; valuesAA[1] = 1; valuesAA[2] = 2;
+    matrixAA->insertGlobalValues(rowAA, numEntriesAA, valuesAA, indicesAA);
+  }
+
+  matrixAA->fillComplete(colMapA, rowMapA);
+  
+  
+  //Matrix matrixAB------------------------------------------------------------
+  RCP_MATRIX matrixAB = Teuchos::rcp(new MATRIX(rowMapA,colMapB,1));
+  
+  double valuesAB[length];
+  int numEntriesAB, rowAB, indicesAB[length];
+  
+  numEntriesAB = 2;
+  indicesAB[0] = 0; indicesAB[1] = 1; indicesAB[2] = 2;
+  
+  if(world.rank() == 0)
+  {
+    rowAB = 2;
+    valuesAB[0] = 3; valuesAB[1] = 2;
+    matrixAB->insertGlobalValues(rowAB, numEntriesAB, valuesAB, indicesAB);
+    
+    rowAB = 3;
+    valuesAB[0] = 2; valuesAB[1] = 1;
+    matrixAB->insertGlobalValues(rowAB, numEntriesAB, valuesAB, indicesAB);
+    
+    rowAB = 4;
+    valuesAB[0] = 1; valuesAB[1] = 0;
+    matrixAB->insertGlobalValues(rowAB, numEntriesAB, valuesAB, indicesAB);
+  }
+  else
+  {
+    rowAB = 0;
+    valuesAB[0] = 5; valuesAB[1] = 4;
+    matrixAB->insertGlobalValues(rowAB, numEntriesAB, valuesAB, indicesAB);
+    
+    rowAB = 1;
+    valuesAB[0] = 4; valuesAB[1] = 3;
+    matrixAB->insertGlobalValues(rowAB, numEntriesAB, valuesAB, indicesAB);
+  }
+  
+  matrixAB->fillComplete(colMapB,rowMapA);
+  
+  
+  //Matrix matrixBA------------------------------------------------------------
+  RCP_MATRIX matrixBA = Teuchos::rcp(new MATRIX(rowMapB,colMapA,1));
+  
+  double valuesBA[length];
+  int numEntriesBA, rowBA, indicesBA[length];
+  
+  numEntriesBA = 3;
+  indicesBA[0] = 0; indicesBA[1] = 1; indicesBA[2] = 2;
+  
+  if(world.rank() == 0)
+  {
+    rowBA = 2;
+    valuesBA[0] = 1; valuesBA[1] = 2; valuesBA[2] = 3;
+    matrixBA->insertGlobalValues(rowBA, numEntriesBA, valuesBA, indicesBA);
+    
+    rowBA = 3;
+    valuesBA[0] = 4; valuesBA[1] = 5; valuesBA[2] = 6;
+    matrixBA->insertGlobalValues(rowBA, numEntriesBA, valuesBA, indicesBA);
+  }
+  else
+  {
+    rowBA = 0;
+    valuesBA[0] = 9; valuesBA[1] = 8; valuesBA[2] = 1;
+    matrixBA->insertGlobalValues(rowBA, numEntriesBA, valuesBA, indicesBA);
+    
+    rowBA = 1;
+    valuesBA[0] = 2; valuesBA[1] = 4; valuesBA[2] = 6;
+    matrixBA->insertGlobalValues(rowBA, numEntriesBA, valuesBA, indicesBA);
+  }
+  
+  matrixBA->fillComplete (colMapA,rowMapB);
+  
+  
+  //Matrix matrixBB------------------------------------------------------------
+  RCP_MATRIX matrixBB = Teuchos::rcp(new MATRIX(rowMapB,colMapB,1));
+  
+  double valuesBB[length];
+  int numEntriesBB, rowBB, indicesBB[length];
+  
+  numEntriesBB = 2;
+  indicesBB[0] = 0; indicesBB[1] = 1;
+  
+  if(world.rank() == 0)
+  {
+    rowBB = 2;
+    valuesBB[0] = 1; valuesBB[1] = 6;
+    matrixBB->insertGlobalValues(rowBB, numEntriesBB, valuesBB, indicesBB);
+    
+    rowBB = 3;
+    valuesBB[0] = 5; valuesBB[1] = 4;
+    matrixBB->insertGlobalValues(rowBB, numEntriesBB, valuesBB, indicesBB);
+  }
+  else
+  {
+    rowBB = 0;
+    valuesBB[0] = 3; valuesBB[1] = 4;
+    matrixBB->insertGlobalValues(rowBB, numEntriesBB, valuesBB, indicesBB);
+    
+    rowBB = 1;
+    valuesBB[0] = 4; valuesBB[1] = 2;
+    matrixBB->insertGlobalValues(rowBB, numEntriesBB, valuesBB, indicesBB);
+  }
+  
+  matrixBB->fillComplete(colMapB,rowMapB);
+  
+  
+  //EpetraBlockMatrixAssemble--------------------------------------------------
+  tpetraBlockMatrixAssemble assembler(2,2);
+  assembler.setTpetraComm(teuchosComm);
+  
+  assembler.setRowMap(1,rowMapA);
+  assembler.setRowMap(2,rowMapB);
+  
+  assembler.setColMap(1,colMapA);
+  assembler.setColMap(2,colMapB);
+  
+  assembler.startup();
+  
+  
+  assembler.setMatrix(matrixAA,1,1);
+  assembler.setMatrix(matrixAB,1,2);
+  assembler.setMatrix(matrixBA,2,1);
+  assembler.setMatrix(matrixBB,2,2);
+  assembler.assemble();
+  
+  
+  auto out = Teuchos::getFancyOStream(Teuchos::rcpFromRef(std::cout));
+  RCP_MATRIX newMatrix = assembler.getMatrix();
+  newMatrix->describe(*out,Teuchos::VERB_EXTREME);
+}

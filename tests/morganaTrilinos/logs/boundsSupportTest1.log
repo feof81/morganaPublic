@@ -1,0 +1,39 @@
+Matrix
+Matrix
+Epetra::CrsMatrix
+Number of Global Rows        = 5
+Number of Global Cols        = 1
+Number of Global Diagonals   = 1
+Number of Global Nonzeros    = 5
+Global Maximum Num Entries   = 1
+ ** Matrix is Lower Triangular **
+ ** Matrix has no diagonal     **
+
+
+Number of My Rows        = 3
+Number of My Cols        = 1
+Number of My Diagonals   = 0
+Number of My Nonzeros    = 3
+My Maximum Num Entries   = 1
+
+Epetra::CrsMatrix
+Number of My Rows        = 2
+Number of My Cols        = 1
+Number of My Diagonals   = 1
+Number of My Nonzeros    = 2
+My Maximum Num Entries   = 1
+
+   Processor    Row Index    Col Index           Value     
+       0             2             0                       3    
+       0             3             0                       4    
+       0             4             0                       5    
+       1             0             0                       1    
+       1             1             0                       2    
+
+
+Vector
+Vector
+Epetra::MultiVector     MyPID           GID               Value  
+Epetra::MultiVector
+         0             0                       4
+

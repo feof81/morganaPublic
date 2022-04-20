@@ -616,7 +616,7 @@ matrixLV(const Epetra_CrsMatrix & L,
   
   delete values;
   delete indices;
-  
+
   assert(mapL.NumMyElements() == localInactiveQ.size());
   
   //Compute global---------------------------------------------------
