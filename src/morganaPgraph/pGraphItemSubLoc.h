@@ -113,6 +113,8 @@ class pGraphItemSubLoc : public pGraphItem
     
     /*! @name Outstream operator */ //@{
   public:
+    size_t memSize() const;
+    
     friend ostream & operator<<(ostream & f, const pGraphItemSubLoc & G);
     //@}
 };
@@ -143,5 +145,11 @@ serialize(ARK & ar, const unsigned int version)
     ar & subLocId(i);
   }
 }
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItem & A);
 
 #endif

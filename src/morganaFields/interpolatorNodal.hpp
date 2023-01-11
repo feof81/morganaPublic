@@ -56,6 +56,7 @@ class interpolatorNodal : public interpolatorTrait<SOURCEFIELD>::SEARCH
     /*! @name Internal data */ //@{
   public:
     pVect<SEARCHDATA,SOURCE_PMAPTYPE> dataVect;
+    pVect<Real,SOURCE_PMAPTYPE>       dataDistance;
     //@}  
     
     /*! @name Constructors and set functions */ //@{
@@ -73,6 +74,7 @@ class interpolatorNodal : public interpolatorTrait<SOURCEFIELD>::SEARCH
     void findDofs(const TARGETFIELD & TargetField);
     void exchangeData(const Teuchos::RCP<SOURCEFIELD> & SourceField, const Teuchos::RCP<TARGETFIELD> & TargetField);
     void exchangeData(const SOURCEFIELD & SourceField, const TARGETFIELD & TargetField);
+    const pVect<Real,SOURCE_PMAPTYPE> & getDataDistance() const;
     //@}
 };
 
@@ -187,9 +189,9 @@ findDofs(const TARGETFIELD & TargetField)
   {
     points = targetGrid->getElementNodesL(i);
     
-   //Loop on the local basis
-   for(UInt j=1; j <= TARGET_FETYPE::numBasis; ++j)
-   {
+    //Loop on the local basis
+    for(UInt j=1; j <= TARGET_FETYPE::numBasis; ++j)
+    {
       Y = TARGET_FETYPE::getRefNode(j);
       P = geoInterface.getPosition(points,Y);
       
@@ -211,6 +213,15 @@ findDofs(const TARGETFIELD & TargetField)
   
   SEARCH::findGlobal(nodesVect,tempDataVect);
   tempDataVect.bufferLids();
+  
+  //Build data distance----------------------------------------------
+  dataDistance.resize(tempDataVect.size());
+  
+  for(UInt i=1; i <= tempDataVect.size(); ++i)
+  {
+    dataDistance.getMapL(i)  = tempDataVect.getMapL(i);
+    dataDistance.getDataL(i) = tempDataVect(i).getDistance();
+  }
 
   //Sending to the correct process-----------------------------------
   SENDRECV sendMap;
@@ -299,6 +310,14 @@ exchangeData(const SOURCEFIELD & SourceField, const TARGETFIELD & TargetField)
   
   //Loading in the field---------------------------------------------
   TargetField.setDofVect(newDofVector);
+}
+
+template<typename SOURCEFIELD, typename TARGETFIELD>
+const pVect<Real,typename interpolatorNodal<SOURCEFIELD,TARGETFIELD>::SOURCE_PMAPTYPE> &
+interpolatorNodal<SOURCEFIELD,TARGETFIELD>::
+getDataDistance() const
+{
+  return(dataDistance);
 }
 
 #endif

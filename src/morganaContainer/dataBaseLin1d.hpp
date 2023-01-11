@@ -60,6 +60,8 @@ class dataBaseLin1d
   public:
     template<typename XX, typename YY>
     friend ostream & operator<<(ostream & f, const dataBaseLin1d<XX,YY> & M);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -279,6 +281,20 @@ operator<<(ostream & f, const dataBaseLin1d<XX,YY> & M)
   return(f);
 }
 
+template<typename X, typename Y>
+size_t
+dataBaseLin1d<X,Y>::
+memSize() const
+{
+  if(data.size() == 0)
+  { return(2 * sizeof(Real)); }
+  else 
+  {
+    return(2 * sizeof(Real) + (dynamicSizeOf(data.begin()->first) 
+                             + dynamicSizeOf(data.begin()->second)
+                             + 2 * sizeof(Real*) ) * data.size() );
+  }
+}
 
 #endif
 

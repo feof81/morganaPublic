@@ -259,6 +259,9 @@ class point3d
     
     /*! Outstream operator */
     friend ostream & operator<<(ostream & f, const point3d & P);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

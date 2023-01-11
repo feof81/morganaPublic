@@ -124,7 +124,6 @@ class stateVector : public Epetra_SerialDenseVector
     stateVector(const expressionStateVector<LHS,RHS,OP> & Expression);
     //@}
     
-    
     /*! @name Operators */ //@{
   public:
     /*! Access operator */
@@ -153,7 +152,6 @@ class stateVector : public Epetra_SerialDenseVector
     Real operator*(const stateVector & C) const;
     //@}
     
-    
     /*! @name Ordinal functions */ //@{
   public:
     /*! Less operator: a vector is "less" than another if its first coordinate is less than the other vctor one.
@@ -163,7 +161,6 @@ class stateVector : public Epetra_SerialDenseVector
     /*! Inequality operator: two vectors are equal if their components are equal to the geometric tolerance */
     bool operator!=(const stateVector & V) const;
     //@}
-    
     
     /*! @name Internal functions */ //@{
   public:
@@ -180,11 +177,13 @@ class stateVector : public Epetra_SerialDenseVector
     UInt size() const;
     //@}
     
-    
     /*! @name Other functions */ //@{
   public:
     /*! Outstream operator */
     friend ostream & operator<<( ostream & f, const stateVector & A);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

@@ -29,28 +29,62 @@ using namespace std;
 using namespace boost::mpi;
 
 
-inline void colMapFixer_overlap(pMap<pMapItem> & map, const communicator & commDev)
+inline void colMapFixer_overlap(pMap<pMapItem> & map,
+                                const communicator & commDev)
 {
   assert(map.size() == map.size());
   assert(commDev.rank() == commDev.rank());
 }
 
-inline void colMapFixer_overlap(pMap<pMapItemShare> & map, const communicator & commDev)
+inline void colMapFixer_overlap(pMap<pMapItemShare> & map,
+                                const communicator & commDev)
 {
   pMapGlobalManip<pMapItemShare> colMaxFixer(commDev);
   colMaxFixer.updateSharing(map);
 }
 
-inline void colMapFixer_changeMap(pMap<pMapItem> & map, const communicator & commDev)
+inline void colMapFixer_changeMap(pMap<pMapItem> & map,
+                                  const communicator & commDev)
 {
   assert(map.size() == map.size());
   assert(commDev.rank() == commDev.rank());
 }
 
-inline void colMapFixer_changeMap(pMap<pMapItemShare> & map, const communicator & commDev)
+inline void colMapFixer_changeMap(pMap<pMapItemShare> & map,
+                                  const communicator & commDev)
 {
   pMapGlobalManip<pMapItemShare> colMaxFixer(commDev);
   colMaxFixer.updateOwningSharing(map);
+}
+
+inline void upgradeMap_share(const pMap<pMapItem>      & inMap,
+                                   pMap<pMapItemShare> & outMap,
+                             const communicator        & commDev)
+{
+  assert(inMap.size() == inMap.size());
+  assert(commDev.rank() == commDev.rank());
+  
+  pMapItemShare item;
+  outMap.resize(inMap.size());
+  
+  for(UInt i=1; i <= inMap.size(); ++i)
+  {
+    item.setLid(inMap(i).getLid());
+    item.setGid(inMap(i).getGid());
+    item.setPid(inMap(i).getPid());
+    
+    outMap(i) = item;
+  }
+  
+  pMapGlobalManip<pMapItemShare> colMaxFixer(commDev);
+  colMaxFixer.updateOwningSharing(outMap);
+}
+
+inline void upgradeMap_share(const pMap<pMapItemShare> & inMap,
+                                   pMap<pMapItemShare> & outMap,
+                             const communicator        & commDev)
+{
+  outMap = inMap;
 }
 
 #endif

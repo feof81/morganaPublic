@@ -83,6 +83,8 @@ class pMapItemSendRecv : public pMapItem
     /*! @name Outstream operators */ //@{
   public:
     friend ostream & operator<<(ostream & f, const pMapItemSendRecv & M);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -105,5 +107,12 @@ serialize(ARK & ar, const unsigned int version)
   ar & rid;
   ar & bufLid;
 }
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pMapItemSendRecv & A);
+
 
 #endif

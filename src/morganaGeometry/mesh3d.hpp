@@ -158,6 +158,7 @@ class mesh3d : public geoMapInterface<GEOSHAPE>
     /*! @name Geometry ops */ //@{
   public:
     void scale(const Real & coeff);
+    void offset(const point3d & P0);
     //@}
     
     /*! @name Printout */ //@{
@@ -793,7 +794,6 @@ setEdgeG(const UInt & gid, const GEOELEMENT1D & edge)
 }
 
 
-
 //_________________________________________________________________________________________________
 // GEOMETRY OPS
 //-------------------------------------------------------------------------------------------------
@@ -805,6 +805,17 @@ scale(const Real & coeff)
   for(UInt i=1; i <= nodes.size(); ++i)
   {
     nodes(i) = nodes(i) * coeff;
+  }
+}
+
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+mesh3d<GEOSHAPE,ELMAP,NODEMAP>::
+offset(const point3d & P0)
+{
+  for(UInt i=1; i <= nodes.size(); ++i)
+  {
+    nodes(i) = nodes(i) + P0;
   }
 }
 

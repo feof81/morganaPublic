@@ -267,7 +267,7 @@ findLocal(const sVect<UInt> & matchingElements, const point3d & P, const point3d
     isInternal = (Pj.getX() >= (Pmin.getX() - geoToll)) && (Pj.getX() <= (Pmax.getX() + geoToll)) &&
                  (Pj.getY() >= (Pmin.getY() - geoToll)) && (Pj.getY() <= (Pmax.getY() + geoToll)) &&
                  (Pj.getZ() >= (Pmin.getZ() - geoToll)) && (Pj.getZ() <= (Pmax.getZ() + geoToll));
-    
+                 
     if(isInternal)
     {
       geoSupport3d.setPoints(points);
@@ -303,11 +303,12 @@ findLocal(const point3d & P)
   
   if(matchingElements.size() == 0)  //If the point is outside this is projected in the domain                                
   {    
-                    Pj = projection(P);	    
+                    Pj = projection(P);
       matchingElements = octTree3d.getMatchingElements(Pj);
-    numFeasibElements += matchingElements.size();
-
+    numFeasibElements += matchingElements.size();    
+    
     SEARCHDATA outData = findLocal(matchingElements,P,Pj);
+    
     assert( !( (!outData.getFound()) && (grid2d->getNumElements() != 0) )  );
     
     return(outData);

@@ -194,6 +194,9 @@ class staticVector : public boost::array<Real,N>
     /*! Outstream operator */
     template<size_t Nc>
     friend ostream & operator<<( ostream & f, const staticVector<Nc> & A);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 
@@ -472,6 +475,14 @@ operator<<( ostream & f, const staticVector<Nc> & A)
   f << endl;
   
   return(f);
+}
+
+template<size_t N>
+size_t
+staticVector<N>::
+memSize() const
+{
+  return(N * sizeof(double) + sizeof(UInt));
 }
 
 #endif

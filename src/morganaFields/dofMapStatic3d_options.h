@@ -25,24 +25,43 @@ class dofMapStatic3d_options
 {
     /*! @name Internal data */ //@{
   public:
-    set<UInt> activeIds;
+    typedef set<UInt> SET;
     //@}
     
-    /*! @name Input functions */ //@{
+    /*! @name Internal data */ //@{
+  public:
+    SET        activeIds;
+    sVect<SET> blockIds;
+    //@}
+    
+    /*! @name Constructors */ //@{
   public:
     dofMapStatic3d_options();
     dofMapStatic3d_options(const dofMapStatic3d_options & O);
     dofMapStatic3d_options operator=(const dofMapStatic3d_options & O);
-    void addGeoId(const UInt & Id);
     void clear();
     //@}
     
-    /*! @name Output functions */ //@{
+    /*! @name GeoId Functions */ //@{
   public:
+    void addGeoId(const UInt & Id);
     UInt numGeoIds() const;
     bool isGeoId(const UInt & Id) const;
     sVect<UInt> geoIdsList() const;
     set<UInt>   getIdsSet() const;
+    //@}
+    
+    /*! @name BlockIds Functions */ //@{
+  public:
+    void setBlockNum(const UInt & numBlocks);
+    void addBlockGeoId(const SET & Ids);
+    void addBlockGeoId(const UInt & k, const UInt & Id);
+    void setBlockGeoId(const UInt & k, const SET         & Ids);
+    void setBlockGeoId(const UInt & k, const sVect<UInt> & Ids);
+    bool isBlockGeoId(const UInt & k, const UInt & Id) const;
+    sVect<UInt> getBlockIdsList(const UInt & k) const;
+    set<UInt>   getBlockIdsSet(const UInt & k) const;
+    UInt        getNumBlocks() const;
     //@}
     
     /*! @name Outstream operator */ //@{

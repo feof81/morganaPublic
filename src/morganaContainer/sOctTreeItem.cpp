@@ -227,3 +227,10 @@ ostream & operator<<(ostream & f, const sOctTreeItem & P)
   
   return(f);
 }
+
+size_t
+sOctTreeItem::
+memSize() const
+{
+  return(sizeof(sOctTreeItem));
+}

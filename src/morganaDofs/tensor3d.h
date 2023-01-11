@@ -108,8 +108,8 @@ class tensor3d
     
     /*! Constructor */
     tensor3d(const Real & XX, const Real & XY, const Real & XZ,
-	     const Real & YX, const Real & YY, const Real & YZ,
-	     const Real & ZX, const Real & ZY, const Real & ZZ);
+             const Real & YX, const Real & YY, const Real & YZ,
+             const Real & ZX, const Real & ZY, const Real & ZZ);
 
     tensor3d(const point3d & P1, const point3d & P2, const point3d & P3);
       
@@ -269,6 +269,9 @@ class tensor3d
   public:
     /*! Outstream operator */
     friend ostream & operator << ( ostream & f, const tensor3d & A);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

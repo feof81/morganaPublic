@@ -441,7 +441,7 @@ removeUnusedPoints(const Teuchos::RCP<MESH2D> & Mesh2d) const
   }
   
   //Temp contiguous numbering
-  tot = 1;
+  tot = 0;
   newOrder.resize(tempMap.size());
   
   for(UInt i=1; i <= tempMap.size(); ++i)
@@ -451,6 +451,8 @@ removeUnusedPoints(const Teuchos::RCP<MESH2D> & Mesh2d) const
       if(tempMap(i).getGid() != tempMap(i-1).getGid())
       { tot++; }
     }
+    else
+    { tot++; }
     
     newOrder(i) = tot;
   }
@@ -607,7 +609,7 @@ removeUnusedPoints(MESH2D & Mesh2d) const
   }
   
   //Temp contiguous numbering
-  tot = 1;
+  tot = 0;
   newOrder.resize(tempMap.size());
   
   for(UInt i=1; i <= tempMap.size(); ++i)
@@ -617,6 +619,8 @@ removeUnusedPoints(MESH2D & Mesh2d) const
       if(tempMap(i).getGid() != tempMap(i-1).getGid())
       { tot++; }
     }
+    else
+    { tot++; }
     
     newOrder(i) = tot;
   }

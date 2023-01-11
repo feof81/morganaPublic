@@ -607,25 +607,7 @@ antiSymmetric(const tensor3d & A) const
 bool
 tensor3d::
 operator<(const tensor3d & V) const
-{
-  /*for(UInt i=0; i<3; ++i)
-  {
-    for(UInt j=0; j<3; ++j)
-    {
-      if( T[i][j] < (V.T[i][j] - geoToll) )
-      {
-	return(true);
-      }
-      
-      if( T[i][j] > (V.T[i][j] + geoToll) )
-      {
-	return(false);
-      }
-    }
-  }
-  
-  return(false);*/
-  
+{  
   for(UInt i=0; i<3; ++i)
   {
     for(UInt j=0; j<3; ++j)
@@ -641,20 +623,7 @@ operator<(const tensor3d & V) const
 bool 
 tensor3d::
 operator!=(const tensor3d & V) const
-{
-  /*for(UInt i=0; i<3; ++i)
-  {
-    for(UInt j=0; j<3; ++j)
-    {
-      if( ( T[i][j] > (V.T[i][j] + geoToll) ) || ( T[i][j] < (V.T[i][j] - geoToll) ) )
-      {
-	return(true);
-      }
-    }
-  }
-  
-  return(false);*/
-  
+{  
   for(UInt i=0; i<3; ++i)
   {
     for(UInt j=0; j<3; ++j)
@@ -691,3 +660,9 @@ operator<<(ostream & f, const tensor3d & A )
   return f;
 }
 
+size_t
+tensor3d::
+memSize() const
+{
+  return(sizeof(tensor3d));
+}

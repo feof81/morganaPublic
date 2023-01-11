@@ -246,7 +246,7 @@ template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
 void
 branch1d<GEOSHAPE,ELMAP,NODEMAP>::
 buildTriplePoints()
-{
+{  
   //Flags------------------------------------------------------------
   assert(commDevOk);
   assert(connectOk);
@@ -594,7 +594,7 @@ buildTriplePoints()
     if(endNodesData(index).getExtNodeGid() == 0)
     { endNodesData(index).setExtNodeGid(pVectBranch(i).getSrcNodeGid()); }
     else
-    { assert(endNodesData(index).getExtNodeGid() == pVectBranch(i).getSrcNodeGid()); }
+    { assert(endNodesData(index).getExtNodeGid() == pVectBranch(i).getSrcNodeGid()); } //If fails means that two pieces of line crosses in a non-end point
     
     refSet.clear();
     for(UInt j=1; j <= endNodesData(index).getExtElementsNum(); ++j)

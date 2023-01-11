@@ -295,6 +295,13 @@ printSorted()
   cout << endl;
 }
 
+size_t
+pGraphItem::
+memSize() const
+{
+  return(sizeof(UInt) * (connected.size() + orderedNodes.size()) + sizeof(nodesOrdered) );
+}
+
 ostream & operator<<(ostream & f, const pGraphItem & G)
 {
   f << "Num Connected  : " << G.size() << endl;
@@ -309,4 +316,10 @@ ostream & operator<<(ostream & f, const pGraphItem & G)
   return(f);
 }
 
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItem & A)
+{ return(A.memSize()); }
 

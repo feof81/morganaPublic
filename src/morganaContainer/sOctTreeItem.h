@@ -76,6 +76,8 @@ class sOctTreeItem
     /*! @name Outstream operator */ //@{
   public:
     friend ostream & operator<<(ostream & f, const sOctTreeItem & P);
+    
+    size_t memSize() const;
     //@}
 };
 

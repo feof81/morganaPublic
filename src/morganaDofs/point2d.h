@@ -214,6 +214,9 @@ class point2d
     
     /*! Outstream operator */
     friend ostream & operator<<(ostream & f, const point2d & P);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

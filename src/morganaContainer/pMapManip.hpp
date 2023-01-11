@@ -131,6 +131,11 @@ template<typename ITEM> class pMapManip
     void unionExclusive(sVect<PMAP> & sourceMaps, PMAP & inMap);
     void unionExclusive(sVect<PMAP> & sourceMaps, Teuchos::RCP<PMAP> & inMap);
     //@}
+    
+    /*! @name Memory functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -821,5 +826,22 @@ unionExclusive(sVect<PMAP> & sourceMaps, Teuchos::RCP<PMAP> & inMap)
 }
 
 
+//_________________________________________________________________________________________________
+// MEMORY FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename ITEM>
+size_t
+pMapManip<ITEM>::
+memSize() const
+{
+  if(container.size() == 0)
+  { return(2 * sizeof(bool)); }
+  else
+  { 
+    return( 2 * sizeof(bool)
+            + (container.begin()->memSize()
+             + 2 * sizeof(Real*) ) * container.size());
+  }
+}
 
 #endif

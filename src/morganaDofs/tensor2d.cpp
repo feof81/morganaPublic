@@ -449,3 +449,9 @@ operator<<(ostream & f, const tensor2d & A )
   return f;
 }
 
+size_t
+tensor2d::
+memSize() const
+{
+  return(sizeof(tensor2d));
+}

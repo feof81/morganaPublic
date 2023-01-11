@@ -42,7 +42,6 @@ class pGraphItem
     void serialize(ARK & ar, const unsigned int version);
     //@}
   
-  
     /*! @name Internal data */ //@{
   public:
     /*! List of connected ids */
@@ -54,7 +53,6 @@ class pGraphItem
     /*! /c orderedNodes are update */
     bool nodesOrdered;
     //@}
-    
     
     /*! @name Constructors */ //@{
   public:
@@ -73,7 +71,6 @@ class pGraphItem
     /*! Copy constructor */
     pGraphItem(const pGraphItem & G);
     //@}
-    
     
     /*! @name Sizing functions */ //@{
   public:
@@ -97,7 +94,6 @@ class pGraphItem
     void clear();
     //@}
     
-    
     /*! @name Get functions */ //@{
   public:
     /*! Return the id i-th node: does not update the ordering */
@@ -116,7 +112,6 @@ class pGraphItem
     inline const UInt & operator()(const UInt & i) const;
     //@}
     
-    
     /*! @name Set functions */ //@{
   public:    
     /*! Sets the id of the i-th node: updates the ordered cids list */
@@ -125,7 +120,6 @@ class pGraphItem
     /*! Sets all the connected ids: updates the ordered cids list */
     void setCids(const sVect<UInt> & Connected);
     //@}
-
 
     /*! @name Node sorting functions */ //@{
   public:
@@ -137,8 +131,7 @@ class pGraphItem
     
     /*! Returns a flag that states whether the cids ordered list is up-to-date */
     const bool & getNodesOrdered() const;
-    //@}    
-  
+    //@}
   
     /*! @name Operator functions */ //@{
   public:
@@ -152,10 +145,10 @@ class pGraphItem
     pGraphItem & operator=(const pGraphItem & E);
     //@}
     
-    
     /*! @name Outstream operator */ //@{
   public:
-    void printSorted();
+    void   printSorted();
+    size_t memSize() const;
     
     friend ostream & operator<<(ostream & f, const pGraphItem & G);
     //@}
@@ -204,6 +197,12 @@ serialize(ARK & ar, const unsigned int version)
   
   updateSorting();
 }
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItem & A);
 
 #endif
 

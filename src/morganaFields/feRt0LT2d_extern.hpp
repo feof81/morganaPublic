@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along with Mor
 #ifndef FERT0LT2D_EXTERN_HPP
 #define FERT0LT2D_EXTERN_HPP
 
+#include "connect2d.hpp"
 #include "feRt0LT2d.hpp"
 #include "feRt0LT2d_card.h"
 #include "pMapItem.h"

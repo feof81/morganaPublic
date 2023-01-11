@@ -442,6 +442,13 @@ expandCommunicator(const bool         & isActive,
   }
 }
 
+size_t
+pMapGlobalManip<pMapItem>::
+memSize() const
+{
+  return(sizeof(double));
+}
+
 
 //_________________________________________________________________________________________________
 // PMAPITEMSHARE
@@ -637,7 +644,7 @@ check(const MAP & Map) const
   for(UInt i=gid_l; i <= gid_u; ++i)
   {
     item.setGid(i);
-    flagGid = flagGid && manipulator.isItem(item); 
+    flagGid = flagGid && manipulator.isItem(item);
   }
   
   if(!flagGid)
@@ -1321,6 +1328,13 @@ expandCommunicator(const bool         & isActive,
   }
 }
 
+size_t
+pMapGlobalManip<pMapItemShare>::
+memSize() const
+{
+  return(sizeof(double));
+}
+
 
 //_________________________________________________________________________________________________
 // PMAPITEMSENDRECV
@@ -1569,4 +1583,11 @@ expandCommunicator(const bool         & isActive,
       NewMap.set(i,mItem);
     }
   }
+}
+
+size_t
+pMapGlobalManip<pMapItemSendRecv>::
+memSize() const
+{
+  return(sizeof(bool));
 }

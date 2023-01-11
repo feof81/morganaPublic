@@ -100,3 +100,18 @@ ostream & operator<<(ostream & f, const pMapItemShare & M)
   f << "pid: " << M.getPid() << " lid: " << M.getLid() << " gid: " << M.getGid() << " shared: " << M.shared << " owned " << M.owned << endl;
   return(f);
 }
+
+size_t
+pMapItemShare::
+memSize() const
+{
+  return(sizeof(pMapItemShare));
+}
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pMapItemShare & A)
+{ return(A.memSize()); }
+

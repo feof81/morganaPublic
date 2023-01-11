@@ -108,6 +108,8 @@ template<typename ITEM> class pMap
   public:
     template<typename T>
     friend ostream & operator<<(ostream & f, const pMap<T> & M);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -287,6 +289,14 @@ serialize(ARK & ar, const unsigned int version)
   {
     items(i).serialize(ar,version);
   }
+}
+
+template<typename ITEM>
+size_t
+pMap<ITEM>::
+memSize() const
+{
+  return(items.size());
 }
 
 #endif

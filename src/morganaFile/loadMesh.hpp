@@ -574,23 +574,23 @@ gmMesh(string meshfile,
     {
       //Is a corner
       case 15 :
-	break;
+      break;
       
       //Is an edge
       case 1 :
-	nElements1d++;
-	break;
-	
+      nElements1d++;
+      break;
+
       //Is a 2d element
       case 2 :
-	nElements2d++;
-	break;
-	
+      nElements2d++;
+      break;
+  
         //Not defined type
       default :
-	if(pid == printPid)
-	{ cout << "ERROR! data loading failed, gmsh-type  not supported";}
-	assert(1 == 2);
+      if(pid == printPid)
+      { cout << "ERROR! data loading failed, gmsh-type  not supported";}
+      assert(1 == 2);
     }
   }
   
@@ -684,103 +684,101 @@ gmMesh(string meshfile,
     {
       //Is a corner
       case 15 :
-	break;
+      break;
       
-	
       //Is 1d element
       case 1 :
-	if( (elId1d <= upperBound1d) && (elId1d >= lowerBound1d) )
+      if( (elId1d <= upperBound1d) && (elId1d >= lowerBound1d) )
+      {
+        assegnavalore(2,dummy); // Numero di flags
+        assert((dummy == 3) || (dummy == 2));
+        
+        if(dummy == 3)
         {
-	  assegnavalore(2,dummy); // Numero di flags
-	  assert((dummy == 3) || (dummy == 2));
-	  
-	  if(dummy == 3)
-	  {
-	    assert(numRowEl == 8);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,dummy); // Elimina il terzo flag
-	    assegnavalore(6,id1);   // Primo id
-	    assegnavalore(7,id2);   // Secondo id
-	  }
-	  
-	  if(dummy == 2)
-	  {
-	    assert(numRowEl == 7);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,id1);   // Primo id
-	    assegnavalore(6,id2);   // Secondo id
-	  }
-	  
-          element1d(1) = id1;
-          element1d(2) = id2;
-          element1d.setGeoId(sub);
-	  
-	  elMapItem.setLid(elIdLoc1d);
-	  elMapItem.setGid(elId1d);
-	  mapItemFixer(elMapItem);
-	  
-	  Belements.push_back(element1d,elMapItem);
-	  
-	  elIdLoc1d++;
-	}
-	
-	elId1d++;
-	break;
-	
-	
+          assert(numRowEl == 8);
+          assegnavalore(3,dummy); // Elimina il primo flag
+          assegnavalore(4,sub);   // Sottodominio di appartenenza
+          assegnavalore(5,dummy); // Elimina il terzo flag
+          assegnavalore(6,id1);   // Primo id
+          assegnavalore(7,id2);   // Secondo id
+        }
+    
+        if(dummy == 2)
+        {
+          assert(numRowEl == 7);
+          assegnavalore(3,dummy); // Elimina il primo flag
+          assegnavalore(4,sub);   // Sottodominio di appartenenza
+          assegnavalore(5,id1);   // Primo id
+          assegnavalore(6,id2);   // Secondo id
+        }
+    
+        element1d(1) = id1;
+        element1d(2) = id2;
+        element1d.setGeoId(sub);
+    
+        elMapItem.setLid(elIdLoc1d);
+        elMapItem.setGid(elId1d);
+        mapItemFixer(elMapItem);
+    
+        Belements.push_back(element1d,elMapItem);
+  
+        elIdLoc1d++;
+      }
+  
+      elId1d++;
+      break;
+  
+
       //Is a 2d element
       case 2 :
-	if( (elId2d <= upperBound2d) && (elId2d >= lowerBound2d) )
+        if( (elId2d <= upperBound2d) && (elId2d >= lowerBound2d) )
         {
-	  assegnavalore(2,dummy); // Numero di flags
-	  assert((dummy == 3) || (dummy == 2));
-	  
-	  if(dummy == 3)
-	  {
-	    assert(numRowEl == 9);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,dummy); // Elimina il terzo flag
-	    assegnavalore(6,id1);   // Primo id
-	    assegnavalore(7,id2);   // Secondo id
-	    assegnavalore(8,id3);   // Terzo id
-	  }
-	  
-	  if(dummy == 2)
-	  {
-	    assert(numRowEl == 8);
-	    assegnavalore(3,dummy); // Elimina il primo flag
-	    assegnavalore(4,sub);   // Sottodominio di appartenenza
-	    assegnavalore(5,id1);   // Primo id
-	    assegnavalore(6,id2);   // Secondo id
-	    assegnavalore(7,id3);   // Terzo id
-	  }
-	  
+          assegnavalore(2,dummy); // Numero di flags
+          assert((dummy == 3) || (dummy == 2));
+    
+          if(dummy == 3)
+          {
+            assert(numRowEl == 9);
+            assegnavalore(3,dummy); // Elimina il primo flag
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,dummy); // Elimina il terzo flag
+            assegnavalore(6,id1);   // Primo id
+            assegnavalore(7,id2);   // Secondo id
+            assegnavalore(8,id3);   // Terzo id
+          }
+    
+          if(dummy == 2)
+          {
+            assert(numRowEl == 8);
+            assegnavalore(3,dummy); // Elimina il primo flag
+            assegnavalore(4,sub);   // Sottodominio di appartenenza
+            assegnavalore(5,id1);   // Primo id
+            assegnavalore(6,id2);   // Secondo id
+            assegnavalore(7,id3);   // Terzo id
+          }
+    
           element2d(1) = id1;
           element2d(2) = id2;
           element2d(3) = id3;
           element2d.setGeoId(sub);
-	  
-	  elMapItem.setLid(elIdLoc2d);
-	  elMapItem.setGid(elId2d);
-	  mapItemFixer(elMapItem);
-	  
-	  elements.push_back(element2d,elMapItem);
-	  
-	  elIdLoc2d++;
-	}
-	
-	elId2d++;
-	break;
-	
-	
+    
+          elMapItem.setLid(elIdLoc2d);
+          elMapItem.setGid(elId2d);
+          mapItemFixer(elMapItem);
+    
+          elements.push_back(element2d,elMapItem);
+    
+          elIdLoc2d++;
+        }
+  
+        elId2d++;
+        break;
+  
         //Not defined type
-      default :
-	if(pid == printPid)
-	{ cout << "ERROR! data loading failed, gmsh-type  not supported";}
-	assert(1 == 2);
+        default :
+        if(pid == printPid)
+        { cout << "ERROR! data loading failed, gmsh-type  not supported";}
+        assert(1 == 2);
     }
   }
   
@@ -792,9 +790,7 @@ gmMesh(string meshfile,
   file.close();
   
   if(pid == printPid)
-  {
-    cout << "Mesh loaded successfully" << endl;
-  }
+  { cout << "Mesh loaded successfully" << endl; }
 }
 
 template<typename ELMAP, typename NODEMAP>

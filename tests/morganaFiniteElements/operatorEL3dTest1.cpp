@@ -1,0 +1,130 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit3d.hpp"
+
+#include "fePr3d.hpp"
+#include "feRt0LT3d.hpp"
+
+#include "dofMapStatic3d.hpp"
+#include "elCardFeeder3d.hpp"
+#include "feStaticField3d.hpp"
+
+#include "operatorEL3d.hpp"
+#include "opEL3dC.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+
+  assert(world.size() == 2);
+  
+  typedef pMapItem             PMAPTYPE;
+  typedef feRt0LT3d<PMAPTYPE>  FIELD_FETYPE;
+  typedef Real                 FIELD_DOFTYPE;
+  typedef fePr3d<1,PMAPTYPE>   TEST_FETYPE;
+  typedef point3d              TEST_DOFTYPE;
+
+  typedef typename FIELD_FETYPE::GEOSHAPE   GEOSHAPE;
+
+  
+  //Loading
+  string meshFile = "./tests/morganaMeshes/mignon3dC.msh";
+  
+  meshInit3d<GEOSHAPE,PMAPTYPE,PMAPTYPE> init(world);
+  init.gmMesh_to_stdB(meshFile, false);
+  
+  
+  //Testing
+  typedef feStaticField3d<FIELD_FETYPE,FIELD_DOFTYPE,dms3d_vectMajor,dms3d_allMode> FIELD;
+  typedef feStaticField3d<TEST_FETYPE,TEST_DOFTYPE,dms3d_vectMajor,dms3d_allMode>   TEST;
+  
+  typedef typename FIELD::MESH3D     MESH3D;
+  typedef typename FIELD::CONNECT3D  CONNECT3D;
+  typedef opEL3dC<FIELD,TEST>        OPERATOR;
+  
+  typedef OPERATOR::FIELD_OPTIONS FIELD_OPTIONS;
+  typedef OPERATOR::TEST_OPTIONS  TEST_OPTIONS;
+  
+  
+  RCP<MESH3D>           grid3d = init.getGrid3d();
+  RCP<CONNECT3D> connectGrid3d = init.getConnectGrid3d();
+  
+  FIELD_OPTIONS fieldOptions;
+  TEST_OPTIONS  testOptions;
+  
+  Teuchos::RCP<OPERATOR> operatore(new OPERATOR(world,*grid3d,*connectGrid3d));
+  
+  operatore->setOptions_field(fieldOptions);
+  operatore->setOptions_test(testOptions);
+  operatore->startup();
+  
+  UInt pid = world.rank();
+  
+  if(pid == 0)
+  {
+    sVect<UInt> indices;
+    
+    //Indices map
+    cout << "field dofsL " << operatore->getNumDofsL_field() << endl;
+    cout << "field dofsG " << operatore->getNumDofsG_field() << endl;
+    cout << "field listL " << operatore->getSizeListL_field() << endl;
+    cout << "field listG " << operatore->getSizeListG_field() << endl << endl;
+  
+    cout << "test dofsL " << operatore->getNumDofsL_test() << endl;
+    cout << "test dofsG " << operatore->getNumDofsG_test() << endl;
+    cout << "test listL " << operatore->getSizeListL_test() << endl;
+    cout << "test listG " << operatore->getSizeListG_test() << endl;
+    
+    cout << "field numIndices " << operatore->numIndex_field() << endl;
+    
+    //Field data
+    operatore->setElement(1);
+    operatore->setIJ(1,1,1,1);
+   
+    indices.resize(operatore->numIndex_field());
+    operatore->indexL_field(indices);
+    
+    cout << "field indices " << indices << endl;
+    
+    //Test data
+    operatore->setElement(1);
+    operatore->setIJ(1,1,1,1);
+   
+    indices.resize(operatore->numIndex_test());
+    operatore->indexL_test(indices);
+    
+    cout << "test indices " << indices << endl;
+  }
+  
+  
+}

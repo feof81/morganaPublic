@@ -79,6 +79,8 @@ class sOctTree
   public:
     template<typename D>
     friend ostream & operator<<(ostream & f, const sOctTree<D> & O);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -626,5 +628,20 @@ ostream & operator<<(ostream & f, const sOctTree<D> & O)
   return(f);
 }
 
+template<typename DATA>
+size_t
+sOctTree<DATA>::
+memSize() const
+{
+  if(data.size() == 0)
+  { return(sizeof(Real) + sizeof(ITER)); }
+  else 
+  {
+    return(sizeof(Real) + sizeof(ITER)
+         + (              data.begin()->first.memSize() 
+          + dynamicSizeOf(data.begin()->second)
+          + 2 * sizeof(Real*) ) * data.size() );
+  }
+}
 
 #endif

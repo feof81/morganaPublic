@@ -887,6 +887,10 @@ template<typename DATA, typename MAPITEM> class pVectComm
                     const DATA & dataMax);
     //@}
     
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -3733,6 +3737,14 @@ vectorData(PVECT & Vect,
   
   Vect.clear();
   manipulator.mergeSimple(recvVects,Vect);
+}
+
+template<typename DATA, typename MAPITEM>
+size_t
+pVectComm<DATA,MAPITEM>::
+memSize() const
+{
+  return(sizeof(bool) + sizeof(UInt));
 }
 
 #endif

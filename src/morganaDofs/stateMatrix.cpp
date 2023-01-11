@@ -230,3 +230,10 @@ operator<<( ostream & f, const stateMatrix & A)
   
   return(f);
 }
+
+size_t
+stateMatrix::
+memSize() const
+{
+  return(this->RowDim() * this->ColDim() * sizeof(double) + 2 * sizeof(int));
+}

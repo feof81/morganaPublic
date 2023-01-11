@@ -190,6 +190,11 @@ template<> class pMapGlobalManip<pMapItem>
                             const communicator & NewCommDev,
                                   MAP          & NewMap);
     //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -389,6 +394,11 @@ template<> class pMapGlobalManip<pMapItemShare>
                             const communicator & NewCommDev,
                                   MAP          & NewMap);
     //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -472,6 +482,11 @@ template<> class pMapGlobalManip<pMapItemSendRecv>
                             const MAP          & OldMap,
                             const communicator & NewCommDev,
                                   MAP          & NewMap);
+    //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
     //@}
 };
 

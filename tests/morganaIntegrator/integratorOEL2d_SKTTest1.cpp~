@@ -1,0 +1,177 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "geoShapes.h"
+#include "meshInit2d.hpp"
+
+#include "feQr2d.hpp"
+#include "feSpectralLH2d.hpp"
+
+#include "feDynamicField2d.hpp"
+#include "feStaticField2d.hpp"
+#include "feStaticField2dGlobalManip.hpp"
+
+#include "operatorEL2d.hpp"
+#include "opEL2dA.hpp"
+
+#include "integratorOEL2d_SKT.hpp"
+
+// mpirun -np 2 ./bin/morgana
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  environment  env(argc,argv);
+  communicator world;
+
+  assert(world.size() == 2);
+  
+  typedef pMapItemShare             PMAPTYPE;
+  typedef feSpectralLH2d<PMAPTYPE>  FIELD_FETYPE;
+  typedef Real                      FIELD_DOFTYPE;
+  typedef feSpectralLH2d<PMAPTYPE>  TEST_FETYPE;
+  typedef Real                      TEST_DOFTYPE;
+  typedef feQr2d<0,PMAPTYPE>        COEFF_FETYPE;
+  typedef Real                      COEFF_DOFTYPE;
+  
+  typedef typename FIELD_FETYPE::FECARD FIELD_FECARD;
+  typedef typename TEST_FETYPE::FECARD  TEST_FECARD;
+
+  typedef typename FIELD_FETYPE::GEOSHAPE GEOSHAPE;
+
+  
+  //Loading
+  string meshFile  = "./tests/morganaMeshes/mignonQuad2dB.unv";
+  string colorFile = "./tests/morganaMeshes/mignonQuad2dB_color.unv";
+  
+  meshInit2d<GEOSHAPE,PMAPTYPE,PMAPTYPE> init(world);
+  init.femap_to_stdB(meshFile, colorFile);
+  
+  
+  //Typedefs
+  typedef feDynamicField2d<FIELD_FETYPE,FIELD_DOFTYPE,dmd2d_vectMajor,dmd2d_standard> FIELD;
+  typedef feDynamicField2d<TEST_FETYPE,TEST_DOFTYPE,dmd2d_vectMajor,dmd2d_standard>   TEST;
+  typedef feStaticField2d<COEFF_FETYPE,COEFF_DOFTYPE,dms2d_vectMajor,dms2d_allMode>   COEFF;
+  
+  typedef typename FIELD::MESH2D     MESH2D;
+  typedef typename FIELD::CONNECT2D  CONNECT2D;
+  typedef opEL2dA<FIELD,TEST,COEFF>  OPERATOR;
+  
+  typedef OPERATOR::FIELD_OPTIONS FIELD_OPTIONS;
+  typedef OPERATOR::TEST_OPTIONS  TEST_OPTIONS;
+  typedef COEFF::OPTIONS          COEFF_OPTIONS;
+  
+  RCP<MESH2D>           grid2d = init.getGrid2d();
+  RCP<CONNECT2D> connectGrid2d = init.getConnectGrid2d();
+  
+  
+  //Coeff startup
+  COEFF_OPTIONS coeffOptions;
+  
+  COEFF coeff;
+  coeff.setCommunicator(world);
+  coeff.setGeometry(grid2d,connectGrid2d);
+  coeff.setOptions(coeffOptions);
+  coeff.startup();
+  
+  
+  //Coeff initialization
+  feStaticField2dGlobalManip<COEFF_FETYPE,COEFF_DOFTYPE,dms2d_vectMajor,dms2d_allMode> manipulator(world);
+  
+  sArray<string> functions(1,1);
+  functions(1,1) = "x";
+  
+  manipulator.initilize(functions,coeff);
+  
+  
+  //Fe cards
+  FIELD_FECARD feCard_field;
+  TEST_FECARD  feCard_test;
+  
+  feCard_field.setIsActive(true);
+  feCard_field.setR(0,1);
+  
+  feCard_test.setIsActive(true);
+  feCard_test.setR(0,1);
+  
+  //Options
+  FIELD_OPTIONS fieldOptions;
+  TEST_OPTIONS  testOptions;
+  
+  
+  //Operator
+  OPERATOR operatore(world,*grid2d,*connectGrid2d);
+  operatore.setOptions_field(fieldOptions);
+  operatore.setOptions_test(testOptions);
+  operatore.setCoeff(coeff);
+  
+  for(UInt i=1; i <= grid2d->getNumElements(); ++i)
+  {
+    operatore.setFeCardL_field(i,feCard_field);
+    operatore.setFeCardL_test(i,feCard_test);
+  }
+  
+  operatore.startup();
+  
+   
+  //Printout
+  UInt pid = world.rank();
+  
+  if(pid == 1)
+  {
+    cout << "Grid 2d - nodes" << endl;
+    cout << grid2d->getNodes() << endl << endl;
+    
+    cout << "Grid 2d - elements" << endl;
+    cout << grid2d->getElements() << endl << endl;
+    
+    sVect<UInt> indices;
+    
+    //Set
+    operatore.setElement(2);
+    operatore.setIJ(1,1,1,1);
+   
+    indices.resize(operatore.numIndex_field());
+    operatore.indexG_field(indices);
+    
+    cout << "field indices " << endl << indices << endl;
+    
+    //Test data   
+    indices.resize(operatore.numIndex_test());
+    operatore.indexG_test(indices);
+    
+    cout << "test indices " << endl << indices << endl;
+    
+    //Integrator
+    typedef integratorOEL2d_SKT<OPERATOR,STANDARD,1> INTEGRATOR;
+    INTEGRATOR integrator;
+    
+    //Test eval
+    sVect<Real> out = integrator.integration(operatore);
+    cout << "integr : " << out << endl;
+  }
+}

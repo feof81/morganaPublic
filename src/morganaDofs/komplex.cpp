@@ -304,4 +304,9 @@ operator<<(ostream& f, const komplex & C)
   return f << "Real: " << C.re << " Imag: " << C.im << endl;
 }
 
- 
+size_t
+komplex::
+memSize() const
+{
+  return(sizeof(komplex));
+}

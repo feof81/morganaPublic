@@ -144,6 +144,7 @@ class mesh2d : public geoMapInterface<GEOSHAPE>
     /*! @name Geometry ops */ //@{
   public:
     void scale(const Real & coeff);
+    void offset(const point3d & P0);
     //@}
     
     /*! @name Printout */ //@{
@@ -689,6 +690,16 @@ scale(const Real & coeff)
   }
 }
 
+template<typename GEOSHAPE, typename ELMAP, typename NODEMAP>
+void
+mesh2d<GEOSHAPE,ELMAP,NODEMAP>::
+offset(const point3d & P0)
+{
+  for(UInt i=1; i <= nodes.size(); ++i)
+  {
+    nodes(i) = nodes(i) + P0;
+  }
+}
 
 
 //_________________________________________________________________________________________________

@@ -197,6 +197,11 @@ template<typename DATA> class pVectGlobalManip<DATA,pMapItem>
                             const communicator & NewCommDev,
                                   PVECT        & NewVect);
     //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -934,6 +939,18 @@ expandCommunicator(const bool         & isActive,
 }
 
 
+//_________________________________________________________________________________________________
+// OTHER FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename DATA>
+size_t
+pVectGlobalManip<DATA,pMapItem>::
+memSize() const
+{
+  return(sizeof(commDevLoaded));
+}
+
+
 
 //_________________________________________________________________________________________________
 // PMAPITEMSHARE
@@ -1288,6 +1305,11 @@ template<typename DATA> class pVectGlobalManip<DATA,pMapItemShare>
                             const PVECT        & OldVect,
                             const communicator & NewCommDev,
                                   PVECT        & NewVect);
+    //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
     //@}
 };
 
@@ -2251,31 +2273,6 @@ allReduce(PVECT & Vect, OP op) const
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //_________________________________________________________________________________________________
 // NON PENDING UPDATE
 //-------------------------------------------------------------------------------------------------
@@ -2864,5 +2861,16 @@ expandCommunicator(const bool         & isActive,
   }
 }
 
+
+//_________________________________________________________________________________________________
+// OTHER FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename DATA>
+size_t
+pVectGlobalManip<DATA,pMapItemShare>::
+memSize() const
+{
+  return(sizeof(bool));
+}
 
 #endif

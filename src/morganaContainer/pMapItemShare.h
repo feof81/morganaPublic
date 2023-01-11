@@ -78,6 +78,8 @@ class pMapItemShare : public pMapItem
     /*! @name Outstream operators */ //@{
   public:
     friend ostream & operator<<(ostream & f, const pMapItemShare & M);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -100,5 +102,12 @@ serialize(ARK & ar, const unsigned int version)
   ar & owned;
   ar & bufLid;
 }
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pMapItemShare & A);
+
 
 #endif

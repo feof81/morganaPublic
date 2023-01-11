@@ -175,3 +175,17 @@ ostream & operator<<(ostream & f, const pMapItem & M)
   f << "pid: " << M.getPid() << " lid: " << M.getLid() << " gid: " << M.getGid() << endl;
   return(f);
 }
+
+size_t
+pMapItem::
+memSize() const
+{
+  return(sizeof(pMapItem));
+}
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pMapItem & A)
+{ return(A.memSize()); }

@@ -194,6 +194,8 @@ template<typename ITEM, typename ROWMAP, typename COLMAP> class pGraph : public 
   public:
     template<typename G, typename RM, typename CM>
     friend ostream & operator<<(ostream & f, const pGraph<G,RM,CM> & M);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -949,6 +951,17 @@ ostream & operator<<(ostream & f, const pGraph<G,RM,CM> & M)
   f << M.colMap << endl;
   
   return(f);
+}
+
+template<typename ITEM, typename ROWMAP, typename COLMAP>
+size_t
+pGraph<ITEM,ROWMAP,COLMAP>::
+memSize() const
+{ 
+  return(2 * sizeof(bool)   +
+         colMap.memSize()   +
+         colManip.memSize() +
+         PVECT::memSize());
 }
 
 #endif

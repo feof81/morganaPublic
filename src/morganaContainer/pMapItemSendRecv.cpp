@@ -115,3 +115,17 @@ ostream & operator<<(ostream & f, const pMapItemSendRecv & M)
   f << "pid: " << M.getPid() << " lid: " << M.getLid() << " gid: " << M.getGid() << " sid: " << M.getSid() << " rid " << M.getRid() << endl;
   return(f);
 }
+
+size_t
+pMapItemSendRecv::
+memSize() const
+{
+  return(sizeof(pMapItemSendRecv));
+}
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pMapItemSendRecv & A)
+{ return(A.memSize()); }

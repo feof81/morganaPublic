@@ -14,6 +14,8 @@ You should have received a copy of the GNU General Public License along with Mor
 #ifndef PVECT_HPP
 #define PVECT_HPP
 
+#include "traitsBasic.h"
+#include "typesMem.h"
 #include "simpleFormats.hpp"
 #include "pMap.hpp"
 #include "pMapManip.hpp"
@@ -173,6 +175,8 @@ template<typename DATA, typename MAP> class pVect
   public:
     template<typename D, typename M>
     friend ostream & operator<<(ostream & f, const pVect<D,M> & V);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -820,6 +824,16 @@ serialize(ARK & ar, const unsigned int version)
   
   ar & *map;
   ar & *data;
+}
+
+template<typename DATA, typename MAP>
+size_t
+pVect<DATA,MAP>::
+memSize() const
+{
+  return(map->memSize() 
+       + mapManip->memSize()
+       + data->memSize() );
 }
 
 #endif

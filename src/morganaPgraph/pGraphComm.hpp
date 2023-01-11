@@ -150,6 +150,11 @@ template<typename ITEM, typename ROWMAP, typename COLMAP> class pGraphComm
     */
     void merge(const UInt & sid, const UInt & rid, const Teuchos::RCP<const PGRAPH> & sendGraph, Teuchos::RCP<PGRAPH> & rGraph) const;
     //@}
+    
+    /*! @name Memory functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -386,5 +391,16 @@ merge(const UInt & sid, const UInt & rid, const Teuchos::RCP<const PGRAPH> & sen
   merger.mergeGraph(rGraph,tempGraph);
 }
 
+
+//_________________________________________________________________________________________________
+// MEMORY FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename ITEM, typename ROWMAP, typename COLMAP>
+size_t
+pGraphComm<ITEM,ROWMAP,COLMAP>::
+memSize() const
+{
+  return(sizeof(UInt) + sizeof(bool));
+}
 
 #endif

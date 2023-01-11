@@ -183,6 +183,9 @@ class stateMatrix : public Epetra_SerialDenseMatrix
   public:
     /*! Outstream operator */
     friend ostream & operator<<( ostream & f, const stateMatrix & A);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

@@ -385,9 +385,9 @@ buildConnectivity()
       //Local edge preparation
       for(UInt k=1; k <= refShape1d.getNumPoints(); ++k)
       { 
-	lid = refShape2d.edgeToPoint(j,k);
-	gid = grid2d->getElementL(i).getCid(lid);
-	spigolo.setCid(k,gid);
+        lid = refShape2d.edgeToPoint(j,k);
+        gid = grid2d->getElementL(i).getCid(lid);
+        spigolo.setCid(k,gid);
       }
       
       spigolo.setGeoId(0);
@@ -405,35 +405,35 @@ buildConnectivity()
       
       if(!paioSpigoli.second)
       {
-	//already existing
-	spigoloMap = (paioSpigoli.first)->second;
-	
-	//edge to element
-	edgeToElementItem = edgeToElement(spigoloMap.getLid());
-	edgeToElementItem.resize(2);
-	edgeToElementItem.setCid(2,i);
-	edgeToElementItem.setSubLocId(2,j);
-	edgeToElement.getItemL(spigoloMap.getLid()) = edgeToElementItem;
-	
-	//elements to face
-	elementEdgeItem.setCid(j,spigoloMap.getLid());
+        //already existing
+        spigoloMap = (paioSpigoli.first)->second;
+
+        //edge to element
+        edgeToElementItem = edgeToElement(spigoloMap.getLid());
+        edgeToElementItem.resize(2);
+        edgeToElementItem.setCid(2,i);
+        edgeToElementItem.setSubLocId(2,j);
+        edgeToElement.getItemL(spigoloMap.getLid()) = edgeToElementItem;
+
+        //elements to face
+        elementEdgeItem.setCid(j,spigoloMap.getLid());
       }
       else
       {
-	//should be created - edge to element
-	edgeToElementMap.setLid(numEdges);
-	edgeToElementItem.resize(1);
-	edgeToElementItem.setCid(1,i);
-	edgeToElementItem.setSubLocId(1,j);
-	edgeToElement.push_back(edgeToElementItem,edgeToElementMap);
-	
-	//element to edge
-	elementEdgeMap.setLid(i);
-	elementEdgeItem.setCid(j,numEdges);
-	
-	//face creation
-	tempGraphEdges.push_back(spigolo,spigoloMap); 
-	++numEdges;
+        //should be created - edge to element
+        edgeToElementMap.setLid(numEdges);
+        edgeToElementItem.resize(1);
+        edgeToElementItem.setCid(1,i);
+        edgeToElementItem.setSubLocId(1,j);
+        edgeToElement.push_back(edgeToElementItem,edgeToElementMap);
+
+        //element to edge
+        elementEdgeMap.setLid(i);
+        elementEdgeItem.setCid(j,numEdges);
+
+        //face creation
+        tempGraphEdges.push_back(spigolo,spigoloMap); 
+        ++numEdges;
       }
     }
     

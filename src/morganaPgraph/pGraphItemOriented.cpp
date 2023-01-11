@@ -170,3 +170,20 @@ ostream & operator<<(ostream & f, const pGraphItemOriented & G)
   
   return(f);
 }
+
+size_t
+pGraphItemOriented::
+memSize() const
+{
+  return( sizeof(UInt) * (connected.size() + orderedNodes.size())
+        + sizeof(nodesOrdered)
+        + sizeof(bool) * orientation.size());
+}
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItemOriented & A)
+{ return(A.memSize()); }
+

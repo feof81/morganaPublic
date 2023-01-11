@@ -117,6 +117,8 @@ class pGraphItemOriented : public pGraphItem
     
     /*! @name Outstream operator */ //@{
   public:
+    size_t memSize() const;
+    
     friend ostream & operator<<(ostream & f, const pGraphItemOriented & G);
     //@}
 };
@@ -161,5 +163,12 @@ serialize(ARK & ar, const unsigned int version)
   for(UInt i=1; i <= orientation.size(); ++i)
   { orientation(i) = bool(buffer(i)); }
 }
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItem & A);
+
 
 #endif

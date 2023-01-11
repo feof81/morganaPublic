@@ -207,6 +207,11 @@ template<typename DATA, typename MAPITEM> class pVectManip
     void unionExclusive(PVECT & outVect);
     void unionExclusive(Teuchos::RCP<PVECT> & outVect);
     //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -1270,6 +1275,18 @@ pVectManip<DATA,MAPITEM>::
 unionExclusive(Teuchos::RCP<PVECT> & outVect)
 {
   unionExclusive(*outVect);
+}
+
+
+//_________________________________________________________________________________________________
+// OTHER FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename DATA, typename MAPITEM>
+size_t
+pVectManip<DATA,MAPITEM>::
+memSize() const
+{
+  return(sizeof(bool));
 }
 
 #endif

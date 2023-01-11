@@ -187,3 +187,10 @@ operator<<( ostream & f, const stateVector & A)
   
   return(f);
 }
+
+size_t
+stateVector::
+memSize() const
+{
+  return(this->Length() * sizeof(double) + sizeof(int));
+}

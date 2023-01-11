@@ -358,4 +358,9 @@ norm2(const point3d & P)
   return(sqrt(dot(P,P)));
 }
 
-
+size_t
+point3d::
+memSize() const
+{
+  return(sizeof(point3d));
+}

@@ -1,0 +1,138 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This file is part of Morgana.
+Author: Andrea Villa, andrea.villa81@fastwebnet.it
+
+Morgana is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Morgana is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Morgana. If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <cmath>
+#include <iostream>
+
+#include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
+
+#include "pMapItem.h"
+#include "pMapItemShare.h"
+
+#include "meshDoctor3d.hpp"
+#include "meshInit3d.hpp"
+
+#include "fePr2d.hpp"
+#include "fePr3d.hpp"
+
+#include "analyticField.hpp"
+#include "feStaticField2d.hpp"
+#include "feStaticField3d.hpp"
+#include "feStaticField2dGlobalManip.hpp"
+#include "feStaticField3dGlobalManip.hpp"
+
+#include "normEval.hpp"
+#include "fnEL3dD.hpp"
+#include "localVectorEL3d.hpp"
+#include "vectorBuilder.hpp"
+
+
+using namespace std;
+using namespace boost::mpi;
+using namespace Teuchos;
+
+
+int main(int argc, char *argv[])
+{
+  //Startup environment
+  environment  env(argc,argv);
+  communicator world;
+
+  //Typedef the fields - chose parameters
+  typedef pMapItemShare        PMAPTYPE;
+  
+  typedef fePr3d<1,PMAPTYPE>   FIELD_FETYPE;
+  typedef Real                 FIELD_DOFTYPE;
+  
+  typedef fePr3d<0,PMAPTYPE>   INT_FETYPE;
+  typedef Real                 INT_DOFTYPE;
+  
+  //Fields
+  typedef feStaticField3d<FIELD_FETYPE, FIELD_DOFTYPE, dms3d_vectMajor, dms3d_allMode>  FIELD;
+  typedef feStaticField3d<INT_FETYPE,   INT_DOFTYPE,   dms3d_vectMajor, dms3d_allMode>  INT_FIELD;
+  
+  typedef FIELD::OPTIONS      FIELD_OPTIONS;
+  typedef INT_FIELD::OPTIONS  INT_FIELD_OPTIONS;
+  
+  typedef FIELD_FETYPE::GEOSHAPE GEOSHAPE;
+  typedef GEOSHAPE::GEOBSHAPE    GEOSHAPE2D;
+  
+  //Loading
+  typedef meshInit3d<GEOSHAPE,PMAPTYPE,PMAPTYPE> INIT;
+  typedef INIT::MESH2D    MESH2D;
+  typedef INIT::MESH3D    MESH3D;
+  typedef INIT::CONNECT2D CONNECT2D;
+  typedef INIT::CONNECT3D CONNECT3D;
+  
+  string meshFile = "./geometries/cubes3d/testCubeA.msh";
+  
+  INIT  init(world);
+  init.gmMesh_to_stdA(meshFile);
+  
+  RCP<MESH2D>           grid2d = init.getGrid2d();
+  RCP<MESH3D>           grid3d = init.getGrid3d();
+  RCP<CONNECT2D> connectGrid2d = init.getConnectGrid2d();
+  RCP<CONNECT3D> connectGrid3d = init.getConnectGrid3d();
+  
+  
+  //Analytic function
+  sArray<string> functionsExact(1,1);
+  functionsExact(1,1) = "0";
+  
+  analyticField<Real> exact(functionsExact);
+  exact.startup();
+
+  
+  //Startup the fieldicient 
+  FIELD_OPTIONS fieldOptions;
+  
+  RCP<FIELD> field(new FIELD);
+  field->setCommunicator(world);
+  field->setGeometry(grid3d,connectGrid3d);
+  field->setOptions(fieldOptions);
+  field->startup();
+  
+  feStaticField3dGlobalManip<FIELD_FETYPE,FIELD_DOFTYPE,dms3d_vectMajor,dms3d_allMode> manipulatorCoeff(world);
+  sArray<string> functionsCoeff(1,1);
+  functionsCoeff(1,1) = "1 + x";
+  manipulatorCoeff.initilize(functionsCoeff,field);
+  
+  
+  //Integration------------------------------------------------------
+  typedef fnEL3dD<INT_FIELD,FIELD>                            FUNCTIONAL;
+  typedef localVectorEL3d<INT_FIELD, FEL3d_STC, STANDARD, 2>  LOCALVECTOR;
+  typedef normEval<LOCALVECTOR>                               NORMEVAL;
+  
+  //Functional
+  INT_FIELD_OPTIONS intFieldOptions;
+  Teuchos::RCP<FUNCTIONAL> functional(new FUNCTIONAL);
+  functional->setCommunicator(world);
+  functional->setGeometry(grid3d,connectGrid3d);
+  functional->setOptions_test(intFieldOptions);
+  functional->setAnalyticFunction(exact);
+  functional->setCoeff(field);
+  functional->startup();
+  
+  //NormEval
+  NORMEVAL evaluator;
+  evaluator.setFunctional(functional);
+  evaluator.setCommDev(world);
+  Real error = evaluator.eval();
+  
+  if(world.rank() == 0)
+  {
+    cout << "Error : " << error << endl;
+  }
+}

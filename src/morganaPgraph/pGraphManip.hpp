@@ -130,6 +130,11 @@ template<typename ITEM, typename ROWMAP, typename COLMAP> class pGraphManip
     void mergeGraph(PGRAPH & inGraph, const PGRAPH & addGraph) const;
     void mergeGraph(Teuchos::RCP<PGRAPH> & inGraph, const Teuchos::RCP<const PGRAPH> & addGraph) const;
     //@}
+    
+    /*! @name Mem functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -838,38 +843,38 @@ mergeGraph(PGRAPH & inGraph, const PGRAPH & addGraph) const
       
       for(UInt j=1; j <= dataItem.size(); ++j)
       {
-	assert(dataItem(j) >= 1);
-	assert(dataItem(j) <= addGraph.colSize());
-	
-	colMapItem = addGraph.getColMap().get(dataItem(j));
-	pairColMap = colContainer.insert(colMapItem);
-	
-	if(pairColMap.second) //ColItem not already present
-	{
-	  //Cancel the inserted item
-	  colContainer.erase(colMapItem);
-	  
-	  //Update lid
-	  maxColLid++;
-	  colMapItem.setLid(maxColLid);
-	  
-	  //Update in the graphItem
-	  dataItem(j) = maxColLid;
-	  
-	  //Insert in the colMap 
-	  inGraph.getColMap().push_back(colMapItem);
-	  
-	  //Update the item in the set
-	  colContainer.insert(colMapItem);
-	}
-	else //ColItem already present
-	{
-	  //Identify the item already present
-	  colMapItem = *pairColMap.first;
-	  
-	  //Update in the graphItem
-	  dataItem(j) = colMapItem.getLid();
-	}
+        assert(dataItem(j) >= 1);
+        assert(dataItem(j) <= addGraph.colSize());
+
+        colMapItem = addGraph.getColMap().get(dataItem(j));
+        pairColMap = colContainer.insert(colMapItem);
+
+        if(pairColMap.second) //ColItem not already present
+        {
+          //Cancel the inserted item
+          colContainer.erase(colMapItem);
+
+          //Update lid
+          maxColLid++;
+          colMapItem.setLid(maxColLid);
+
+          //Update in the graphItem
+          dataItem(j) = maxColLid;
+
+          //Insert in the colMap 
+          inGraph.getColMap().push_back(colMapItem);
+
+          //Update the item in the set
+          colContainer.insert(colMapItem);
+        }
+        else //ColItem already present
+        {
+          //Identify the item already present
+          colMapItem = *pairColMap.first;
+
+          //Update in the graphItem
+          dataItem(j) = colMapItem.getLid();
+        }
       }
       
       //Insert the new rowMapItem and dataItem
@@ -890,5 +895,22 @@ mergeGraph(Teuchos::RCP<PGRAPH> & inGraph, const Teuchos::RCP<const PGRAPH> & ad
 }
 
 
+//_________________________________________________________________________________________________
+// MEM FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+template<typename ITEM, typename ROWMAP, typename COLMAP>
+size_t
+pGraphManip<ITEM,ROWMAP,COLMAP>::
+memSize() const
+{
+  if(container.size() == 0)
+  { return(2 * sizeof(bool)); }
+  else
+  { 
+    return( 2 * sizeof(bool)
+            + (container.begin()->memSize()
+             + 2 * sizeof(Real*) ) * container.size());
+  }
+}
 
 #endif

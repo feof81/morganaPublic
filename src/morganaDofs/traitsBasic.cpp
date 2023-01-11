@@ -79,6 +79,12 @@ norm(const Real & A)
   return(abs(A));
 }
 
+static size_t
+traitsBasic<Real>::
+memSize(const Real & A)
+{
+  return(sizeof(Real));
+}
 
 
 //_________________________________________________________________________________________________
@@ -152,6 +158,12 @@ norm(const point2d & A)
   return(A.norm2());
 }
 
+size_t
+traitsBasic<point2d>::
+memSize(const point2d & A)
+{
+  return(sizeof(point2d));
+}
 
 
 //_________________________________________________________________________________________________
@@ -226,6 +238,12 @@ norm(const point3d & A)
   return(A.norm2());
 }
 
+size_t
+traitsBasic<point3d>::
+memSize(const point3d & A)
+{
+  return(sizeof(point3d));
+}
 
 
 //_________________________________________________________________________________________________
@@ -303,6 +321,12 @@ norm(const tensor2d & A)
   return(A.getFrobenius());
 }
 
+size_t
+traitsBasic<tensor2d>::
+memSize(const tensor2d & A)
+{
+  return(sizeof(tensor2d));
+}
 
 
 //_________________________________________________________________________________________________
@@ -382,6 +406,13 @@ norm(const tensor3d & A)
   return(A.getFrobenius());
 }
 
+size_t
+traitsBasic<tensor3d>::
+memSize(const tensor3d & A)
+{
+  return(sizeof(tensor3d));
+}
+
 
 //_________________________________________________________________________________________________
 // KOMPLEX TRAIT
@@ -452,4 +483,11 @@ traitsBasic<komplex>::
 norm(const komplex & C)
 {
   return(C.norm());
+}
+
+size_t
+traitsBasic<komplex>::
+memSize(const komplex & A)
+{
+  return(sizeof(komplex));
 }

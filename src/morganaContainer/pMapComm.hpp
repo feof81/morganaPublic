@@ -182,6 +182,11 @@ template<typename ITEM> class pMapComm
     */
     void vectorPid(MAP & map) const;
     //@}
+    
+    /*! @name Other functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -840,6 +845,20 @@ vectorPid(MAP & map) const
   
   map.clear();
   manipulator.mergeSimple(recvMaps,map);
+}
+
+
+//_______________________________________________________________________________________________________
+// OTHER FUNCTIONS
+//-------------------------------------------------------------------------------------------------------
+template<typename ITEM>
+size_t
+pMapComm<ITEM>::
+memSize() const
+{
+  return(sizeof(UInt) 
+       + sizeof(bool)
+       + sizeof(commDevLoaded));
 }
 
 #endif

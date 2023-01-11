@@ -55,6 +55,7 @@ template<> class traitsBasic<Real>
     
   public:
     static Real norm(const Real & A);
+    static size_t memSize(const Real & A);
 };
 
 
@@ -83,6 +84,7 @@ template<> class traitsBasic<point2d>
     
   public:
     static Real norm(const point2d & A);
+    static size_t memSize(const point2d & A);
 };
 
 
@@ -110,6 +112,7 @@ template<> class traitsBasic<point3d>
     
   public:
     static Real norm(const point3d & A);
+    static size_t memSize(const point3d & A);
 };
 
 
@@ -138,6 +141,7 @@ template<> class traitsBasic<tensor2d>
     
   public:
     static Real norm(const tensor2d & A);
+    static size_t memSize(const tensor2d & A);
 };
 
 
@@ -166,6 +170,7 @@ template<> class traitsBasic<tensor3d>
     
   public:
     static Real norm(const tensor3d & A);
+    static size_t memSize(const tensor3d & A);
 };
 
 
@@ -194,6 +199,7 @@ template<size_t N> class traitsBasic<staticVector<N> >
     
   public:
     static Real norm(const staticVector<N> & A);
+    static size_t memSize(const staticVector<N> & A);
 };
 
 template<size_t N>
@@ -289,6 +295,14 @@ norm(const staticVector<N> & A)
   return(tot);
 }
 
+template<size_t N>
+size_t
+traitsBasic<staticVector<N> >::
+memSize(const staticVector<N> & A)
+{
+  return(A.memSize());
+}
+
 
 
 //_________________________________________________________________________________________________
@@ -315,6 +329,7 @@ template<> class traitsBasic<komplex>
     
   public:
     static Real norm(const komplex & C);
+    static size_t memSize(const komplex & A);
 };
 
 

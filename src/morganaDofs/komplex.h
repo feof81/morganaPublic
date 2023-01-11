@@ -238,6 +238,9 @@ class komplex
     
     /*! Outstream operator */
     friend ostream & operator<<(ostream & f, const komplex & C);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 

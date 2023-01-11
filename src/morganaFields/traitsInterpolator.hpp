@@ -33,6 +33,18 @@ You should have received a copy of the GNU General Public License along with Mor
 #include "search2dA.hpp"
 #include "search3dA.hpp"
 
+#include "geoMapSupport1d.hpp"
+#include "geoMapSupport2d.hpp"
+#include "geoMapSupport3d.hpp"
+
+#include "feStaticField1dGlobalManip.hpp"
+#include "feStaticField2dGlobalManip.hpp"
+#include "feStaticField3dGlobalManip.hpp"
+
+#include "feDynamicField1dGlobalManip.hpp"
+#include "feDynamicField2dGlobalManip.hpp"
+#include "feDynamicField3dGlobalManip.hpp"
+
 
 /*! Traits for the simple interpolation */
 template<typename SOURCEFIELD> class interpolatorTrait;
@@ -49,6 +61,8 @@ class interpolatorTrait<feStaticField1d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh1d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                             MESH;
     typedef connect1d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          CONNECT;
     typedef search1dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          SEARCH;
+    typedef geoMapSupport1d<GEOSHAPE>                                      SUPPORT;
+    typedef feStaticField1dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
 
 template<typename FETYPE, typename DOFTYPE, dmd1d_order ORDER, dmd1d_mode MODE>
@@ -60,6 +74,8 @@ class interpolatorTrait<feDynamicField1d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh1d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                              MESH;
     typedef connect1d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           CONNECT;
     typedef search1dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           SEARCH;
+    typedef geoMapSupport1d<GEOSHAPE>                                       SUPPORT;
+    typedef feDynamicField1dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
 
 
@@ -73,6 +89,8 @@ class interpolatorTrait<feStaticField2d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                             MESH;
     typedef connect2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          CONNECT;
     typedef search2dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          SEARCH;
+    typedef geoMapSupport2d<GEOSHAPE>                                      SUPPORT;
+    typedef feStaticField2dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
 
 template<typename FETYPE, typename DOFTYPE, dmd2d_order ORDER, dmd2d_mode MODE>
@@ -84,6 +102,8 @@ class interpolatorTrait<feDynamicField2d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                              MESH;
     typedef connect2d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           CONNECT;
     typedef search2dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           SEARCH;
+    typedef geoMapSupport2d<GEOSHAPE>                                       SUPPORT;
+    typedef feDynamicField2dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
 
 
@@ -97,6 +117,8 @@ class interpolatorTrait<feStaticField3d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh3d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                             MESH;
     typedef connect3d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          CONNECT;
     typedef search3dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                          SEARCH;
+    typedef geoMapSupport3d<GEOSHAPE>                                      SUPPORT;
+    typedef feStaticField3dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
 
 template<typename FETYPE, typename DOFTYPE, dmd3d_order ORDER, dmd3d_mode MODE>
@@ -108,8 +130,8 @@ class interpolatorTrait<feDynamicField3d<FETYPE,DOFTYPE,ORDER,MODE> >
     typedef mesh3d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                              MESH;
     typedef connect3d<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           CONNECT;
     typedef search3dA<GEOSHAPE,PMAPTYPE,PMAPTYPE>                           SEARCH;
+    typedef geoMapSupport3d<GEOSHAPE>                                       SUPPORT;
+    typedef feDynamicField3dGlobalManip<FETYPE,DOFTYPE,ORDER,MODE>          MANIP;
 };
-
-
 
 #endif

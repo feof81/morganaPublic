@@ -312,14 +312,12 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   commDev->barrier();
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
   
-  
   //The grid3d-------------------------------------------------------------------------------------
   grid3d = Teuchos::rcp(new mesh3d<GEOSHAPE,ELMAP,NODEMAP>);
   grid3d->setNodes(nodes);
   grid3d->setElements(elements3d);
   grid3d->transferMap();
   grid3d->setMeshStandard(STDL);
-  
   
   //Mesh partition---------------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Mesh partition" << " "; time(&start); cout << endl;}
@@ -329,7 +327,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   assert(gridManip3d.check(grid3d));
   
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-  
   
   //Mesh overlapping-------------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Mesh overlap" << " "; time(&start); cout << endl;}
@@ -344,7 +341,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
   
-  
   //Mesh connecting--------------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Connecting Volume 3d" << " "; time(&start); cout << endl;}
   
@@ -353,7 +349,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   connectGrid3d->buildConnectivity();
   
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-  
   
   //Faces and edges cheking------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Check Faces" << " "; time(&start); cout << endl;}
@@ -365,7 +360,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   pGraphGlobalManip<GEOELEMENT1D,ELMAP,NODEMAP> checkEdges(commDev);
   assert(checkEdges.check(grid3d->getEdges()));
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-    
   
   //Distribute the elements2d----------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Distribute elements 2d" << " "; time(&start); cout << endl;}
@@ -463,7 +457,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
  
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
   
-  
   //Connecting2d-----------------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Connecting surface 2d" << " "; time(&start); cout << endl;}
   
@@ -473,7 +466,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}  
   
-  
   //Boundary3d connecting--------------------------------------------------------------------------
   if((pid == printPid) && verbose) {cout << "Boundary connecting 3d" << " "; time(&start); cout << endl;}
   
@@ -481,7 +473,6 @@ gmMesh_to_stdA(const string & meshfile, const bool & verbose)
   connectGrid3d->buildBoundaryConnectivity();
   
   if((pid == printPid) && verbose) {time(&end); cout << "done (" << difftime(end, start) << " s)" << endl << endl;}
-  
   
   //Flags------------------------------------------------------------------------------------------
   mesh3dCreated    = true;
@@ -894,14 +885,14 @@ femap_to_stdA(const string & meshfile, const string & colorfile, const bool & ve
       
       for(UInt j=1; j <= el2d.size(); ++j)
       {
-	nodeLid  = el2d.getCid(j);
+        nodeLid  = el2d.getCid(j);
         color    = nodesColor(nodeLid);
-	
-	if(powerColor(color) < minPower)
-	{
-	  minColor = color;
+  
+        if(powerColor(color) < minPower)
+        {
+          minColor = color;
           minPower = powerColor(color);
-	}
+        }
       }
       
       el2d.setGeoId(minColor);

@@ -423,9 +423,9 @@ buildConnectivity()
       //Local edge preparation
       for(UInt k=1; k <= refShape1d.getNumPoints(); ++k)
       { 
-	lId = refShape3d.edgeToPoint(j,k);
-	gId = grid3d->getElementL(i).getCid(lId);
-	spigolo.getCid(k) = gId;
+        lId = refShape3d.edgeToPoint(j,k);
+        gId = grid3d->getElementL(i).getCid(lId);
+        spigolo.getCid(k) = gId;
       }
       
       spigolo.updateSorting();
@@ -443,16 +443,16 @@ buildConnectivity()
       
       if(!paioSpigoli.second)
       {
-	//already existing
-	spigoloMap = (paioSpigoli.first)->second; //Map extraction
-	elementEdgeItem.getCid(j) = spigoloMap.getLid();
+        //already existing
+        spigoloMap = (paioSpigoli.first)->second; //Map extraction
+        elementEdgeItem.getCid(j) = spigoloMap.getLid();
       }
       else
       {
-	//should be created
-	elementEdgeItem.getCid(j) = numEdges;
-	tempGraphEdges.push_back(spigolo,spigoloMap);
-	++numEdges;
+        //should be created
+        elementEdgeItem.getCid(j) = numEdges;
+        tempGraphEdges.push_back(spigolo,spigoloMap);
+        ++numEdges;
       }
     } //End loop onto local edges
     
@@ -500,9 +500,9 @@ buildConnectivity()
       //Local face preparation
       for(UInt k=1; k <= refShape2d.getNumPoints(); ++k)
       { 
-	lId = refShape3d.faceToPoint(j,k);
-	gId = grid3d->getElementL(i).getCid(lId);
-	face.getCid(k) = gId;
+        lId = refShape3d.faceToPoint(j,k);
+        gId = grid3d->getElementL(i).getCid(lId);
+        face.getCid(k) = gId;
       }
       
       face.updateSorting();
@@ -520,36 +520,35 @@ buildConnectivity()
       
       if(!paioFaces.second)
       {
-	//already existing
-	faceMap = (paioFaces.first)->second;
-	
-	//face to element
-	faceToElementItem = faceToElement.getItemL(faceMap.getLid());
-	faceToElementItem.resize(2);
-	faceToElementItem.setCid(2,i);
-	faceToElementItem.setSubLocId(2,j);
-	faceToElement.getItemL(faceMap.getLid()) = faceToElementItem;
-	
-	//elements to face
-	elementFaceItem.getCid(j) = faceMap.getLid();
-	
+        //already existing
+        faceMap = (paioFaces.first)->second;
+
+        //face to element
+        faceToElementItem = faceToElement.getItemL(faceMap.getLid());
+        faceToElementItem.resize(2);
+        faceToElementItem.setCid(2,i);
+        faceToElementItem.setSubLocId(2,j);
+        faceToElement.getItemL(faceMap.getLid()) = faceToElementItem;
+
+        //elements to face
+        elementFaceItem.getCid(j) = faceMap.getLid();
       }
       else
       {
-	//should be created - face to element
-	faceToElementMap.setLid(numFaces);
-	faceToElementItem.resize(1);
-	faceToElementItem.setCid(1,i);
-	faceToElementItem.setSubLocId(1,j);
-	faceToElement.push_back(faceToElementItem,faceToElementMap);
-	
-	//element to face
-	elementFaceMap.setLid(i);
-	elementFaceItem.getCid(j) = numFaces;
-	
-	//face creation
-	tempGraphFaces.push_back(face,faceMap); 
-	++numFaces;
+        //should be created - face to element
+        faceToElementMap.setLid(numFaces);
+        faceToElementItem.resize(1);
+        faceToElementItem.setCid(1,i);
+        faceToElementItem.setSubLocId(1,j);
+        faceToElement.push_back(faceToElementItem,faceToElementMap);
+
+        //element to face
+        elementFaceMap.setLid(i);
+        elementFaceItem.getCid(j) = numFaces;
+
+        //face creation
+        tempGraphFaces.push_back(face,faceMap); 
+        ++numFaces;
       }
     } //End loop onto local faces
     
@@ -1145,7 +1144,7 @@ getVertexToVertex(const UInt & i, const UInt & j) const
 {
   assert(connectCreated);
   assert(i >=1); assert(j >= 1);
-  assert(i <= vertexToVertex.rowSizeL());
+  assert(i <= vertexToVertex.rowSize());
   assert(j <= vertexToVertex.getItemL(i).size());
   return(vertexToVertex.getCid_LL(i,j));
 }

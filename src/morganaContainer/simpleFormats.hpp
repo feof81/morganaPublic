@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License along with Mor
 #include <boost/serialization/access.hpp>
 #include <boost/mpi.hpp>
 
+#include "typesMem.h"
 #include "morganaTypes.hpp"
 
 using namespace std;
@@ -104,6 +105,8 @@ class sVect : public vector<T>
   public:
     template<typename TT, int OO>
     friend ostream & operator<<(ostream & f, const sVect<TT,OO> & V);
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -224,9 +227,6 @@ serialize(ARK & ar, const unsigned int version)
   { ar & this->get(i); }
 }
 
-
-
-
 template<typename TT, int OO>
 ostream & operator<<(ostream & f, const sVect<TT,OO> & V)
 {
@@ -238,6 +238,16 @@ ostream & operator<<(ostream & f, const sVect<TT,OO> & V)
   return(f);
 }
 
+template <typename T, int OFFSETVEC>
+size_t 
+sVect<T, OFFSETVEC>::
+memSize() const
+{
+  if(this->size() == 0)
+  { return(0); }
+  else
+  { return(dynamicSizeOf(this->operator[](0)) * this->size()); }
+}
 
 
 
@@ -293,6 +303,8 @@ class sArray : public vector<T>
     bool bCheck( size_type const i, size_type const j ) const;
     inline size_type nrows() const;
     inline size_type ncols() const;
+    
+    size_t memSize() const;
     //@}
 };
 
@@ -397,6 +409,17 @@ sArray<T, OFFSETVEC>::
 ncols() const
 {
   return _M_ncols;
+}
+
+template <typename T, int OFFSETVEC>
+size_t 
+sArray<T, OFFSETVEC>::
+memSize() const
+{
+  if(this->size() == 0)
+  { return(0); }
+  else
+  { return(dynamicSizeOf(this->operator[](0)) * this->size()); }
 }
 
 #endif

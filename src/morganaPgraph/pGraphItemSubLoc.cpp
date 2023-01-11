@@ -175,3 +175,18 @@ ostream & operator<<(ostream & f, const pGraphItemSubLoc & G)
   
   return(f);
 }
+
+size_t
+pGraphItemSubLoc::
+memSize() const
+{
+  return( sizeof(UInt) * (connected.size() + orderedNodes.size() + subLocId.size())
+        + sizeof(nodesOrdered) );
+}
+
+
+//_________________________________________________________________________________________________
+// ASSOCIATED FUNCTIONS
+//-------------------------------------------------------------------------------------------------
+size_t dynamicSizeOf(const pGraphItemSubLoc & A)
+{ return(A.memSize()); }

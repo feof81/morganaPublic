@@ -163,6 +163,11 @@ template<typename ITEM, typename COLMAP> class pGraphGlobalManip<ITEM,pMapItem,C
                             const communicator & NewCommDev,
                                   PGRAPH       & NewPgraph);
     //@}
+    
+    /*! @name Memory functions */ //@{
+  public:
+    size_t memSize() const;
+    //@}
 };
 
 
@@ -786,6 +791,13 @@ expandCommunicator(const bool         & isActive,
   }
 }
 
+template<typename ITEM, typename COLMAP>
+size_t
+pGraphGlobalManip<ITEM,pMapItem,COLMAP>::
+memSize() const
+{
+  return(sizeof(bool));
+}
 
 
 //_________________________________________________________________________________________________
@@ -911,6 +923,11 @@ template<typename ITEM, typename COLMAP> class pGraphGlobalManip<ITEM,pMapItemSh
                             const PGRAPH       & OldPgraph,
                             const communicator & NewCommDev,
                                   PGRAPH       & NewPgraph);
+    //@}
+    
+    /*! @name Memory functions */ //@{
+  public:
+    size_t memSize() const;
     //@}
 };
 
@@ -1540,6 +1557,15 @@ expandCommunicator(const bool         & isActive,
     NewPgraph.updateRowFinder();
     NewPgraph.updateColFinder();
   }
+}
+
+
+template<typename ITEM, typename COLMAP>
+size_t
+pGraphGlobalManip<ITEM,pMapItemShare,COLMAP>::
+memSize() const
+{
+  return(sizeof(bool));
 }
 
 #endif

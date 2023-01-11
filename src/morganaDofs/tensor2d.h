@@ -235,6 +235,9 @@ class tensor2d
   public:
     /*! Outstream operator */
     friend ostream & operator << ( ostream & f, const tensor2d & A);
+    
+    /*! Memory size */
+    size_t memSize() const;
     //@}
 };
 
